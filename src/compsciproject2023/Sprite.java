@@ -5,6 +5,8 @@
  */
 package compsciproject2023;
 
+import java.awt.image.BufferedImage;
+
 /**
  *
  * @author 10848
@@ -13,7 +15,10 @@ public class Sprite {
     
     private int XSprite, YSprite, XSpeed, YSpeed, Range;
     private int Alive;
+    public BufferedImage player;
 
+    
+    
     public int getXSprite() {
         return XSprite;
     }

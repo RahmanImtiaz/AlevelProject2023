@@ -58,6 +58,8 @@ public class CompSciProject2023 extends Application {
     final int HEIGHT = (int) Screen.getPrimary().getBounds().getHeight();
 
     Button BtnPlay;
+    
+    KeyHandler KeyH = new KeyHandler();
 
     @Override
     public void start(Stage primaryStage) {
@@ -265,6 +267,7 @@ public class CompSciProject2023 extends Application {
         Backg.setFitWidth(WIDTH);
         Backg.setFitHeight(HEIGHT);
         GameRoot.getChildren().add(Backg);
+        
 
         Scene sceneGame = new Scene(GameRoot, WIDTH, HEIGHT);
 

@@ -5,17 +5,20 @@
  */
 package compsciproject2023;
 
-
+import java.awt.image.BufferedImage;
+import javafx.scene.image.Image;
 
 /**
  *
  * @author 10848
  */
-public class Player extends Sprite{
+public class Player extends Sprite {
+
     private int StrenghtP, Mp, Health;
-   
-    
-    public void setDefaultAttributes(){
+
+    KeyHandler KeyH = new KeyHandler();
+
+    public void setDefaultAttributes() {
         this.Mp = 100;
         this.StrenghtP = 100;
         this.Health = 100;
@@ -24,20 +27,28 @@ public class Player extends Sprite{
         setXSpeed(4);
         setYSpeed(4);
     }
-    
-    
-    public void move(){
-        
-            
-           
-        
-    
-    
-    }
-    
-    public void draw(){
-        
-    }
-   
-}
 
+    public void move() {
+
+        if (KeyH.upPressed == true) {
+            setYSprite(getYSprite() - getYSpeed());
+        } else if (KeyH.downPressed == true) {
+            setYSprite(getYSprite() + getYSpeed());
+        } else if (KeyH.leftPressed == true) {
+            setXSprite(getXSprite() - getXSpeed());
+        } else if (KeyH.rightPressed == true) {
+            setXSprite(getXSprite() + getXSpeed());
+        }
+
+    }
+    
+    public void getplayerimage(){
+      
+    }
+
+    public void draw() {
+
+        
+    }
+
+}
