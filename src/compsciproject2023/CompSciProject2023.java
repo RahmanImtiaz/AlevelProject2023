@@ -5,7 +5,10 @@
  */
 package compsciproject2023;
 
+import java.applet.AudioClip;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.net.URL;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import static javafx.application.Platform.exit;
@@ -27,6 +30,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
@@ -49,7 +54,6 @@ public class CompSciProject2023 extends Application {
 
     //final int WIDTH = 1920;
     //final int HEIGHT = 1080;
-    
     final int WIDTH = (int) Screen.getPrimary().getBounds().getWidth();
     final int HEIGHT = (int) Screen.getPrimary().getBounds().getHeight();
 
@@ -64,6 +68,9 @@ public class CompSciProject2023 extends Application {
         ScoreScene = CreateScore2();
         SettingsScene = CreateSetting3();
         GameScene = CreateGame();
+
+       
+        
 
         Stage.setTitle("Mortal Destruction");
         Stage.setScene(MenuScene);
@@ -82,12 +89,11 @@ public class CompSciProject2023 extends Application {
         //BtnPlay.setScaleY(2);
         BtnPlay.setOnAction(event -> switchscene(GameScene));
 
-       // BtnPlay.addEventHandler(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
+        // BtnPlay.addEventHandler(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
         //    BtnPlay.setStyle("-fx-font-weight: bold");
         //    BtnPlay.setScaleX(3.2);
         //    BtnPlay.setScaleY(2.2);
-       // });
-
+        // });
         Button Btnscore = new Button();
         Btnscore.setText("> High Score");
         Btnscore.setBackground(null);
@@ -132,11 +138,9 @@ public class CompSciProject2023 extends Application {
         vboxM.setAlignment(Pos.CENTER);
 
         root.getChildren().add(Backg);
-        vboxM.getChildren().addAll(BtnPlay,Btnscore,BtnSet,BtnExit);
-        
+        vboxM.getChildren().addAll(BtnPlay, Btnscore, BtnSet, BtnExit);
 
-       // vboxM.setSpacing(50);
-
+        // vboxM.setSpacing(50);
         borderPane.setTranslateY(200);
         borderPane.setCenter(vboxM);
         root.getChildren().add(borderPane);
@@ -168,16 +172,13 @@ public class CompSciProject2023 extends Application {
         BorderPane borderPane2 = new BorderPane();
         Button BtnBack = new Button();
         BtnBack.setText("< Back");
-        BtnBack.setLayoutX(100);
-        BtnBack.setLayoutY(350);
         BtnBack.setBackground(null);
         BtnBack.setTextFill(Color.WHITE);
-        BtnBack.setFont(new Font("Papyrus", 30));
-        BtnBack.setScaleX(3);
-        BtnBack.setScaleY(2);
+        BtnBack.setFont(new Font("Papyrus", 20));
+
         BtnBack.setOnAction(event -> switchscene(MenuScene));
         borderPane2.setLeft(BtnBack);
-        borderPane2.setTranslateY(900);
+        borderPane2.setTranslateY(750);
 
         ScoreRoot.getChildren().add(borderPane2);
         Scene sceneScore = new Scene(ScoreRoot, WIDTH, HEIGHT);
@@ -205,41 +206,51 @@ public class CompSciProject2023 extends Application {
         SetRoot.getChildren().add(borderPane);
 
         Label Title = new Label("Settings");
-        Title.setLayoutX(WIDTH/2 - 150);
+        Title.setLayoutX(WIDTH / 2 - 150);
         Title.setLayoutY(150);
         Title.setFont(new Font("Papyrus", 80));
         Title.setTextFill(Color.WHITE);
-        
-        
-        
+
         Label vol = new Label("Volume");
         Slider volume = new Slider();
-        volume.setLayoutX(WIDTH/2 - 400);
+        volume.setLayoutX(WIDTH / 2 - 400);
         volume.setLayoutY(400);
         volume.setPrefWidth(700);
         //double value = volume.getValue();
         Label volPerc = new Label();
-        volPerc.setLayoutX(WIDTH/2);
+        volPerc.setLayoutX(WIDTH / 2);
         volPerc.setLayoutY(400);
-        
-       volPerc.textProperty().bind(
-            Bindings.format(
-                "%.0f",
-                volume.valueProperty()
-            )
+
+        volPerc.textProperty().bind(
+                Bindings.format(
+                        "%.0f",
+                        volume.valueProperty()
+                )
         );
-       
-        volPerc.setLayoutX(WIDTH/2+350);
+
+        volPerc.setLayoutX(WIDTH / 2 + 350);
         volPerc.setLayoutY(335);
         volPerc.setFont(new Font("Papyrus", 50));
         volPerc.setTextFill(Color.WHITE);
-        
-        vol.setLayoutX(WIDTH/2 - 400);
+
+        vol.setLayoutX(WIDTH / 2 - 400);
         vol.setLayoutY(300);
         vol.setFont(new Font("Papyrus", 50));
         vol.setTextFill(Color.WHITE);
         SetRoot.getChildren().addAll(vol, volume, Title, volPerc);
-        
+
+        BorderPane borderPane2 = new BorderPane();
+        Button BtnBack = new Button();
+        BtnBack.setText("< Back");
+        BtnBack.setBackground(null);
+        BtnBack.setTextFill(Color.WHITE);
+        BtnBack.setFont(new Font("Papyrus", 20));
+
+        BtnBack.setOnAction(event -> switchscene(MenuScene));
+        borderPane2.setLeft(BtnBack);
+        borderPane2.setTranslateY(750);
+
+        SetRoot.getChildren().add(borderPane2);
         Scene sceneSet = new Scene(SetRoot, WIDTH, HEIGHT);
 
         return sceneSet;
@@ -254,9 +265,7 @@ public class CompSciProject2023 extends Application {
         Backg.setFitWidth(WIDTH);
         Backg.setFitHeight(HEIGHT);
         GameRoot.getChildren().add(Backg);
-        
-        
-        
+
         Scene sceneGame = new Scene(GameRoot, WIDTH, HEIGHT);
 
         return sceneGame;
