@@ -22,6 +22,7 @@ public class Player extends Sprite {
         this.KeyH = KeyH;
         setDefaultAttributes();
         getplayerimage();
+        draw();
     }
 
     public void setDefaultAttributes() {

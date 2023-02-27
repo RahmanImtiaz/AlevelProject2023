@@ -9,6 +9,7 @@ import java.applet.AudioClip;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.net.URL;
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import static javafx.application.Platform.exit;
@@ -58,7 +59,7 @@ public class CompSciProject2023 extends Application {
     final int HEIGHT = (int) Screen.getPrimary().getBounds().getHeight();
 
     Button BtnPlay;
-    
+
     KeyHandler KeyH = new KeyHandler();
 
     @Override
@@ -69,15 +70,13 @@ public class CompSciProject2023 extends Application {
         MenuScene = CreateMainMenu1();
         ScoreScene = CreateScore2();
         SettingsScene = CreateSetting3();
-        GameScene = CreateGame();
-
-       
-        
+        CreateGame(primaryStage);
 
         Stage.setTitle("Mortal Destruction");
         Stage.setScene(MenuScene);
 
         Stage.show();
+
     }
 
     private Scene CreateMainMenu1() { //Function used to create the main menu scene
@@ -89,7 +88,7 @@ public class CompSciProject2023 extends Application {
         BtnPlay.setFont(new Font("Papyrus", 30));
         //BtnPlay.setScaleX(3);
         //BtnPlay.setScaleY(2);
-        BtnPlay.setOnAction(event -> switchscene(GameScene));
+        BtnPlay.setOnAction(event -> CreateGame(Stage));
 
         // BtnPlay.addEventHandler(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
         //    BtnPlay.setStyle("-fx-font-weight: bold");
@@ -259,21 +258,38 @@ public class CompSciProject2023 extends Application {
 
     }
 
-    private Scene CreateGame() { //Function used to create the Game scene
+    private void CreateGame(Stage primaryStage) { //Function used to create the Game scene
 
+        // new AnimationTimer() {
+        //      @Override
+        //    public void handle(long now) {
+        //
+        //       
+        //
+        //    }
+        //
+        //}.start();
         Group GameRoot = new Group();
         Image imgBack = new Image("GameBackground.jpeg");
         ImageView Backg = new ImageView(imgBack);
         Backg.setFitWidth(WIDTH);
         Backg.setFitHeight(HEIGHT);
         GameRoot.getChildren().add(Backg);
-        
 
         Scene sceneGame = new Scene(GameRoot, WIDTH, HEIGHT);
 
-        return sceneGame;
+        primaryStage.setScene(sceneGame);
+
     }
 
+    // public void move(){
+    //     player1.move();
+    //    
+    // }
+    // public void draw(){
+    //    player1.draw();
+    //   
+    // }
     private void switchscene(Scene newScene) { //Method called on when button is clicked. This method takes in a new scene in and switchs the scene to the new scene.
         Stage.setScene(newScene);
     }
