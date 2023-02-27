@@ -6,6 +6,7 @@
 package compsciproject2023;
 
 import java.awt.image.BufferedImage;
+import javafx.scene.image.Image;
 
 /**
  *
@@ -15,7 +16,8 @@ public class Sprite {
     
     private int XSprite, YSprite, XSpeed, YSpeed, Range;
     private int Alive;
-    public BufferedImage player;
+    public Image Up1, Up2, Down1, Down2, Left1, Left2, Right1, Right2; 
+    public String direction;
 
     
     
