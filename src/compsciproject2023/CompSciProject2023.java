@@ -52,7 +52,7 @@ public class CompSciProject2023 extends Application {
     Scene MenuScene;
     Scene ScoreScene;
     Scene SettingsScene;
-  
+
     public Player p1;
 
     boolean running, goNorth, goSouth, goEast, goWest;
@@ -64,7 +64,7 @@ public class CompSciProject2023 extends Application {
 
     Button BtnPlay;
 
-    KeyHandler KeyH = new KeyHandler();
+
 
     @Override
     public void start(Stage primaryStage) {
@@ -277,47 +277,43 @@ public class CompSciProject2023 extends Application {
 
         Scene sceneGame = new Scene(GameRoot, WIDTH, HEIGHT);
 
-        sceneGame.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                switch (event.getCode()) {
-                    case W:
-                        goNorth = true;
-                        break;
-                    case S:
-                        goSouth = true;
-                        break;
-                    case A:
-                        goWest = true;
-                        break;
-                    case D:
-                        goEast = true;
-                        break;
-                    case SHIFT: running = true; break;
-                }
+        sceneGame.setOnKeyPressed((KeyEvent event) -> {
+            switch (event.getCode()) {
+                case W:
+                    goNorth = true;
+                    break;
+                case S:
+                    goSouth = true;
+                    break;
+                case A:
+                    goWest = true;
+                    break;
+                case D:
+                    goEast = true;
+                    break;
+                case SHIFT:
+                    running = true;
+                    break;
             }
         });
 
-        sceneGame.setOnKeyReleased(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                switch (event.getCode()) {
-                    case W:
-                        goNorth = false;
-                        break;
-                    case S:
-                        goSouth = false;
-                        break;
-                    case A:
-                        goWest = false;
-                        break;
-                    case D:
-                        goEast = false;
-                        break;
-                    case SHIFT:
-                        running = false;
-                        break;
-                }
+        sceneGame.setOnKeyReleased((KeyEvent event) -> {
+            switch (event.getCode()) {
+                case W:
+                    goNorth = false;
+                    break;
+                case S:
+                    goSouth = false;
+                    break;
+                case A:
+                    goWest = false;
+                    break;
+                case D:
+                    goEast = false;
+                    break;
+                case SHIFT:
+                    running = false;
+                    break;
             }
         });
 
@@ -327,26 +323,25 @@ public class CompSciProject2023 extends Application {
                 int dx = 0, dy = 0;
 
                 if (goNorth) {
-                    dy -= 2;
-                    
+                    dy += 2;
+
                 }
                 if (goSouth) {
-                    dy += 2;
+                    dy -= 2;
                 }
                 if (goEast) {
-                    dx += 2;
+                    dx -= 2;
                 }
                 if (goWest) {
-                    dx -= 2;
+                    dx += 2;
                 }
                 if (running) {
                     dx *= 3;
                     dy *= 3;
                 }
                 p1.move(dy, dx);
-                
 
-             }
+            }
 
         }.start();
         primaryStage.setScene(sceneGame);

@@ -45,27 +45,9 @@ public class Player extends Sprite {
 
     public void move(int dy, int dx) {
 
-        //if (KeyH.upPressed == true) {
-        //    direction = "up";
-        //    setYSprite(getYSprite() - getYSpeed());
-        //} else if (KeyH.downPressed == true) {
-        //    direction = "down";
-        //    setYSprite(getYSprite() + getYSpeed());
-        //} else if (KeyH.leftPressed == true) {
-        //    direction = "left";
-        //    setXSprite(getXSprite() - getXSpeed());
-        //} else if (KeyH.rightPressed == true) {
-        //    direction = "right";
-        //    setXSprite(getXSprite() + getXSpeed());
-        //}
        
         setYSprite(getYSprite() - dy);
         setXSprite(getXSprite() - dx);
-        
-
-        
-
-        
 
     }
 

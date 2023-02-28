@@ -15,30 +15,30 @@ import javafx.scene.shape.Rectangle;
  * @author 10848
  */
 public class Sprite {
-    
+
     public Rectangle rect;
     Color color;
-    
+
     private int XSprite, YSprite, XSpeed, YSpeed, Range;
     private int Alive;
-    public Image Up1, Up2, Down1, Down2, Left1, Left2, Right1, Right2; 
+    public Image Up1, Up2, Down1, Down2, Left1, Left2, Right1, Right2;
     public String direction;
-    
 
     public Sprite(int width, int height, Color color) {
-        
-        rect = new Rectangle(width,height,color);
-        
+
+        rect = new Rectangle(width, height, color);
+        rect.setX(XSprite);
+        rect.setY(YSprite);
+
     }
 
-    
-    
     public int getXSprite() {
         return XSprite;
     }
 
     public void setXSprite(int XSprite) {
         this.XSprite = XSprite;
+        rect.setX(XSprite);
     }
 
     public int getYSprite() {
@@ -47,6 +47,7 @@ public class Sprite {
 
     public void setYSprite(int YSprite) {
         this.YSprite = YSprite;
+        rect.setY(YSprite);
     }
 
     public int getXSpeed() {
@@ -80,6 +81,5 @@ public class Sprite {
     public void setAlive(int Alive) {
         this.Alive = Alive;
     }
-    
-    
+
 }
