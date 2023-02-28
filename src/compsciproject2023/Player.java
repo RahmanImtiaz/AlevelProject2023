@@ -6,7 +6,11 @@
 package compsciproject2023;
 
 import java.awt.image.BufferedImage;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -15,14 +19,17 @@ import javafx.scene.image.Image;
 public class Player extends Sprite {
 
     private int StrenghtP, Mp, Health;
+    double speed;
 
-    KeyHandler KeyH = new KeyHandler();
+    //KeyHandler KeyH = new KeyHandler();
+    public Player(int width, int height, int speed, Color colour) {
+        super(width, height, Color.WHITE);
+        this.speed = speed;
 
-    public Player(KeyHandler KeyH) {
-        this.KeyH = KeyH;
         setDefaultAttributes();
         getplayerimage();
         draw();
+
     }
 
     public void setDefaultAttributes() {
@@ -36,20 +43,30 @@ public class Player extends Sprite {
         direction = "down";
     }
 
-    public void move() {
-        if (KeyH.upPressed == true) {
-            direction = "up";
-            setYSprite(getYSprite() - getYSpeed());
-        } else if (KeyH.downPressed == true) {
-            direction = "down";
-            setYSprite(getYSprite() + getYSpeed());
-        } else if (KeyH.leftPressed == true) {
-            direction = "left";
-            setXSprite(getXSprite() - getXSpeed());
-        } else if (KeyH.rightPressed == true) {
-            direction = "right";
-            setXSprite(getXSprite() + getXSpeed());
-        }
+    public void move(int dy, int dx) {
+
+        //if (KeyH.upPressed == true) {
+        //    direction = "up";
+        //    setYSprite(getYSprite() - getYSpeed());
+        //} else if (KeyH.downPressed == true) {
+        //    direction = "down";
+        //    setYSprite(getYSprite() + getYSpeed());
+        //} else if (KeyH.leftPressed == true) {
+        //    direction = "left";
+        //    setXSprite(getXSprite() - getXSpeed());
+        //} else if (KeyH.rightPressed == true) {
+        //    direction = "right";
+        //    setXSprite(getXSprite() + getXSpeed());
+        //}
+       
+        setYSprite(getYSprite() - dy);
+        setXSprite(getXSprite() - dx);
+        
+
+        
+
+        
+
     }
 
     public void getplayerimage() {
@@ -59,8 +76,8 @@ public class Player extends Sprite {
         Up2 = new Image("Up2.png");
         Left1 = new Image("Left1.png");
         Left2 = new Image("Left2.png");
-        Right1 = new Image("Right1");
-        Right2 = new Image("Right2");
+        Right1 = new Image("Right1.png");
+        Right2 = new Image("Right2.png");
     }
 
     public void draw() {

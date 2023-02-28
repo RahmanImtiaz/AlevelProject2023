@@ -27,6 +27,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -51,7 +52,10 @@ public class CompSciProject2023 extends Application {
     Scene MenuScene;
     Scene ScoreScene;
     Scene SettingsScene;
-    Scene GameScene;
+  
+    public Player p1;
+
+    boolean running, goNorth, goSouth, goEast, goWest;
 
     //final int WIDTH = 1920;
     //final int HEIGHT = 1080;
@@ -260,15 +264,6 @@ public class CompSciProject2023 extends Application {
 
     private void CreateGame(Stage primaryStage) { //Function used to create the Game scene
 
-        // new AnimationTimer() {
-        //      @Override
-        //    public void handle(long now) {
-        //
-        //       
-        //
-        //    }
-        //
-        //}.start();
         Group GameRoot = new Group();
         Image imgBack = new Image("GameBackground.jpeg");
         ImageView Backg = new ImageView(imgBack);
@@ -276,20 +271,88 @@ public class CompSciProject2023 extends Application {
         Backg.setFitHeight(HEIGHT);
         GameRoot.getChildren().add(Backg);
 
+        p1 = new Player(30, 30, 4, Color.WHITE);
+
+        GameRoot.getChildren().add(p1.rect);
+
         Scene sceneGame = new Scene(GameRoot, WIDTH, HEIGHT);
 
+        sceneGame.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                switch (event.getCode()) {
+                    case W:
+                        goNorth = true;
+                        break;
+                    case S:
+                        goSouth = true;
+                        break;
+                    case A:
+                        goWest = true;
+                        break;
+                    case D:
+                        goEast = true;
+                        break;
+                    case SHIFT: running = true; break;
+                }
+            }
+        });
+
+        sceneGame.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                switch (event.getCode()) {
+                    case W:
+                        goNorth = false;
+                        break;
+                    case S:
+                        goSouth = false;
+                        break;
+                    case A:
+                        goWest = false;
+                        break;
+                    case D:
+                        goEast = false;
+                        break;
+                    case SHIFT:
+                        running = false;
+                        break;
+                }
+            }
+        });
+
+        new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                int dx = 0, dy = 0;
+
+                if (goNorth) {
+                    dy -= 2;
+                    
+                }
+                if (goSouth) {
+                    dy += 2;
+                }
+                if (goEast) {
+                    dx += 2;
+                }
+                if (goWest) {
+                    dx -= 2;
+                }
+                if (running) {
+                    dx *= 3;
+                    dy *= 3;
+                }
+                p1.move(dy, dx);
+                
+
+             }
+
+        }.start();
         primaryStage.setScene(sceneGame);
 
     }
 
-    // public void move(){
-    //     player1.move();
-    //    
-    // }
-    // public void draw(){
-    //    player1.draw();
-    //   
-    // }
     private void switchscene(Scene newScene) { //Method called on when button is clicked. This method takes in a new scene in and switchs the scene to the new scene.
         Stage.setScene(newScene);
     }

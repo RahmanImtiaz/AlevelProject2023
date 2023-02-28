@@ -7,6 +7,8 @@ package compsciproject2023;
 
 import java.awt.image.BufferedImage;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 /**
  *
@@ -14,10 +16,20 @@ import javafx.scene.image.Image;
  */
 public class Sprite {
     
+    public Rectangle rect;
+    Color color;
+    
     private int XSprite, YSprite, XSpeed, YSpeed, Range;
     private int Alive;
     public Image Up1, Up2, Down1, Down2, Left1, Left2, Right1, Right2; 
     public String direction;
+    
+
+    public Sprite(int width, int height, Color color) {
+        
+        rect = new Rectangle(width,height,color);
+        
+    }
 
     
     
