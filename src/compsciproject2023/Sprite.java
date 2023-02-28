@@ -38,7 +38,7 @@ public class Sprite {
 
     public Sprite(int width, int height, String imgpath) {
 
-        Image imgSprite = new Image("Down1.png");
+        Image imgSprite = new Image(imgpath);
         Sprite = new ImageView(imgSprite);
         Sprite.setX(XSprite);
         Sprite.setY(YSprite);
