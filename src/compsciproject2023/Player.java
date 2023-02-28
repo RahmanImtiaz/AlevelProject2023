@@ -20,15 +20,17 @@ public class Player extends Sprite {
 
     private int StrenghtP, Mp, Health;
     double speed;
+    public Image Up1, Up2, Down1, Down2, Left1, Left2, Right1, Right2;
 
     //KeyHandler KeyH = new KeyHandler();
-    public Player(int width, int height, int speed, Color colour) {
-        super(width, height, Color.WHITE);
+    public Player(int width, int height, int speed, String imgpath) {
+        
+        super(width, height, imgpath);
         this.speed = speed;
-
+        Image img = draw(imgpath);
         setDefaultAttributes();
         getplayerimage();
-        draw();
+       
 
     }
 
@@ -44,10 +46,21 @@ public class Player extends Sprite {
     }
 
     public void move(int dy, int dx) {
-
-       
         setYSprite(getYSprite() - dy);
         setXSprite(getXSprite() - dx);
+        
+        if (dy>0) {
+            
+        }
+        if (dy<0) {
+            
+        }
+        if (dx>0) {
+            
+        }
+        if (dx<0) {
+            
+        }
 
     }
 
@@ -62,21 +75,9 @@ public class Player extends Sprite {
         Right2 = new Image("Right2.png");
     }
 
-    public void draw() {
-        Image image = null;
-        switch (direction) {
-            case "up":
-                image = Up1;
-                break;
-            case "Down":
-                image = Down1;
-                break;
-            case "left":
-                image = Left1;
-                break;
-            case "right":
-                image = Right1;
-                break;
-        }
+    public Image draw(String imgpath) {
+        Image imgPlay = new Image(imgpath);
+        return imgPlay;
+   
     }
 }

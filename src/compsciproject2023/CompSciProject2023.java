@@ -56,13 +56,14 @@ public class CompSciProject2023 extends Application {
     public Player p1;
 
     boolean running, goNorth, goSouth, goEast, goWest;
+    public String Up1, Up2, Down1, Down2, Left1, Left2, Right1, Right2;
 
     //final int WIDTH = 1920;
     //final int HEIGHT = 1080;
     final int WIDTH = (int) Screen.getPrimary().getBounds().getWidth();
     final int HEIGHT = (int) Screen.getPrimary().getBounds().getHeight();
 
-    Button BtnPlay;
+    Button BtnPlay, Btnscore, BtnSet, BtnExit;
 
 
 
@@ -90,8 +91,6 @@ public class CompSciProject2023 extends Application {
         BtnPlay.setBackground(null);
         BtnPlay.setTextFill(Color.WHITE);
         BtnPlay.setFont(new Font("Papyrus", 30));
-        //BtnPlay.setScaleX(3);
-        //BtnPlay.setScaleY(2);
         BtnPlay.setOnAction(event -> CreateGame(Stage));
 
         // BtnPlay.addEventHandler(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
@@ -99,34 +98,26 @@ public class CompSciProject2023 extends Application {
         //    BtnPlay.setScaleX(3.2);
         //    BtnPlay.setScaleY(2.2);
         // });
-        Button Btnscore = new Button();
+        
+        Btnscore = new Button();
         Btnscore.setText("> High Score");
         Btnscore.setBackground(null);
         Btnscore.setTextFill(Color.WHITE);
         Btnscore.setFont(new Font("Papyrus", 30));
-        //Btnscore.setScaleX(3);
-        //Btnscore.setScaleY(2);
-
         Btnscore.setOnAction(event -> switchscene(ScoreScene));
 
-        Button BtnSet = new Button();
+        BtnSet = new Button();
         BtnSet.setText("> Settings");
         BtnSet.setBackground(null);
         BtnSet.setTextFill(Color.WHITE);
         BtnSet.setFont(new Font("Papyrus", 30));
-        //BtnSet.setScaleX(3);
-        //BtnSet.setScaleY(2);
-
         BtnSet.setOnAction(event -> switchscene(SettingsScene));
 
-        Button BtnExit = new Button();
+        BtnExit = new Button();
         BtnExit.setText("> Exit");
         BtnExit.setBackground(null);
         BtnExit.setTextFill(Color.WHITE);
         BtnExit.setFont(new Font("Papyrus", 30));
-        //BtnExit.setScaleX(3);
-        //BtnExit.setScaleY(2);
-
         BtnExit.setOnAction(event -> exit());
 
         Group root = new Group();
@@ -134,7 +125,6 @@ public class CompSciProject2023 extends Application {
         ImageView Backg = new ImageView(imgBack);
         Backg.setFitWidth(WIDTH);
         Backg.setFitHeight(HEIGHT);
-
         BorderPane borderPane = new BorderPane();
         borderPane.setPrefSize(WIDTH, HEIGHT);
 
@@ -175,13 +165,14 @@ public class CompSciProject2023 extends Application {
         ScoreRoot.getChildren().add(borderPane);
 
         BorderPane borderPane2 = new BorderPane();
+        
         Button BtnBack = new Button();
         BtnBack.setText("< Back");
         BtnBack.setBackground(null);
         BtnBack.setTextFill(Color.WHITE);
         BtnBack.setFont(new Font("Papyrus", 20));
-
         BtnBack.setOnAction(event -> switchscene(MenuScene));
+        
         borderPane2.setLeft(BtnBack);
         borderPane2.setTranslateY(750);
 
@@ -264,6 +255,16 @@ public class CompSciProject2023 extends Application {
 
     private void CreateGame(Stage primaryStage) { //Function used to create the Game scene
 
+        
+        
+        Down1 = "Down1.png";
+        Down2 = "Down2.png";
+        Up1 = "Up1.png";
+        Up2 = "Up2.png";
+        Left1 = "Left1.png";
+        Left2 = "Left2.png";
+        Right1 = "Right1.png";
+        Right2 = "Right2.png";
         Group GameRoot = new Group();
         Image imgBack = new Image("GameBackground.jpeg");
         ImageView Backg = new ImageView(imgBack);
@@ -271,9 +272,11 @@ public class CompSciProject2023 extends Application {
         Backg.setFitHeight(HEIGHT);
         GameRoot.getChildren().add(Backg);
 
-        p1 = new Player(30, 30, 4, Color.WHITE);
+        
+        p1 = new Player(30, 30, 4, Down1);
 
-        GameRoot.getChildren().add(p1.rect);
+        //GameRoot.getChildren().add(p1.rect);
+        GameRoot.getChildren().add(p1.Sprite);
 
         Scene sceneGame = new Scene(GameRoot, WIDTH, HEIGHT);
 
