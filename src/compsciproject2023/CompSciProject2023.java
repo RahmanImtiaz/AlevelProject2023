@@ -25,6 +25,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -52,8 +53,11 @@ public class CompSciProject2023 extends Application {
     Scene MenuScene;
     Scene ScoreScene;
     Scene SettingsScene;
+    Scene GuideScene;
 
     public Player p1;
+    public int Spritecount = 0;
+    public int Spritenum = 0;
 
     boolean running, goNorth, goSouth, goEast, goWest;
     public String Up1, Up2, Down1, Down2, Left1, Left2, Right1, Right2;
@@ -63,9 +67,7 @@ public class CompSciProject2023 extends Application {
     final int WIDTH = (int) Screen.getPrimary().getBounds().getWidth();
     final int HEIGHT = (int) Screen.getPrimary().getBounds().getHeight();
 
-    Button BtnPlay, Btnscore, BtnSet, BtnExit;
-
-
+    Button BtnPlay, Btnscore, BtnSet, BtnExit, BtnGuide;
 
     @Override
     public void start(Stage primaryStage) {
@@ -74,6 +76,7 @@ public class CompSciProject2023 extends Application {
 
         MenuScene = CreateMainMenu1();
         ScoreScene = CreateScore2();
+        GuideScene = CreateGuide();
         SettingsScene = CreateSetting3();
         CreateGame(primaryStage);
 
@@ -98,13 +101,19 @@ public class CompSciProject2023 extends Application {
         //    BtnPlay.setScaleX(3.2);
         //    BtnPlay.setScaleY(2.2);
         // });
-        
         Btnscore = new Button();
         Btnscore.setText("> High Score");
         Btnscore.setBackground(null);
         Btnscore.setTextFill(Color.WHITE);
         Btnscore.setFont(new Font("Papyrus", 30));
         Btnscore.setOnAction(event -> switchscene(ScoreScene));
+        
+        BtnGuide = new Button();
+        BtnGuide.setText("> Instructions");
+        BtnGuide.setBackground(null);
+        BtnGuide.setTextFill(Color.WHITE);
+        BtnGuide.setFont(new Font("Papyrus", 30));
+        BtnGuide.setOnAction(event -> switchscene(GuideScene));
 
         BtnSet = new Button();
         BtnSet.setText("> Settings");
@@ -133,7 +142,7 @@ public class CompSciProject2023 extends Application {
         vboxM.setAlignment(Pos.CENTER);
 
         root.getChildren().add(Backg);
-        vboxM.getChildren().addAll(BtnPlay, Btnscore, BtnSet, BtnExit);
+        vboxM.getChildren().addAll(BtnPlay, Btnscore, BtnGuide, BtnSet, BtnExit);
 
         // vboxM.setSpacing(50);
         borderPane.setTranslateY(200);
@@ -164,22 +173,73 @@ public class CompSciProject2023 extends Application {
 
         ScoreRoot.getChildren().add(borderPane);
 
-        BorderPane borderPane2 = new BorderPane();
+        Label Title = new Label("Score Board");
+        Title.setLayoutX(WIDTH / 2 - 250);
+        Title.setLayoutY(150);
+        Title.setFont(new Font("Papyrus", 80));
+        Title.setTextFill(Color.WHITE);
+        ScoreRoot.getChildren().add(Title);
         
+        BorderPane borderPane2 = new BorderPane();
+
         Button BtnBack = new Button();
         BtnBack.setText("< Back");
         BtnBack.setBackground(null);
         BtnBack.setTextFill(Color.WHITE);
         BtnBack.setFont(new Font("Papyrus", 20));
         BtnBack.setOnAction(event -> switchscene(MenuScene));
-        
+
         borderPane2.setLeft(BtnBack);
-        borderPane2.setTranslateY(750);
+        borderPane2.setTranslateY(900);
 
         ScoreRoot.getChildren().add(borderPane2);
         Scene sceneScore = new Scene(ScoreRoot, WIDTH, HEIGHT);
 
         return sceneScore;
+    }
+    
+    private Scene CreateGuide() {
+        Group ScoreGuide = new Group();
+        Image imgBack = new Image("Backgroundimg.jpeg");
+        ImageView Backg = new ImageView(imgBack);
+        Backg.setFitWidth(WIDTH);
+        Backg.setFitHeight(HEIGHT);
+        ScoreGuide.getChildren().add(Backg);
+
+        Rectangle rectangle = new Rectangle(200, 200, 960, 540);
+        Image SetBox = new Image("Settingsbox.JPG");
+        rectangle.setFill(new ImagePattern(SetBox));
+        BorderPane borderPane = new BorderPane();
+        borderPane.setPrefSize(WIDTH, HEIGHT);
+        borderPane.setCenter(rectangle);
+        
+              
+
+        ScoreGuide.getChildren().addAll(borderPane);
+        
+        Label Title = new Label("User Intsructions");
+        Title.setLayoutX(WIDTH / 2 - 300);
+        Title.setLayoutY(150);
+        Title.setFont(new Font("Papyrus", 80));
+        Title.setTextFill(Color.WHITE);
+        ScoreGuide.getChildren().add(Title);
+
+        BorderPane borderPane2 = new BorderPane();
+
+        Button BtnBack = new Button();
+        BtnBack.setText("< Back");
+        BtnBack.setBackground(null);
+        BtnBack.setTextFill(Color.WHITE);
+        BtnBack.setFont(new Font("Papyrus", 20));
+        BtnBack.setOnAction(event -> switchscene(MenuScene));
+
+        borderPane2.setLeft(BtnBack);
+        borderPane2.setTranslateY(900);
+
+        ScoreGuide.getChildren().add(borderPane2);
+        Scene sceneGuide = new Scene(ScoreGuide, WIDTH, HEIGHT);
+
+        return sceneGuide;
     }
 
     private Scene CreateSetting3() { //Function used to create the settings scene
@@ -244,7 +304,7 @@ public class CompSciProject2023 extends Application {
 
         BtnBack.setOnAction(event -> switchscene(MenuScene));
         borderPane2.setLeft(BtnBack);
-        borderPane2.setTranslateY(750);
+        borderPane2.setTranslateY(900);
 
         SetRoot.getChildren().add(borderPane2);
         Scene sceneSet = new Scene(SetRoot, WIDTH, HEIGHT);
@@ -255,8 +315,6 @@ public class CompSciProject2023 extends Application {
 
     private void CreateGame(Stage primaryStage) { //Function used to create the Game scene
 
-        
-        
         Down1 = "Down1.png";
         Down2 = "Down2.png";
         Up1 = "Up1.png";
@@ -272,7 +330,6 @@ public class CompSciProject2023 extends Application {
         Backg.setFitHeight(HEIGHT);
         GameRoot.getChildren().add(Backg);
 
-        
         p1 = new Player(30, 30, 4, Down1);
 
         //GameRoot.getChildren().add(p1.rect);
@@ -320,30 +377,95 @@ public class CompSciProject2023 extends Application {
             }
         });
 
+        Image Down1 = new Image("Down1.png");
+        Image Down2 = new Image("Down2.png");
+        Image Up1 = new Image("Up1.png");
+        Image Up2 = new Image("Up2.png");
+        Image Left1 = new Image("Left1.png");
+        Image Left2 = new Image("Left2.png");
+        Image Right1 = new Image("Right1.png");
+        Image Right2 = new Image("Right2.png");
+
         new AnimationTimer() {
             @Override
             public void handle(long now) {
+
+                
+
                 int dx = 0, dy = 0;
+                if (Spritecount % 2 == 0) {
 
-                if (goNorth) {
-                    dy += 2;
+                    if (goNorth) {
+                        if (Spritenum == 1) {
+                            p1.Sprite.setImage(Up1);
+                        }
+                        if (Spritenum == 2) {
+                            p1.Sprite.setImage(Up2);
+                        }
 
-                }
-                if (goSouth) {
-                    dy -= 2;
-                }
-                if (goEast) {
-                    dx -= 2;
-                }
-                if (goWest) {
-                    dx += 2;
-                }
-                if (running) {
-                    dx *= 3;
-                    dy *= 3;
+                        dy += 2;
+
+                    }
+                    if (goSouth) {
+
+                        if (Spritenum == 1) {
+                            p1.Sprite.setImage(Down1);
+                        }
+                        if (Spritenum == 2) {
+                            p1.Sprite.setImage(Down2);
+                        }
+                        dy -= 2;
+                    }
+                    if (goEast) {
+
+                        if (Spritenum == 1) {
+                            p1.Sprite.setImage(Right2);
+                        }
+                        if (Spritenum == 2) {
+                            p1.Sprite.setImage(Right1);
+                        }
+                        dx -= 2;
+                    }
+                    if (goWest) {
+
+                        if (Spritenum == 1) {
+                            p1.Sprite.setImage(Left1);
+                        }
+                        if (Spritenum == 2) {
+                            p1.Sprite.setImage(Left2);
+                        }
+                        dx += 2;
+                    }
+                    if (running) {
+                        dx *= 3;
+                        dy *= 3;
+                    }
+
+                } else {
+                    if (goNorth) {
+                        p1.Sprite.setImage(Up2);
+                        dy += 2;
+                    }
+                    if (goSouth) {
+                        p1.Sprite.setImage(Down2);
+                        dy -= 2;
+                    }
+                    if (goEast) {
+                        p1.Sprite.setImage(Right2);
+                        dx -= 2;
+                    }
+                    if (goWest) {
+                        p1.Sprite.setImage(Left2);
+                        dx += 2;
+                    }
+                    if (running) {
+                        dx *= 3;
+                        dy *= 3;
+                    }
+
                 }
                 p1.move(dy, dx);
-
+                Spritecount++;
             }
 
         }.start();
@@ -361,5 +483,7 @@ public class CompSciProject2023 extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
+    
 
 }
