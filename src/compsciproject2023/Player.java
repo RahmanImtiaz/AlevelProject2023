@@ -24,13 +24,12 @@ public class Player extends Sprite {
 
     //KeyHandler KeyH = new KeyHandler();
     public Player(int width, int height, int speed, String imgpath) {
-        
+
         super(width, height, imgpath);
         this.speed = speed;
         Image img = draw(imgpath);
         setDefaultAttributes();
         getplayerimage();
-       
 
     }
 
@@ -48,18 +47,19 @@ public class Player extends Sprite {
     public void move(int dy, int dx) {
         setYSprite(getYSprite() - dy);
         setXSprite(getXSprite() - dx);
+
         
-        if (dy>0) {
-            
+        if (dy > 0) {
+
         }
-        if (dy<0) {
-            
+        if (dy < 0) {
+
         }
-        if (dx>0) {
-            
+        if (dx > 0) {
+
         }
-        if (dx<0) {
-            
+        if (dx < 0) {
+
         }
 
     }
@@ -78,6 +78,6 @@ public class Player extends Sprite {
     public Image draw(String imgpath) {
         Image imgPlay = new Image(imgpath);
         return imgPlay;
-   
+
     }
 }

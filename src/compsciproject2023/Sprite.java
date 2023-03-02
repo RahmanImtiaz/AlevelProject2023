@@ -23,19 +23,18 @@ public class Sprite {
 
     private int XSprite, YSprite, XSpeed, YSpeed, Range;
     private int Alive;
-    
+
     public String direction;
 
-   // public Sprite(int width, int height, Color color) {
+    // public Sprite(int width, int height, Color color) {
 //
     //    rect = new Rectangle(width, height, color);
     //    rect.setX(XSprite);
-   //     rect.setY(YSprite);
+    //     rect.setY(YSprite);
 //
     //    Image imgPlay = new Image("Down1.png");
     //    ImageView Player = new ImageView(imgPlay);
-   // }
-
+    // }
     public Sprite(int width, int height, String imgpath) {
 
         Image imgSprite = new Image(imgpath);
