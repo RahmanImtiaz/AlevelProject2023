@@ -14,42 +14,44 @@ import javafx.scene.image.ImageView;
  *
  * @author 10848
  */
-public class Projectiles {
+public class Projectiles extends Sprite{
     public boolean stillShooting;
     int x, y, dy, dx;
     ImageView ivView;
-
-    public Projectiles() {
-        stillShooting = false;
-        dy=10;
-        
-        Image imgProjectile = new Image("RedFireBall.png");
-        ivView = new ImageView(imgProjectile);
-        ivView.setLayoutY(y);
-    }
     
+    
+    public Projectiles(int dy, int dx, String imgpath, int playerx, int playery) {
+        super(5,5,imgpath);
+        stillShooting = false;
+        this.dy=dy;
+        this.dx=dx;
+        this.setXSprite(playerx);
+        this.setYSprite(playery);
+       
+        //Image imgProjectile = new Image("RedFireBall.png");
+        //ivView = new ImageView(imgProjectile);
+        //ivView.setLayoutY(y);
+    }
+   
     public ImageView getImageView(){
         return ivView;
     }
-    
-    public void moveprojec(){
-        y = y-dy;
-        ivView.setLayoutY(y);
-        if (y<0) {
-            stillShooting = false;
-            
+   
+    public void moveprojectile(){
+        //y = y-dy;
+        //ivView.setLayoutY(y);
+        setXSprite(getXSprite()+dx);
+        setYSprite(getYSprite()+dy);
+        if (getYSprite()<0 || getXSprite()<0) {
+            stillShooting = false;  
         }
     }
-    
-    public void shoot(int playerx, int playery){
-        x = playerx;
-        y = playery;
-        ivView.setLayoutX(x);
-        stillShooting = true;
-    }
-    
-    
+   
 
-    
-    
+   
+   
+
+   
+   
 }
+

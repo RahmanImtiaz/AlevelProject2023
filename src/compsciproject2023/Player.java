@@ -47,21 +47,6 @@ public class Player extends Sprite {
     public void move(int dy, int dx) {
         setYSprite(getYSprite() - dy);
         setXSprite(getXSprite() - dx);
-
-        
-        if (dy > 0) {
-
-        }
-        if (dy < 0) {
-
-        }
-        if (dx > 0) {
-
-        }
-        if (dx < 0) {
-
-        }
-
     }
 
     public void getplayerimage() {

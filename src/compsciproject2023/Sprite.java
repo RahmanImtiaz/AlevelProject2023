@@ -17,26 +17,15 @@ import javafx.scene.shape.Rectangle;
  */
 public class Sprite {
 
-    //public Rectangle rect;
+    
     public ImageView Sprite;
     Color color;
-
     private int XSprite, YSprite, XSpeed, YSpeed, Range;
     private int Alive;
-
     public String direction;
 
-    // public Sprite(int width, int height, Color color) {
-//
-    //    rect = new Rectangle(width, height, color);
-    //    rect.setX(XSprite);
-    //     rect.setY(YSprite);
-//
-    //    Image imgPlay = new Image("Down1.png");
-    //    ImageView Player = new ImageView(imgPlay);
-    // }
+  
     public Sprite(int width, int height, String imgpath) {
-
         Image imgSprite = new Image(imgpath);
         Sprite = new ImageView(imgSprite);
         Sprite.setX(XSprite);
@@ -49,7 +38,6 @@ public class Sprite {
 
     public void setXSprite(int XSprite) {
         this.XSprite = XSprite;
-        //rect.setX(XSprite);
         Sprite.setX(XSprite);
     }
 
@@ -59,7 +47,6 @@ public class Sprite {
 
     public void setYSprite(int YSprite) {
         this.YSprite = YSprite;
-        //rect.setY(YSprite);
         Sprite.setY(YSprite);
     }
 

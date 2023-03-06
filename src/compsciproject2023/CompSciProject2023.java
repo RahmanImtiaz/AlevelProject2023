@@ -21,6 +21,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -59,14 +60,28 @@ public class CompSciProject2023 extends Application {
     public Player p1;
     public int Spritecount = 0;
     public int Spritenum = 0;
-    Projectiles playerprojectile;
+    //Projectiles playerprojectile;
+    int projectileSpeed = 10;
 
     boolean running, goNorth, goSouth, goEast, goWest;
     boolean Shooting, Shootleft, Shootright, Shootup, Shootdown;
     public String Up1, Up2, Down1, Down2, Left1, Left2, Right1, Right2;
+
+    private ArrayList<Projectiles> projectiles = new ArrayList();
+    private Projectiles projectile;
+    private int projectileLifespan = 6;
     
-    private ArrayList<Rectangle> projectiles = new ArrayList();
-    private ArrayList<Rectangle> enemies = new ArrayList();
+    private ArrayList<Enemies> MaleeEnemies = new ArrayList();
+    private int MaleeEnemycounter = 0, MaleeEnemyspawnTime = 180, MaleeEnemySpeed = 2;
+    private Enemies MaleeEnemy;
+    
+    private ArrayList<Enemies> RangedEnemies = new ArrayList();
+    private int RangedEnemycounter = 0, RangedEnemyspawnTime = 180, RangedEnemySpeed = 4;
+    private Enemies RangedEnemy;
+
+    private ArrayList<Rectangle> Arrows = new ArrayList();
+    private int Arrowcounter = 0, ArrowspawnTime = 180, ArrowSpeed = 4;
+    private Rectangle Arrow;
 
     //final int WIDTH = 1920;
     //final int HEIGHT = 1080;
@@ -74,10 +89,11 @@ public class CompSciProject2023 extends Application {
     final int HEIGHT = (int) Screen.getPrimary().getBounds().getHeight();
 
     Button BtnPlay, Btnscore, BtnSet, BtnExit, BtnGuide;
+    private Group Menuroot, ScoreRoot, Guideroot, SetRoot, GameRoot;
 
     @Override
     public void start(Stage primaryStage) {
-
+        
         Stage = primaryStage;
 
         MenuScene = CreateMainMenu1();
@@ -135,7 +151,7 @@ public class CompSciProject2023 extends Application {
         BtnExit.setFont(new Font("Papyrus", 30));
         BtnExit.setOnAction(event -> exit());
 
-        Group root = new Group();
+        Menuroot = new Group();
         Image imgBack = new Image("BackgroundMenuimg.jpeg");
         ImageView Backg = new ImageView(imgBack);
         Backg.setFitWidth(WIDTH);
@@ -146,22 +162,24 @@ public class CompSciProject2023 extends Application {
         VBox vboxM = new VBox();
 
         vboxM.setAlignment(Pos.CENTER);
+        
+        
 
-        root.getChildren().add(Backg);
+        Menuroot.getChildren().add(Backg);
         vboxM.getChildren().addAll(BtnPlay, Btnscore, BtnGuide, BtnSet, BtnExit);
 
         // vboxM.setSpacing(50);
         borderPane.setTranslateY(200);
         borderPane.setCenter(vboxM);
-        root.getChildren().add(borderPane);
-        Scene scene = new Scene(root, WIDTH, HEIGHT);
-
+        Menuroot.getChildren().add(borderPane);
+        Scene scene = new Scene(Menuroot, WIDTH, HEIGHT);
+        
         return scene;
 
     }
 
     private Scene CreateScore2() { //Function used to create the High Score scene
-        Group ScoreRoot = new Group();
+        ScoreRoot = new Group();
         Image imgBack = new Image("Backgroundimg.jpeg");
         ImageView Backg = new ImageView(imgBack);
         Backg.setFitWidth(WIDTH);
@@ -205,12 +223,12 @@ public class CompSciProject2023 extends Application {
     }
 
     private Scene CreateGuide() {
-        Group ScoreGuide = new Group();
+        Guideroot = new Group();
         Image imgBack = new Image("Backgroundimg.jpeg");
         ImageView Backg = new ImageView(imgBack);
         Backg.setFitWidth(WIDTH);
         Backg.setFitHeight(HEIGHT);
-        ScoreGuide.getChildren().add(Backg);
+        Guideroot.getChildren().add(Backg);
 
         Rectangle rectangle = new Rectangle(200, 200, 960, 540);
         Image SetBox = new Image("Settingsbox.JPG");
@@ -219,14 +237,14 @@ public class CompSciProject2023 extends Application {
         borderPane.setPrefSize(WIDTH, HEIGHT);
         borderPane.setCenter(rectangle);
 
-        ScoreGuide.getChildren().addAll(borderPane);
+        Guideroot.getChildren().addAll(borderPane);
 
         Label Title = new Label("User Intsructions");
         Title.setLayoutX(WIDTH / 2 - 300);
         Title.setLayoutY(150);
         Title.setFont(new Font("Papyrus", 80));
         Title.setTextFill(Color.WHITE);
-        ScoreGuide.getChildren().add(Title);
+        Guideroot.getChildren().add(Title);
 
         BorderPane borderPane2 = new BorderPane();
 
@@ -240,14 +258,14 @@ public class CompSciProject2023 extends Application {
         borderPane2.setLeft(BtnBack);
         borderPane2.setTranslateY(7 * (HEIGHT / 8));
 
-        ScoreGuide.getChildren().add(borderPane2);
-        Scene sceneGuide = new Scene(ScoreGuide, WIDTH, HEIGHT);
+        Guideroot.getChildren().add(borderPane2);
+        Scene sceneGuide = new Scene(Guideroot, WIDTH, HEIGHT);
 
         return sceneGuide;
     }
 
     private Scene CreateSetting3() { //Function used to create the settings scene
-        Group SetRoot = new Group();
+        SetRoot = new Group();
         Image imgBack = new Image("Backgroundimg.jpeg");
         ImageView Backg = new ImageView(imgBack);
         Backg.setFitWidth(WIDTH);
@@ -318,6 +336,7 @@ public class CompSciProject2023 extends Application {
     }
 
     private void CreateGame(Stage primaryStage) { //Function used to create the Game scene
+
         Down1 = "Down1.png";
         Down2 = "Down2.png";
         Up1 = "Up1.png";
@@ -326,9 +345,9 @@ public class CompSciProject2023 extends Application {
         Left2 = "Left2.png";
         Right1 = "Right1.png";
         Right2 = "Right2.png";
-        
-        playerprojectile = new Projectiles();
-        Group GameRoot = new Group();
+       
+        //playerprojectile = new Projectiles();
+        GameRoot = new Group();
         Image imgBack = new Image("GameBackground.jpeg");
         ImageView Backg = new ImageView(imgBack);
         Backg.setFitWidth(WIDTH);
@@ -348,33 +367,79 @@ public class CompSciProject2023 extends Application {
         GameRoot.getChildren().add(p1.Sprite);
 
         Scene sceneGame = new Scene(GameRoot, WIDTH, HEIGHT);
+        sceneGame.setCursor(Cursor.CROSSHAIR);
+        controls(sceneGame);
+        loop();
 
-        sceneGame.setOnKeyPressed((KeyEvent event) -> {
+        primaryStage.setScene(sceneGame);
+        primaryStage.setFullScreen(true);
+
+    }
+    private void controls(Scene sceneGame){
+                sceneGame.setOnKeyPressed((KeyEvent event) -> {
             switch (event.getCode()) {
                 case W:
                     goNorth = true;
                     Shootup = true;
+                    Shootdown = false;
+                    Shootleft = false;
+                    Shootright = false;
+
                     break;
                 case S:
                     goSouth = true;
+                    Shootup = false;
                     Shootdown = true;
+                    Shootleft = false;
+                    Shootright = false;
                     break;
                 case A:
                     goWest = true;
+                    Shootup = false;
+                    Shootdown = false;
                     Shootleft = true;
+                    Shootright = false;
                     break;
                 case D:
                     goEast = true;
+                    Shootup = false;
+                    Shootdown = false;
+                    Shootleft = false;
                     Shootright = true;
                     break;
                 case SHIFT:
                     running = true;
-                case SPACE:
-                    Shooting = true;
-                    playerprojectile.shoot(p1.getXSprite(),p1.getYSprite());
-                    GameRoot.getChildren().add(playerprojectile.getImageView());
-                    
                     break;
+                case SPACE:
+                    //playerprojectile.shoot(p1.getXSprite(), p1.getYSprite());
+                    //GameRoot.getChildren().add(playerprojectile.getImageView());
+                    if (!Shooting) {
+                        //Image bolt = new Image("PlayerBolt.png");
+                        //projectiles.add(projectile = new Rectangle(10, 50, new ImagePattern(bolt)));
+                        //projectile.relocate(p1.getXSprite(), p1.getYSprite());
+                        //GameRoot.getChildren().add(projectile);
+                        String playerfireball = "RedFireBall.png";
+                        if (Shootup) {
+                            projectiles.add(projectile = new Projectiles(-projectileSpeed,0,playerfireball,p1.getXSprite(), p1.getYSprite()));
+                            GameRoot.getChildren().add(projectile.Sprite);
+                        }
+                        if (Shootdown) {
+                            projectiles.add(projectile = new Projectiles(projectileSpeed,0,playerfireball,p1.getXSprite(), p1.getYSprite()));
+                            GameRoot.getChildren().add(projectile.Sprite);
+                        }
+                        if (Shootleft) {
+                            projectiles.add(projectile = new Projectiles(0,-projectileSpeed,playerfireball,p1.getXSprite(), p1.getYSprite()));
+                            GameRoot.getChildren().add(projectile.Sprite);
+                        }
+                        if (Shootright) {
+                            projectiles.add(projectile = new Projectiles(0,projectileSpeed,playerfireball,p1.getXSprite(), p1.getYSprite()));
+                            GameRoot.getChildren().add(projectile.Sprite);
+                        }
+                        Shooting = true;
+                       
+                    }
+                    break;
+                   
             }
         });
 
@@ -394,12 +459,18 @@ public class CompSciProject2023 extends Application {
                     break;
                 case SHIFT:
                     running = false;
-                    
                     break;
+                case SPACE:
+                    Shooting = false;
+                    break;
+                   
             }
         });
-
-        Image Down1 = new Image("Down1.png");
+    }
+   
+    private void loop(){
+       
+         Image Down1 = new Image("Down1.png");
         Image Down2 = new Image("Down2.png");
         Image Up1 = new Image("Up1.png");
         Image Up2 = new Image("Up2.png");
@@ -407,8 +478,8 @@ public class CompSciProject2023 extends Application {
         Image Left2 = new Image("Left2.png");
         Image Right1 = new Image("Right1.png");
         Image Right2 = new Image("Right2.png");
-
-        new AnimationTimer() {
+       
+        AnimationTimer gametimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 int dx = 0, dy = 0;
@@ -434,25 +505,99 @@ public class CompSciProject2023 extends Application {
                     dy *= 3;
                 }
                 p1.move(dy, dx);
-                if (playerprojectile.stillShooting) {
-                    playerprojectile.moveprojec();
-                    
-                }
-
+               
+                shootPlayerprojectile();
+                Arrowcounter++;
+                spawnArrows();
+                moveArrows();
+                //if (playerprojectile.stillShooting) {
+                 //   playerprojectile.moveprojec(); 
+                //}
             }
+        };
+        gametimer.start();
+    }
+   
+   
+    private void shootPlayerprojectile() {
+       //projectileLifespan--;
+        //for (int i = 0; i < projectiles.size(); ++i) {
+            //if (projectiles.get(i).getLayoutY() > (GameRoot.getBoundsInParent().getMinY() - projectile.getHeight())) {
+                //projectiles.get(i).relocate(projectiles.get(i).getLayoutX(), (projectiles.get(i).getLayoutY() - projectileSpeed));
+            //} else {
+                //projectiles.remove(i);
+                //GameRoot.getChildren().remove(i);
+            //}
+        //}
+        
+        for (int i = 0; i < projectiles.size(); ++i) {
+            projectiles.get(i).moveprojectile();
+            //if (projectiles.get(i).getYSprite() > (GameRoot.getBoundsInParent().getMinY())) {
+                //projectiles.get(i).moveprojectile();
+            //} else {
+                //projectiles.remove(i);
+                //GameRoot.getChildren().remove(i);
+            //}
+        }
+    }
+    
+    private void spawnRangedEnemies(){
+        double spawnPosition = Math.random();
+        
+        String imgpath = "RangedEnemyImg";
 
-        }.start();
+        double ex = (int) ((WIDTH) * spawnPosition);
+        double ey = (int) ((HEIGHT) * spawnPosition);
 
-        primaryStage.setScene(sceneGame);
-        primaryStage.setFullScreen(true);
+        if (RangedEnemycounter % RangedEnemyspawnTime == 0) {
+            for (int i = 0; i < RangedEnemies.size(); i++) {
+                RangedEnemies.add(RangedEnemy);
+                GameRoot.getChildren().add(RangedEnemy.Sprite);
+            }
+        }
+    }
+    
+    private void spawnMaleeEnemies(){
+    
+    }
 
+    private void spawnArrows() {
+
+        double spawnPosition = Math.random();
+
+        Image arrow = new Image("Arrow.png");
+       
+       
+        int eWidth = 20;
+        int eHeight = 40;
+        double ex = (int) ((WIDTH - eWidth) * spawnPosition);
+        int ey = (int) (GameRoot.getLayoutY());
+
+        if (Arrowcounter % ArrowspawnTime == 0) {
+
+            Arrow = new Rectangle(eWidth, eHeight);
+            Arrow.setFill(new ImagePattern(arrow));
+            Arrow.relocate(ex, ey);
+            Arrows.add(Arrow);
+            GameRoot.getChildren().add(Arrow);
+        }
+    }
+
+    public void moveArrows() {
+        for (int i = 0; i < Arrows.size(); ++i) {
+            if (Arrows.get(i).getLayoutY() < (GameRoot.getBoundsInParent().getMaxY() + Arrow.getHeight())) {
+                Arrows.get(i).relocate(Arrows.get(i).getLayoutX(), (Arrows.get(i).getLayoutY() + ArrowSpeed));
+            } else {
+                Arrows.remove(i);
+            }
+        }
     }
 
     private void switchscene(Scene newScene) { //Method called on when button is clicked. This method takes in a new scene in and switchs the scene to the new scene.
         Stage.setScene(newScene);
         Stage.setFullScreen(true);
     }
-
+    
     /**
      * @param args the command line arguments
      */
