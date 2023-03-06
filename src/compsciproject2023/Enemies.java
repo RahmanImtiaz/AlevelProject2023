@@ -12,10 +12,12 @@ package compsciproject2023;
 public class Enemies extends Sprite {
     int StrengthE, Health;
     
-    public Enemies(int width, int height, String imgpath, int stength, int health) {
+    public Enemies(int width, int height, String imgpath, int stength, int health, int x, int y) {
         super(width, height, imgpath);
         this.StrengthE = stength;
         this.Health = health;
+        setXSprite(x);
+        setYSprite(y);
     }
     
     

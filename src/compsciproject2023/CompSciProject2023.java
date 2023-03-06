@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Random;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
@@ -77,7 +78,7 @@ public class CompSciProject2023 extends Application {
     
     private ArrayList<Enemies> RangedEnemies = new ArrayList();
     private int RangedEnemycounter = 0, RangedEnemyspawnTime = 180, RangedEnemySpeed = 4;
-    private Enemies RangedEnemy;
+    //private Enemies RangedEnemy;
 
     private ArrayList<Rectangle> Arrows = new ArrayList();
     private int Arrowcounter = 0, ArrowspawnTime = 180, ArrowSpeed = 4;
@@ -478,6 +479,7 @@ public class CompSciProject2023 extends Application {
         Image Left2 = new Image("Left2.png");
         Image Right1 = new Image("Right1.png");
         Image Right2 = new Image("Right2.png");
+       spawnRangedEnemies();
        
         AnimationTimer gametimer = new AnimationTimer() {
             @Override
@@ -508,6 +510,9 @@ public class CompSciProject2023 extends Application {
                
                 shootPlayerprojectile();
                 Arrowcounter++;
+                RangedEnemycounter++;
+                
+              
                 spawnArrows();
                 moveArrows();
                 //if (playerprojectile.stillShooting) {
@@ -542,25 +547,24 @@ public class CompSciProject2023 extends Application {
     }
     
     private void spawnRangedEnemies(){
-        double spawnPosition = Math.random();
-        
-        String imgpath = "RangedEnemyImg";
+        //double spawnPosition = Math.random();
 
-        double ex = (int) ((WIDTH) * spawnPosition);
-        double ey = (int) ((HEIGHT) * spawnPosition);
-
-        if (RangedEnemycounter % RangedEnemyspawnTime == 0) {
-            for (int i = 0; i < RangedEnemies.size(); i++) {
-                RangedEnemies.add(RangedEnemy);
-                GameRoot.getChildren().add(RangedEnemy.Sprite);
+        String imgpath = "RangedEnemyImg.png";
+        Random r = new Random();
+        //if (RangedEnemycounter % RangedEnemyspawnTime == 0) {
+            for (int i = 0; i < r.nextInt(10)+11; i++) {
+                int x = r.nextInt(700);
+                int y = r.nextInt(700);
+                RangedEnemies.add(new Enemies(5,5,imgpath,10,100,x,y));
+                GameRoot.getChildren().add(RangedEnemies.get(i).Sprite);
             }
-        }
+        //}
     }
     
     private void spawnMaleeEnemies(){
     
     }
-
+       
     private void spawnArrows() {
 
         double spawnPosition = Math.random();
