@@ -20,8 +20,8 @@ public class Sprite {
     
     public ImageView Sprite;
     Color color;
-    private int XSprite, YSprite, XSpeed, YSpeed;
-    int Range;
+    private double XSprite, YSprite, XSpeed, YSpeed;
+    private int Range;
     private Boolean Alive;
     public String direction;
 
@@ -33,37 +33,37 @@ public class Sprite {
         Sprite.setY(YSprite);
     }
 
-    public int getXSprite() {
+    public double getXSprite() {
         return XSprite;
     }
 
-    public void setXSprite(int XSprite) {
+    public void setXSprite(double XSprite) {
         this.XSprite = XSprite;
         Sprite.setX(XSprite);
     }
 
-    public int getYSprite() {
+    public double getYSprite() {
         return YSprite;
     }
 
-    public void setYSprite(int YSprite) {
+    public void setYSprite(double YSprite) {
         this.YSprite = YSprite;
         Sprite.setY(YSprite);
     }
 
-    public int getXSpeed() {
+    public double getXSpeed() {
         return XSpeed;
     }
 
-    public void setXSpeed(int XSpeed) {
+    public void setXSpeed(double XSpeed) {
         this.XSpeed = XSpeed;
     }
 
-    public int getYSpeed() {
+    public double getYSpeed() {
         return YSpeed;
     }
 
-    public void setYSpeed(int YSpeed) {
+    public void setYSpeed(double YSpeed) {
         this.YSpeed = YSpeed;
     }
 

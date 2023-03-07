@@ -16,11 +16,11 @@ import javafx.scene.image.ImageView;
  */
 public class Projectiles extends Sprite{
     public boolean stillShooting;
-    int x, y, dy, dx;
+    double x, y, dy, dx;
     ImageView ivView;
     
     
-    public Projectiles(int dy, int dx, String imgpath, int spritex, int spritey) {
+    public Projectiles(double dy, double dx, String imgpath, double spritex, double spritey) {
         super(5,5,imgpath);
         stillShooting = false;
         this.dy=dy;

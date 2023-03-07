@@ -64,7 +64,7 @@ public class CompSciProject2023 extends Application {
     public int Spritecount = 0;
     public int Spritenum = 0;
     //Projectiles playerprojectile;
-    int projectileSpeed = 10;
+    double projectileSpeed = 10;
 
     boolean running, goNorth, goSouth, goEast, goWest, Escape;
     boolean Shooting, Shootleft, Shootright, Shootup, Shootdown;
@@ -75,12 +75,14 @@ public class CompSciProject2023 extends Application {
     private int projectileLifespan = 6;
 
     private ArrayList<Enemies> MaleeEnemies = new ArrayList();
-    private int MaleeEnemycounter = 0, MaleeEnemyspawnTime = 180, MaleeEnemySpeed = 2;
+    private int MaleeEnemycounter = 0, MaleeEnemyspawnTime = 180;
+    private double MaleeEnemySpeed = 2;
     private Enemies MaleeEnemy;
 
     private ArrayList<Enemies> RangedEnemies = new ArrayList();
     private ArrayList<Projectiles> Enemyprojectiles = new ArrayList();
-    private int RangedEnemycounter = 0, RangedEnemyspawnTime = 180, RangedEnemySpeed = 4;
+    private int RangedEnemycounter = 0, RangedEnemyspawnTime = 180;
+    private double RangedEnemySpeed = 4;
     //private Enemies RangedEnemy;
 
     private ArrayList<Rectangle> Arrows = new ArrayList();
@@ -89,8 +91,9 @@ public class CompSciProject2023 extends Application {
 
     //final int WIDTH = 1920;
     //final int HEIGHT = 1080;
-    final int WIDTH = (int) Screen.getPrimary().getBounds().getWidth();
-    final int HEIGHT = (int) Screen.getPrimary().getBounds().getHeight();
+    final double WIDTH = Screen.getPrimary().getBounds().getWidth();
+    final double HEIGHT = Screen.getPrimary().getBounds().getHeight();
+   
 
     Button BtnPlay, Btnscore, BtnSet, BtnExit, BtnGuide;
     Button BtnSaveScore, BtnResume, ButtonExitGame;
@@ -480,23 +483,23 @@ public class CompSciProject2023 extends Application {
         AnimationTimer gametimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                int dx = 0, dy = 0;
+                double dx = 0, dy = 0;
 
                 if (goNorth) {
                     p1.Sprite.setImage(Up1);
-                    dy += 2;
+                    dy += 4;
                 }
                 if (goSouth) {
                     p1.Sprite.setImage(Down1);
-                    dy -= 2;
+                    dy -= 4;
                 }
                 if (goEast) {
                     p1.Sprite.setImage(Right1);
-                    dx -= 2;
+                    dx -= 4;
                 }
                 if (goWest) {
                     p1.Sprite.setImage(Left2);
-                    dx += 2;
+                    dx += 4;
                 }
                 if (running) {
                     dx *= 3;
@@ -575,10 +578,14 @@ public class CompSciProject2023 extends Application {
 
         String imgpath = "RangedEnemyImg.png";
         Random r = new Random();
+        
+        int height = (int) HEIGHT;
+        int width = (int) WIDTH;
+        
         //if (RangedEnemycounter % RangedEnemyspawnTime == 0) {
         for (int i = 0; i < r.nextInt(10) + 6; i++) {
-            int x = r.nextInt(WIDTH);
-            int y = r.nextInt(HEIGHT);
+            double x = r.nextInt(width);
+            double y = r.nextInt(height);
             RangedEnemies.add(new Enemies(5, 5, imgpath, 10, 100, x, y, 10));
             GameRoot.getChildren().add(RangedEnemies.get(i).Sprite);
         }
@@ -589,25 +596,24 @@ public class CompSciProject2023 extends Application {
 
     }
 
-    private void checkenemydist(int px, int py) {
+    private void checkenemydist(double px, double py) {
         for (int i = 0; i < RangedEnemies.size(); i++) {
-            int playerdistx;
-            int playerdisty;
+            double playerdistx;
+            double playerdisty;
             //do{
              playerdistx = px - RangedEnemies.get(i).getXSprite();
              playerdisty = py - RangedEnemies.get(i).getYSprite();
 
             String playerfireball = "RedFireBall.png";
-            //if ((playerdistx) * (playerdistx) < (RangedEnemies.get(i).getRange()) * (RangedEnemies.get(i).getRange())) {
+            if ((playerdistx) * (playerdistx) < (RangedEnemies.get(i).getRange()) * (RangedEnemies.get(i).getRange())) {
             double val = playerdistx/playerdisty;
             double angle = Math.asin(val);
             double dy = projectileSpeed * (Math.sin(angle));
             double dx = projectileSpeed * (Math.cos(angle));
-            
             Enemyprojectiles.add(projectile = new Projectiles(dy, dx, playerfireball, RangedEnemies.get(i).getXSprite(), RangedEnemies.get(i).getYSprite()));
             GameRoot.getChildren().add(projectile.Sprite);
                         
-            //}
+            }
 
         //}while(playerdistx ==0 && playerdisty == 0);
             }

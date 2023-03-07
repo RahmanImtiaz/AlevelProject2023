@@ -23,7 +23,7 @@ public class Player extends Sprite {
     public Image Up1, Up2, Down1, Down2, Left1, Left2, Right1, Right2;
 
     //KeyHandler KeyH = new KeyHandler();
-    public Player(int width, int height, int speed, String imgpath) {
+    public Player(int width, int height, double speed, String imgpath) {
 
         super(width, height, imgpath);
         this.speed = speed;
@@ -44,7 +44,7 @@ public class Player extends Sprite {
         direction = "down";
     }
 
-    public void move(int dy, int dx) {
+    public void move(double dy, double dx) {
         setYSprite(getYSprite() - dy);
         setXSprite(getXSprite() - dx);
     }
