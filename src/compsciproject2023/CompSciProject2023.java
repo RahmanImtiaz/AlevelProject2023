@@ -43,8 +43,10 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
  *
@@ -64,19 +66,20 @@ public class CompSciProject2023 extends Application {
     //Projectiles playerprojectile;
     int projectileSpeed = 10;
 
-    boolean running, goNorth, goSouth, goEast, goWest;
+    boolean running, goNorth, goSouth, goEast, goWest, Escape;
     boolean Shooting, Shootleft, Shootright, Shootup, Shootdown;
     public String Up1, Up2, Down1, Down2, Left1, Left2, Right1, Right2;
 
     private ArrayList<Projectiles> projectiles = new ArrayList();
     private Projectiles projectile;
     private int projectileLifespan = 6;
-    
+
     private ArrayList<Enemies> MaleeEnemies = new ArrayList();
     private int MaleeEnemycounter = 0, MaleeEnemyspawnTime = 180, MaleeEnemySpeed = 2;
     private Enemies MaleeEnemy;
-    
+
     private ArrayList<Enemies> RangedEnemies = new ArrayList();
+    private ArrayList<Projectiles> Enemyprojectiles = new ArrayList();
     private int RangedEnemycounter = 0, RangedEnemyspawnTime = 180, RangedEnemySpeed = 4;
     //private Enemies RangedEnemy;
 
@@ -90,11 +93,12 @@ public class CompSciProject2023 extends Application {
     final int HEIGHT = (int) Screen.getPrimary().getBounds().getHeight();
 
     Button BtnPlay, Btnscore, BtnSet, BtnExit, BtnGuide;
-    private Group Menuroot, ScoreRoot, Guideroot, SetRoot, GameRoot;
+    Button BtnSaveScore, BtnResume, ButtonExitGame;
+    private Group Menuroot, ScoreRoot, Guideroot, SetRoot, GameRoot, PauseRoot;
 
     @Override
     public void start(Stage primaryStage) {
-        
+
         Stage = primaryStage;
 
         MenuScene = CreateMainMenu1();
@@ -161,10 +165,7 @@ public class CompSciProject2023 extends Application {
         borderPane.setPrefSize(WIDTH, HEIGHT);
 
         VBox vboxM = new VBox();
-
         vboxM.setAlignment(Pos.CENTER);
-        
-        
 
         Menuroot.getChildren().add(Backg);
         vboxM.getChildren().addAll(BtnPlay, Btnscore, BtnGuide, BtnSet, BtnExit);
@@ -174,7 +175,7 @@ public class CompSciProject2023 extends Application {
         borderPane.setCenter(vboxM);
         Menuroot.getChildren().add(borderPane);
         Scene scene = new Scene(Menuroot, WIDTH, HEIGHT);
-        
+
         return scene;
 
     }
@@ -337,7 +338,6 @@ public class CompSciProject2023 extends Application {
     }
 
     private void CreateGame(Stage primaryStage) { //Function used to create the Game scene
-
         Down1 = "Down1.png";
         Down2 = "Down2.png";
         Up1 = "Up1.png";
@@ -346,7 +346,7 @@ public class CompSciProject2023 extends Application {
         Left2 = "Left2.png";
         Right1 = "Right1.png";
         Right2 = "Right2.png";
-       
+
         //playerprojectile = new Projectiles();
         GameRoot = new Group();
         Image imgBack = new Image("GameBackground.jpeg");
@@ -356,28 +356,28 @@ public class CompSciProject2023 extends Application {
         GameRoot.getChildren().add(Backg);
 
         p1 = new Player(30, 30, 4, Down1);
-       // Terrain Maze = new Terrain();
-       // for (Rectangle row[] : Maze.rectangles) {
-       //     for (Rectangle r : row) {
-       //         GameRoot.getChildren().add(r);
-       //     }
+        // Terrain Maze = new Terrain();
+        // for (Rectangle row[] : Maze.rectangles) {
+        //     for (Rectangle r : row) {
+        //         GameRoot.getChildren().add(r);
+        //     }
 
-       // }
-
+        // }
         //GameRoot.getChildren().add(p1.rect);
         GameRoot.getChildren().add(p1.Sprite);
 
         Scene sceneGame = new Scene(GameRoot, WIDTH, HEIGHT);
         sceneGame.setCursor(Cursor.CROSSHAIR);
         controls(sceneGame);
-        loop();
+        loop(primaryStage);
 
         primaryStage.setScene(sceneGame);
         primaryStage.setFullScreen(true);
 
     }
-    private void controls(Scene sceneGame){
-                sceneGame.setOnKeyPressed((KeyEvent event) -> {
+
+    private void controls(Scene sceneGame) {
+        sceneGame.setOnKeyPressed((KeyEvent event) -> {
             switch (event.getCode()) {
                 case W:
                     goNorth = true;
@@ -412,35 +412,31 @@ public class CompSciProject2023 extends Application {
                     running = true;
                     break;
                 case SPACE:
-                    //playerprojectile.shoot(p1.getXSprite(), p1.getYSprite());
-                    //GameRoot.getChildren().add(playerprojectile.getImageView());
                     if (!Shooting) {
-                        //Image bolt = new Image("PlayerBolt.png");
-                        //projectiles.add(projectile = new Rectangle(10, 50, new ImagePattern(bolt)));
-                        //projectile.relocate(p1.getXSprite(), p1.getYSprite());
-                        //GameRoot.getChildren().add(projectile);
                         String playerfireball = "RedFireBall.png";
                         if (Shootup) {
-                            projectiles.add(projectile = new Projectiles(-projectileSpeed,0,playerfireball,p1.getXSprite(), p1.getYSprite()));
+                            projectiles.add(projectile = new Projectiles(-projectileSpeed, 0, playerfireball, p1.getXSprite(), p1.getYSprite()));
                             GameRoot.getChildren().add(projectile.Sprite);
                         }
                         if (Shootdown) {
-                            projectiles.add(projectile = new Projectiles(projectileSpeed,0,playerfireball,p1.getXSprite(), p1.getYSprite()));
+                            projectiles.add(projectile = new Projectiles(projectileSpeed, 0, playerfireball, p1.getXSprite(), p1.getYSprite()));
                             GameRoot.getChildren().add(projectile.Sprite);
                         }
                         if (Shootleft) {
-                            projectiles.add(projectile = new Projectiles(0,-projectileSpeed,playerfireball,p1.getXSprite(), p1.getYSprite()));
+                            projectiles.add(projectile = new Projectiles(0, -projectileSpeed, playerfireball, p1.getXSprite(), p1.getYSprite()));
                             GameRoot.getChildren().add(projectile.Sprite);
                         }
                         if (Shootright) {
-                            projectiles.add(projectile = new Projectiles(0,projectileSpeed,playerfireball,p1.getXSprite(), p1.getYSprite()));
+                            projectiles.add(projectile = new Projectiles(0, projectileSpeed, playerfireball, p1.getXSprite(), p1.getYSprite()));
                             GameRoot.getChildren().add(projectile.Sprite);
                         }
                         Shooting = true;
-                       
                     }
                     break;
-                   
+                case ESCAPE:
+                    Escape = true;
+                    break;
+
             }
         });
 
@@ -464,14 +460,14 @@ public class CompSciProject2023 extends Application {
                 case SPACE:
                     Shooting = false;
                     break;
-                   
+
             }
         });
     }
-   
-    private void loop(){
-       
-         Image Down1 = new Image("Down1.png");
+
+    private void loop(Stage primaryStage) {
+
+        Image Down1 = new Image("Down1.png");
         Image Down2 = new Image("Down2.png");
         Image Up1 = new Image("Up1.png");
         Image Up2 = new Image("Up2.png");
@@ -479,8 +475,8 @@ public class CompSciProject2023 extends Application {
         Image Left2 = new Image("Left2.png");
         Image Right1 = new Image("Right1.png");
         Image Right2 = new Image("Right2.png");
-       spawnRangedEnemies();
-       
+        spawnRangedEnemies();
+
         AnimationTimer gametimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -507,71 +503,123 @@ public class CompSciProject2023 extends Application {
                     dy *= 3;
                 }
                 p1.move(dy, dx);
-               
+
                 shootPlayerprojectile();
                 Arrowcounter++;
                 RangedEnemycounter++;
-                
-              
                 spawnArrows();
                 moveArrows();
-                //if (playerprojectile.stillShooting) {
-                 //   playerprojectile.moveprojec(); 
-                //}
+                checkenemydist(p1.getXSprite(), p1.getYSprite());
+
             }
+
         };
         gametimer.start();
+
+        // if (Escape) {
+        //             gametimer.stop();
+        //             InGamePauseMenu(primaryStage);
+        //         }
     }
-   
-   
+
+    private void InGamePauseMenu(Stage primaryStage) {
+        //BtnSaveScore, BtnResume, ButtonExitGame
+        PauseRoot = new Group();
+
+        BtnSaveScore = new Button();
+        BtnSaveScore.setText("> Exit");
+        BtnSaveScore.setBackground(null);
+        BtnSaveScore.setTextFill(Color.WHITE);
+        BtnSaveScore.setFont(new Font("Papyrus", 30));
+        BtnSaveScore.setOnAction(event -> exit());
+
+        BorderPane borderPane = new BorderPane();
+        borderPane.setPrefSize(WIDTH, HEIGHT);
+
+        VBox vbox = new VBox();
+        vbox.setAlignment(Pos.CENTER);
+        vbox.getChildren().addAll(BtnSaveScore);
+        borderPane.setCenter(vbox);
+        PauseRoot.getChildren().add(borderPane);
+        Stage popupStage = new Stage(StageStyle.TRANSPARENT);
+        popupStage.initOwner(primaryStage);
+        popupStage.initModality(Modality.APPLICATION_MODAL);
+        popupStage.setScene(new Scene(PauseRoot, Color.TRANSPARENT));
+
+    }
+
     private void shootPlayerprojectile() {
-       //projectileLifespan--;
+        //projectileLifespan--;
         //for (int i = 0; i < projectiles.size(); ++i) {
-            //if (projectiles.get(i).getLayoutY() > (GameRoot.getBoundsInParent().getMinY() - projectile.getHeight())) {
-                //projectiles.get(i).relocate(projectiles.get(i).getLayoutX(), (projectiles.get(i).getLayoutY() - projectileSpeed));
-            //} else {
-                //projectiles.remove(i);
-                //GameRoot.getChildren().remove(i);
-            //}
+        //if (projectiles.get(i).getLayoutY() > (GameRoot.getBoundsInParent().getMinY() - projectile.getHeight())) {
+        //projectiles.get(i).relocate(projectiles.get(i).getLayoutX(), (projectiles.get(i).getLayoutY() - projectileSpeed));
+        //} else {
+        //projectiles.remove(i);
+        //GameRoot.getChildren().remove(i);
         //}
-        
+        //}
+
         for (int i = 0; i < projectiles.size(); ++i) {
             projectiles.get(i).moveprojectile();
             //if (projectiles.get(i).getYSprite() > (GameRoot.getBoundsInParent().getMinY())) {
-                //projectiles.get(i).moveprojectile();
+            //projectiles.get(i).moveprojectile();
             //} else {
-                //projectiles.remove(i);
-                //GameRoot.getChildren().remove(i);
+            //projectiles.remove(i);
+            //GameRoot.getChildren().remove(i);
             //}
         }
     }
-    
-    private void spawnRangedEnemies(){
+
+    private void spawnRangedEnemies() {
         //double spawnPosition = Math.random();
 
         String imgpath = "RangedEnemyImg.png";
         Random r = new Random();
         //if (RangedEnemycounter % RangedEnemyspawnTime == 0) {
-            for (int i = 0; i < r.nextInt(10)+11; i++) {
-                int x = r.nextInt(700);
-                int y = r.nextInt(700);
-                RangedEnemies.add(new Enemies(5,5,imgpath,10,100,x,y));
-                GameRoot.getChildren().add(RangedEnemies.get(i).Sprite);
-            }
+        for (int i = 0; i < r.nextInt(10) + 6; i++) {
+            int x = r.nextInt(WIDTH);
+            int y = r.nextInt(HEIGHT);
+            RangedEnemies.add(new Enemies(5, 5, imgpath, 10, 100, x, y, 10));
+            GameRoot.getChildren().add(RangedEnemies.get(i).Sprite);
+        }
         //}
     }
-    
-    private void spawnMaleeEnemies(){
-    
+
+    private void spawnMaleeEnemies() {
+
     }
-       
+
+    private void checkenemydist(int px, int py) {
+        for (int i = 0; i < RangedEnemies.size(); i++) {
+            int playerdistx;
+            int playerdisty;
+            //do{
+             playerdistx = px - RangedEnemies.get(i).getXSprite();
+             playerdisty = py - RangedEnemies.get(i).getYSprite();
+
+            String playerfireball = "RedFireBall.png";
+            //if ((playerdistx) * (playerdistx) < (RangedEnemies.get(i).getRange()) * (RangedEnemies.get(i).getRange())) {
+            double val = playerdistx/playerdisty;
+            double angle = Math.asin(val);
+            double dy = projectileSpeed * (Math.sin(angle));
+            double dx = projectileSpeed * (Math.cos(angle));
+            
+            Enemyprojectiles.add(projectile = new Projectiles(dy, dx, playerfireball, RangedEnemies.get(i).getXSprite(), RangedEnemies.get(i).getYSprite()));
+            GameRoot.getChildren().add(projectile.Sprite);
+                        
+            //}
+
+        //}while(playerdistx ==0 && playerdisty == 0);
+            }
+
+    }
+
     private void spawnArrows() {
 
         double spawnPosition = Math.random();
 
         Image arrow = new Image("Arrow.png");
-       
-       
+
         int eWidth = 20;
         int eHeight = 40;
         double ex = (int) ((WIDTH - eWidth) * spawnPosition);
@@ -601,7 +649,7 @@ public class CompSciProject2023 extends Application {
         Stage.setScene(newScene);
         Stage.setFullScreen(true);
     }
-    
+
     /**
      * @param args the command line arguments
      */

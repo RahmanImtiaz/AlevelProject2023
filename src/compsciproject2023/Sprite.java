@@ -20,8 +20,9 @@ public class Sprite {
     
     public ImageView Sprite;
     Color color;
-    private int XSprite, YSprite, XSpeed, YSpeed, Range;
-    private int Alive;
+    private int XSprite, YSprite, XSpeed, YSpeed;
+    int Range;
+    private Boolean Alive;
     public String direction;
 
   
@@ -74,11 +75,11 @@ public class Sprite {
         this.Range = Range;
     }
 
-    public int getAlive() {
+    public boolean getAlive() {
         return Alive;
     }
 
-    public void setAlive(int Alive) {
+    public void setAlive(boolean Alive) {
         this.Alive = Alive;
     }
 

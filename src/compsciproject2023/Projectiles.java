@@ -20,13 +20,13 @@ public class Projectiles extends Sprite{
     ImageView ivView;
     
     
-    public Projectiles(int dy, int dx, String imgpath, int playerx, int playery) {
+    public Projectiles(int dy, int dx, String imgpath, int spritex, int spritey) {
         super(5,5,imgpath);
         stillShooting = false;
         this.dy=dy;
         this.dx=dx;
-        this.setXSprite(playerx);
-        this.setYSprite(playery);
+        this.setXSprite(spritex);
+        this.setYSprite(spritey);
        
         //Image imgProjectile = new Image("RedFireBall.png");
         //ivView = new ImageView(imgProjectile);
