@@ -11,6 +11,8 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
@@ -93,7 +95,6 @@ public class CompSciProject2023 extends Application {
     //final int HEIGHT = 1080;
     final double WIDTH = Screen.getPrimary().getBounds().getWidth();
     final double HEIGHT = Screen.getPrimary().getBounds().getHeight();
-   
 
     Button BtnPlay, Btnscore, BtnSet, BtnExit, BtnGuide;
     Button BtnSaveScore, BtnResume, ButtonExitGame;
@@ -359,13 +360,7 @@ public class CompSciProject2023 extends Application {
         GameRoot.getChildren().add(Backg);
 
         p1 = new Player(30, 30, 4, Down1);
-        // Terrain Maze = new Terrain();
-        // for (Rectangle row[] : Maze.rectangles) {
-        //     for (Rectangle r : row) {
-        //         GameRoot.getChildren().add(r);
-        //     }
 
-        // }
         //GameRoot.getChildren().add(p1.rect);
         GameRoot.getChildren().add(p1.Sprite);
 
@@ -416,7 +411,7 @@ public class CompSciProject2023 extends Application {
                     break;
                 case SPACE:
                     if (!Shooting) {
-                        String playerfireball = "RedFireBall.png";
+                        String playerfireball = "PurpleFireBall.png";
                         if (Shootup) {
                             projectiles.add(projectile = new Projectiles(-projectileSpeed, 0, playerfireball, p1.getXSprite(), p1.getYSprite()));
                             GameRoot.getChildren().add(projectile.Sprite);
@@ -512,7 +507,20 @@ public class CompSciProject2023 extends Application {
                 RangedEnemycounter++;
                 spawnArrows();
                 moveArrows();
-                checkenemydist(p1.getXSprite(), p1.getYSprite());
+                //Timer myTimer = new Timer();
+                //TimerTask myTimerTask = new TimerTask() {
+                    //@Override
+                    //public void run() {
+                        //EnemyProjectile(p1.getXSprite(), p1.getYSprite());
+                        
+                    //}
+                //};
+                //myTimer.scheduleAtFixedRate(myTimerTask, 0, 10);
+                
+                
+
+                EnemyProjectile(p1.getXSprite(), p1.getYSprite());
+                shootenemeyprojEnemyprojectiles();
 
             }
 
@@ -578,15 +586,16 @@ public class CompSciProject2023 extends Application {
 
         String imgpath = "RangedEnemyImg.png";
         Random r = new Random();
-        
+
         int height = (int) HEIGHT;
         int width = (int) WIDTH;
-        
+
         //if (RangedEnemycounter % RangedEnemyspawnTime == 0) {
-        for (int i = 0; i < r.nextInt(10) + 6; i++) {
+        //for (int i = 0; i < r.nextInt(10) + 6; i++) {
+        for (int i = 0; i < 2; i++) {
             double x = r.nextInt(width);
             double y = r.nextInt(height);
-            RangedEnemies.add(new Enemies(5, 5, imgpath, 10, 100, x, y, 10));
+            RangedEnemies.add(new Enemies(5, 5, imgpath, 10, 100, x, y, 20));
             GameRoot.getChildren().add(RangedEnemies.get(i).Sprite);
         }
         //}
@@ -596,28 +605,52 @@ public class CompSciProject2023 extends Application {
 
     }
 
-    private void checkenemydist(double px, double py) {
+    private void EnemyProjectile(double px, double py) {
         for (int i = 0; i < RangedEnemies.size(); i++) {
             double playerdistx;
             double playerdisty;
             //do{
-             playerdistx = px - RangedEnemies.get(i).getXSprite();
-             playerdisty = py - RangedEnemies.get(i).getYSprite();
+            playerdistx = px - RangedEnemies.get(i).getXSprite();
+            playerdisty = py - RangedEnemies.get(i).getYSprite();
+            
+            double hypot = Math.hypot(px - RangedEnemies.get(i).getXSprite(), py - RangedEnemies.get(i).getYSprite());
 
             String playerfireball = "RedFireBall.png";
-            if ((playerdistx) * (playerdistx) < (RangedEnemies.get(i).getRange()) * (RangedEnemies.get(i).getRange())) {
-            double val = playerdistx/playerdisty;
-            double angle = Math.asin(val);
-            double dy = projectileSpeed * (Math.sin(angle));
-            double dx = projectileSpeed * (Math.cos(angle));
-            Enemyprojectiles.add(projectile = new Projectiles(dy, dx, playerfireball, RangedEnemies.get(i).getXSprite(), RangedEnemies.get(i).getYSprite()));
-            GameRoot.getChildren().add(projectile.Sprite);
-                        
+            if ((playerdistx) * (playerdistx) < (RangedEnemies.get(i).getRange()) * (RangedEnemies.get(i).getRange())
+                    || (playerdisty) * (playerdisty) < (RangedEnemies.get(i).getRange()) * (RangedEnemies.get(i).getRange())
+                    || hypot <RangedEnemies.get(i).getRange()) {
+                double val = playerdistx / playerdisty;
+                double angle = Math.atan(val);
+                double dy = projectileSpeed * (Math.sin(angle));
+                double dx = projectileSpeed * (Math.cos(angle));
+                if (px < RangedEnemies.get(i).getXSprite() && py < RangedEnemies.get(i).getXSprite()) { // this is where the projectile shoots to up-left corner
+                    dy = -dy;
+                    dx = -dx;
+                }
+
+                Enemyprojectiles.add(projectile = new Projectiles(dy, dx, playerfireball, RangedEnemies.get(i).getXSprite(), RangedEnemies.get(i).getYSprite()));
+                GameRoot.getChildren().add(projectile.Sprite);
             }
 
-        //}while(playerdistx ==0 && playerdisty == 0);
-            }
+            //}while(playerdistx ==0 && playerdisty == 0);
+        }
 
+    }
+
+    private void shootenemeyprojEnemyprojectiles() {
+        for (int i = 0; i < Enemyprojectiles.size(); ++i) {
+            Enemyprojectiles.get(i).moveprojectile();
+        }
+
+    }
+
+    private void GenerateMaze() {
+        Terrain Maze = new Terrain();
+        for (Rectangle row[] : Maze.rectangles) {
+            for (Rectangle r : row) {
+                GameRoot.getChildren().add(r);
+            }
+        }
     }
 
     private void spawnArrows() {
