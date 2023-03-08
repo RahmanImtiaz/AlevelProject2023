@@ -368,7 +368,9 @@ public class CompSciProject2023 extends Application {
         sceneGame.setCursor(Cursor.CROSSHAIR);
         controls(sceneGame);
         loop(primaryStage);
-
+        
+        spawnRangedEnemies();
+        
         primaryStage.setScene(sceneGame);
         primaryStage.setFullScreen(true);
 
@@ -473,7 +475,8 @@ public class CompSciProject2023 extends Application {
         Image Left2 = new Image("Left2.png");
         Image Right1 = new Image("Right1.png");
         Image Right2 = new Image("Right2.png");
-        spawnRangedEnemies();
+        
+        
 
         AnimationTimer gametimer = new AnimationTimer() {
             @Override
@@ -520,7 +523,8 @@ public class CompSciProject2023 extends Application {
                 
 
                 EnemyProjectile(p1.getXSprite(), p1.getYSprite());
-                shootenemeyprojEnemyprojectiles();
+                //shootenemeyprojEnemyprojectiles();
+                Enemyprojectiles.forEach(Enemyprojectiles -> Enemyprojectiles.moveprojectile());
 
             }
 
@@ -595,7 +599,7 @@ public class CompSciProject2023 extends Application {
         for (int i = 0; i < 2; i++) {
             double x = r.nextInt(width);
             double y = r.nextInt(height);
-            RangedEnemies.add(new Enemies(5, 5, imgpath, 10, 100, x, y, 20));
+            RangedEnemies.add(new Enemies(5, 5, imgpath, 10, 100, x, y, 30));
             GameRoot.getChildren().add(RangedEnemies.get(i).Sprite);
         }
         //}
@@ -618,7 +622,7 @@ public class CompSciProject2023 extends Application {
             String playerfireball = "RedFireBall.png";
             if ((playerdistx) * (playerdistx) < (RangedEnemies.get(i).getRange()) * (RangedEnemies.get(i).getRange())
                     || (playerdisty) * (playerdisty) < (RangedEnemies.get(i).getRange()) * (RangedEnemies.get(i).getRange())
-                    || hypot <RangedEnemies.get(i).getRange()) {
+                    || hypot*hypot <(RangedEnemies.get(i).getRange()) * (RangedEnemies.get(i).getRange())) {
                 double val = playerdistx / playerdisty;
                 double angle = Math.atan(val);
                 double dy = projectileSpeed * (Math.sin(angle));
