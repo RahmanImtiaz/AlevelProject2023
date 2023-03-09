@@ -375,6 +375,7 @@ public class CompSciProject2023 extends Application {
         loop(primaryStage);
 
         spawnRangedEnemies();
+        
 
         primaryStage.setScene(sceneGame);
         primaryStage.setFullScreen(true);
@@ -531,6 +532,7 @@ public class CompSciProject2023 extends Application {
                 RangedEnemies.forEach(RangedEnemies -> RangedEnemies.move());
             }
                 
+                
 
             }
 
@@ -616,7 +618,7 @@ public class CompSciProject2023 extends Application {
     }
 
     private void EnemyProjectile(double px, double py) {
-        for (int i = 0; i < RangedEnemies.size(); i++) {
+        for (int i = 0; i < RangedEnemies.size()-1; i++) {
             double playerdistx;
             double playerdisty;
             //do{
@@ -628,16 +630,29 @@ public class CompSciProject2023 extends Application {
 
             double hypot = Math.hypot(px - RangedEnemies.get(i).getXSprite(), py - RangedEnemies.get(i).getYSprite());
 
+             
+                 
+            
+            if (p1.radiuscircleP.getBoundsInParent().intersects(RangedEnemies.get(i).radiuscircleE.getBoundsInParent())) {
             String playerfireball = "RedFireBall.png";
-            if ((playerdistx) * (playerdistx) < (RangedEnemies.get(i).getRange()) * (RangedEnemies.get(i).getRange())
-                    || (playerdisty) * (playerdisty) < (RangedEnemies.get(i).getRange()) * (RangedEnemies.get(i).getRange())
-                    || hypot * hypot < (RangedEnemies.get(i).getRange()) * (RangedEnemies.get(i).getRange())) {
+            //if ((playerdistx) * (playerdistx) < (RangedEnemies.get(i).getRange()) * (RangedEnemies.get(i).getRange())
+            //        || (playerdisty) * (playerdisty) < (RangedEnemies.get(i).getRange()) * (RangedEnemies.get(i).getRange())
+            //        || hypot * hypot < (RangedEnemies.get(i).getRange()) * (RangedEnemies.get(i).getRange())) {
                 double val = playerdisty / playerdistx;
                 double angle = Math.atan(val);
                 double dy = projectileSpeed * (Math.sin(angle));
                 double dx = projectileSpeed * (Math.cos(angle));
                 if (px < RangedEnemies.get(i).getXSprite() && py < RangedEnemies.get(i).getXSprite()) { // this is where the projectile shoots to up-left corner
                     if (dy > 0) {
+                        dy = -dy;
+                    }
+                    if (dx > 0) {
+                        dx = -dx;
+                    }
+                }
+                
+                if (px < RangedEnemies.get(i).getXSprite() && py > RangedEnemies.get(i).getXSprite()) { // this is where the projectile shoots to down-left corner
+                    if (dy < 0) {
                         dy = -dy;
                     }
                     if (dx > 0) {
@@ -670,9 +685,10 @@ public class CompSciProject2023 extends Application {
                 Enemyprojectiles.add(projectile = new Projectiles(dy, dx, playerfireball, RangedEnemies.get(i).getXSprite(), RangedEnemies.get(i).getYSprite()));
                 GameRoot.getChildren().add(projectile.Sprite);
             }
+        }
 
             //}while(playerdistx ==0 && playerdisty == 0);
-        }
+        //}
 
     }
 

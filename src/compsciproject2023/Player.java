@@ -32,7 +32,7 @@ public class Player extends Sprite {
         Image img = draw(imgpath);
         setDefaultAttributes();
         getplayerimage();
-        radiuscircleP = new Circle(getXSprite(),getYSprite(),30,Color.TRANSPARENT);
+        radiuscircleP = new Circle(getXSprite(),getYSprite(),50,Color.TRANSPARENT);
 
     }
 
