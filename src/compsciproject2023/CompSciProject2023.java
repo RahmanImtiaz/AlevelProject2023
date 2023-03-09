@@ -9,11 +9,14 @@ import java.applet.AudioClip;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.net.URL;
+import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import static javafx.application.Platform.exit;
@@ -56,6 +59,8 @@ import javafx.stage.StageStyle;
  */
 public class CompSciProject2023 extends Application {
 
+    
+    
     Stage Stage;
     Scene MenuScene;
     Scene ScoreScene;
@@ -83,7 +88,7 @@ public class CompSciProject2023 extends Application {
 
     private ArrayList<Enemies> RangedEnemies = new ArrayList();
     private ArrayList<Projectiles> Enemyprojectiles = new ArrayList();
-    private int RangedEnemycounter = 0, RangedEnemyspawnTime = 180;
+    private int RangedEnemycounter = 0, RangedEnemyspawnTime = 180, SpawnEnemycounter;
     private double RangedEnemySpeed = 4;
     //private Enemies RangedEnemy;
 
@@ -368,9 +373,9 @@ public class CompSciProject2023 extends Application {
         sceneGame.setCursor(Cursor.CROSSHAIR);
         controls(sceneGame);
         loop(primaryStage);
-        
+
         spawnRangedEnemies();
-        
+
         primaryStage.setScene(sceneGame);
         primaryStage.setFullScreen(true);
 
@@ -475,8 +480,6 @@ public class CompSciProject2023 extends Application {
         Image Left2 = new Image("Left2.png");
         Image Right1 = new Image("Right1.png");
         Image Right2 = new Image("Right2.png");
-        
-        
 
         AnimationTimer gametimer = new AnimationTimer() {
             @Override
@@ -512,19 +515,22 @@ public class CompSciProject2023 extends Application {
                 moveArrows();
                 //Timer myTimer = new Timer();
                 //TimerTask myTimerTask = new TimerTask() {
-                    //@Override
-                    //public void run() {
-                        //EnemyProjectile(p1.getXSprite(), p1.getYSprite());
-                        
-                    //}
+                //@Override
+                //public void run() {
+                //EnemyProjectile(p1.getXSprite(), p1.getYSprite());
+                //}
                 //};
                 //myTimer.scheduleAtFixedRate(myTimerTask, 0, 10);
-                
-                
-
                 EnemyProjectile(p1.getXSprite(), p1.getYSprite());
                 //shootenemeyprojEnemyprojectiles();
                 Enemyprojectiles.forEach(Enemyprojectiles -> Enemyprojectiles.moveprojectile());
+                
+               
+                SpawnEnemycounter++;
+                if(SpawnEnemycounter%200==0){
+                RangedEnemies.forEach(RangedEnemies -> RangedEnemies.move());
+            }
+                
 
             }
 
@@ -596,12 +602,12 @@ public class CompSciProject2023 extends Application {
 
         //if (RangedEnemycounter % RangedEnemyspawnTime == 0) {
         //for (int i = 0; i < r.nextInt(10) + 6; i++) {
-        for (int i = 0; i < 2; i++) {
+        //for (int i = 0; i < 2; i++) {
             double x = r.nextInt(width);
             double y = r.nextInt(height);
-            RangedEnemies.add(new Enemies(5, 5, imgpath, 10, 100, x, y, 30));
-            GameRoot.getChildren().add(RangedEnemies.get(i).Sprite);
-        }
+            RangedEnemies.add(new Enemies(5, 5, imgpath, 10, 100, width/2, height/2, 30));
+            GameRoot.getChildren().add(RangedEnemies.get(0).Sprite);
+        //}
         //}
     }
 
@@ -614,22 +620,51 @@ public class CompSciProject2023 extends Application {
             double playerdistx;
             double playerdisty;
             //do{
-            playerdistx = px - RangedEnemies.get(i).getXSprite();
-            playerdisty = py - RangedEnemies.get(i).getYSprite();
-            
+            //playerdistx = px - RangedEnemies.get(i).getXSprite();
+            //playerdisty = py - RangedEnemies.get(i).getYSprite();
+
+            playerdistx = RangedEnemies.get(i).getXSprite() - px;
+            playerdisty = RangedEnemies.get(i).getYSprite() - py;
+
             double hypot = Math.hypot(px - RangedEnemies.get(i).getXSprite(), py - RangedEnemies.get(i).getYSprite());
 
             String playerfireball = "RedFireBall.png";
             if ((playerdistx) * (playerdistx) < (RangedEnemies.get(i).getRange()) * (RangedEnemies.get(i).getRange())
                     || (playerdisty) * (playerdisty) < (RangedEnemies.get(i).getRange()) * (RangedEnemies.get(i).getRange())
-                    || hypot*hypot <(RangedEnemies.get(i).getRange()) * (RangedEnemies.get(i).getRange())) {
-                double val = playerdistx / playerdisty;
+                    || hypot * hypot < (RangedEnemies.get(i).getRange()) * (RangedEnemies.get(i).getRange())) {
+                double val = playerdisty / playerdistx;
                 double angle = Math.atan(val);
                 double dy = projectileSpeed * (Math.sin(angle));
                 double dx = projectileSpeed * (Math.cos(angle));
                 if (px < RangedEnemies.get(i).getXSprite() && py < RangedEnemies.get(i).getXSprite()) { // this is where the projectile shoots to up-left corner
-                    dy = -dy;
-                    dx = -dx;
+                    if (dy > 0) {
+                        dy = -dy;
+                    }
+                    if (dx > 0) {
+                        dx = -dx;
+                    }
+                }
+
+                if (px == RangedEnemies.get(i).getXSprite() && py < RangedEnemies.get(i).getYSprite()) { // this is where the projectile shoots straight up
+                    if (dy > 0) {
+                        dy = -dy;
+                    }
+                }
+                if (px == RangedEnemies.get(i).getXSprite() && py > RangedEnemies.get(i).getYSprite()) { // this is where the projectile shoots straight down
+                    if (dy < 0) {
+                        dy = -dy;
+                    }
+                }
+
+                if (py == RangedEnemies.get(i).getYSprite() && px < RangedEnemies.get(i).getXSprite()) { // this is where the projectile shoots directly left
+                    if (dx > 0) {
+                        dx = -dx;
+                    }
+                }
+                if (py == RangedEnemies.get(i).getYSprite() && px < RangedEnemies.get(i).getXSprite()) { // this is where the projectile shoots directly right
+                    if (dx < 0) {
+                        dx = -dx;
+                    }
                 }
 
                 Enemyprojectiles.add(projectile = new Projectiles(dy, dx, playerfireball, RangedEnemies.get(i).getXSprite(), RangedEnemies.get(i).getYSprite()));
@@ -646,6 +681,24 @@ public class CompSciProject2023 extends Application {
             Enemyprojectiles.get(i).moveprojectile();
         }
 
+    }
+
+    private void enemyshot() {
+        Iterator<Projectiles> it = projectiles.iterator();
+        Iterator<Enemies> itE = RangedEnemies.iterator();
+        Projectiles P = it.next();
+        Enemies E = itE.next();
+        while (it.hasNext()) {
+            if (P.Sprite.getBoundsInParent().intersects(E.Sprite.getBoundsInParent())) {
+                E.setAlive(false);
+            }
+
+        }
+        for (int i = 0; i < RangedEnemies.size(); i++) {
+            if (RangedEnemies.get(i).isdead()) {
+                GameRoot.getChildren().remove(RangedEnemies.get(i));
+            }
+        }
     }
 
     private void GenerateMaze() {

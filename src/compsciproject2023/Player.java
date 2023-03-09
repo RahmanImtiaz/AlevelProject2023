@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
 /**
  *
@@ -21,6 +22,7 @@ public class Player extends Sprite {
     private int StrenghtP, Mp, Health;
     double speed;
     public Image Up1, Up2, Down1, Down2, Left1, Left2, Right1, Right2;
+    Circle radiuscircleP;
 
     //KeyHandler KeyH = new KeyHandler();
     public Player(int width, int height, double speed, String imgpath) {
@@ -30,6 +32,7 @@ public class Player extends Sprite {
         Image img = draw(imgpath);
         setDefaultAttributes();
         getplayerimage();
+        radiuscircleP = new Circle(getXSprite(),getYSprite(),30,Color.TRANSPARENT);
 
     }
 
@@ -47,6 +50,8 @@ public class Player extends Sprite {
     public void move(double dy, double dx) {
         setYSprite(getYSprite() - dy);
         setXSprite(getXSprite() - dx);
+        radiuscircleP.setCenterX(getXSprite());
+        radiuscircleP.setCenterY(getYSprite());
     }
 
     public void getplayerimage() {

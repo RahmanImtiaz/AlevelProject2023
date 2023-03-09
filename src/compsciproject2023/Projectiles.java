@@ -34,7 +34,7 @@ public class Projectiles extends Sprite{
     }
    
     public ImageView getImageView(){
-        return ivView;
+        return Sprite;
     }
    
     public void moveprojectile(){
