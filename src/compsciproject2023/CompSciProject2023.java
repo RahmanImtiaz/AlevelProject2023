@@ -59,8 +59,6 @@ import javafx.stage.StageStyle;
  */
 public class CompSciProject2023 extends Application {
 
-    
-    
     Stage Stage;
     Scene MenuScene;
     Scene ScoreScene;
@@ -88,7 +86,7 @@ public class CompSciProject2023 extends Application {
 
     private ArrayList<Enemies> RangedEnemies = new ArrayList();
     private ArrayList<Projectiles> Enemyprojectiles = new ArrayList();
-    private int RangedEnemycounter = 0, RangedEnemyspawnTime = 180, SpawnEnemycounter;
+    private int RangedEnemycounter = 0, RangedEnemyspawnTime = 180, SpawnEnemycounter, EnemyProjcounter;
     private double RangedEnemySpeed = 4;
     //private Enemies RangedEnemy;
 
@@ -109,9 +107,9 @@ public class CompSciProject2023 extends Application {
     public void start(Stage primaryStage) {
 
         Stage = primaryStage;
-        
+
 //Function is called and stored the Scene returned from a subroutine is stored in global variable
-        MenuScene = CreateMainMenu1(); 
+        MenuScene = CreateMainMenu1();
         ScoreScene = CreateScore2();
         GuideScene = CreateGuide();
         SettingsScene = CreateSetting3();
@@ -181,7 +179,6 @@ public class CompSciProject2023 extends Application {
         vboxM.getChildren().addAll(BtnPlay, Btnscore, BtnGuide, BtnSet, BtnExit);
 
         // vboxM.setSpacing(50);
-        
         borderPane.setCenter(vboxM); //places the vbox to the center
         borderPane.setTranslateY(200); //moves vbox down a bit
         Menuroot.getChildren().add(borderPane);
@@ -375,7 +372,6 @@ public class CompSciProject2023 extends Application {
         loop(primaryStage); //calls the subroutine with the animation timer/gameloop
 
         spawnRangedEnemies();//calls the subroutine responsible for enemy spawns
-        
 
         primaryStage.setScene(sceneGame);
         primaryStage.setFullScreen(true);
@@ -514,7 +510,7 @@ public class CompSciProject2023 extends Application {
                 RangedEnemycounter++;//dont need it for now
                 spawnArrows();//spawns arrows
                 moveArrows();//moves the arrows
-                
+
                 //Timer myTimer = new Timer();
                 //TimerTask myTimerTask = new TimerTask() {
                 //@Override
@@ -523,17 +519,15 @@ public class CompSciProject2023 extends Application {
                 //}
                 //};
                 //myTimer.scheduleAtFixedRate(myTimerTask, 0, 10);
-                EnemyProjectile(p1.getXSprite(), p1.getYSprite()); //responsible for creating enemy projectiles
-                //shootenemeyprojEnemyprojectiles();
+                EnemyProjcounter++;
+                if (SpawnEnemycounter % 100 == 0) {
+                    EnemyProjectile(p1.getXSprite(), p1.getYSprite()); //responsible for creating enemy projectiles
+                }
                 Enemyprojectiles.forEach(Enemyprojectiles -> Enemyprojectiles.moveprojectile()); //calls movement method for each projectile
-                
-               
                 SpawnEnemycounter++;//increments each time--> counts the number of ticks in loop
-                if(SpawnEnemycounter%200==0){ //works for every 200 ticks
-                RangedEnemies.forEach(RangedEnemies -> RangedEnemies.move());
-            }
-                
-                
+                if (SpawnEnemycounter % 200 == 0) { //works for every 200 ticks
+                    //RangedEnemies.forEach(RangedEnemies -> RangedEnemies.move());
+                }
 
             }
 
@@ -595,23 +589,18 @@ public class CompSciProject2023 extends Application {
     }
 
     private void spawnRangedEnemies() {
-        //double spawnPosition = Math.random();
-
         String imgpath = "RangedEnemyImg.png";
         Random r = new Random();
 
         int height = (int) HEIGHT;
         int width = (int) WIDTH;
 
-        //if (RangedEnemycounter % RangedEnemyspawnTime == 0) {
-        //for (int i = 0; i < r.nextInt(10) + 6; i++) {
-        //for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < r.nextInt(5) + 2; i++) {
             double x = r.nextInt(width);
             double y = r.nextInt(height);
-            RangedEnemies.add(new Enemies(5, 5, imgpath, 10, 100, width/2, height/2, 30));
-            GameRoot.getChildren().add(RangedEnemies.get(0).Sprite);
-        //}
-        //}
+            RangedEnemies.add(new Enemies(5, 5, imgpath, 10, 100, x, y, 30));
+            GameRoot.getChildren().add(RangedEnemies.get(i).Sprite);
+        }
     }
 
     private void spawnMaleeEnemies() {
@@ -619,27 +608,16 @@ public class CompSciProject2023 extends Application {
     }
 
     private void EnemyProjectile(double px, double py) {
-        for (int i = 0; i < RangedEnemies.size()-1; i++) {
+        for (int i = 0; i < RangedEnemies.size() / 2; i++) {
             double playerdistx;
             double playerdisty;
-            //do{
-            //playerdistx = px - RangedEnemies.get(i).getXSprite();
-            //playerdisty = py - RangedEnemies.get(i).getYSprite();
-
             playerdistx = RangedEnemies.get(i).getXSprite() - px;
             playerdisty = RangedEnemies.get(i).getYSprite() - py;
 
             double hypot = Math.hypot(px - RangedEnemies.get(i).getXSprite(), py - RangedEnemies.get(i).getYSprite());
 
-             
-                 
-            
             if (p1.radiuscircleP.getBoundsInParent().intersects(RangedEnemies.get(i).radiuscircleE.getBoundsInParent())) {
-            String playerfireball = "RedFireBall.png";
-            //if ((playerdistx) * (playerdistx) < (RangedEnemies.get(i).getRange()) * (RangedEnemies.get(i).getRange())
-            //        || (playerdisty) * (playerdisty) < (RangedEnemies.get(i).getRange()) * (RangedEnemies.get(i).getRange())
-            //        || hypot * hypot < (RangedEnemies.get(i).getRange()) * (RangedEnemies.get(i).getRange())) {
-            
+                String playerfireball = "RedFireBall.png";
                 double val = playerdisty / playerdistx;
                 double angle = Math.atan(val);
                 double dy = projectileSpeed * (Math.sin(angle));
@@ -660,20 +638,13 @@ public class CompSciProject2023 extends Application {
                         dx = -dx;
                     }
                 }
-
-
-
                 Enemyprojectiles.add(projectile = new Projectiles(dy, dx, playerfireball, RangedEnemies.get(i).getXSprite(), RangedEnemies.get(i).getYSprite()));
                 GameRoot.getChildren().add(projectile.Sprite);
             }
         }
 
-            //}while(playerdistx ==0 && playerdisty == 0);
-        //}
-
+        
     }
-
-  
 
     private void enemyshot() {
         Iterator<Projectiles> it = projectiles.iterator();

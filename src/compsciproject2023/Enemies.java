@@ -28,7 +28,7 @@ public class Enemies extends Sprite {
         setRange(Range);
         setXSprite(x);
         setYSprite(y);
-        radiuscircleE = new Circle(getXSprite(), getYSprite(), 100, Color.TRANSPARENT);
+        radiuscircleE = new Circle(getXSprite(), getYSprite(), 350, Color.TRANSPARENT);
 
     }
 
