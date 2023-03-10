@@ -109,16 +109,17 @@ public class CompSciProject2023 extends Application {
     public void start(Stage primaryStage) {
 
         Stage = primaryStage;
-
-        MenuScene = CreateMainMenu1();
+        
+//Function is called and stored the Scene returned from a subroutine is stored in global variable
+        MenuScene = CreateMainMenu1(); 
         ScoreScene = CreateScore2();
         GuideScene = CreateGuide();
         SettingsScene = CreateSetting3();
-        CreateGame(primaryStage);
+        CreateGame(primaryStage);  // This subroutine is different, we instead pass the primary stage, and set the scene to the stage in this procedure.
 
         Stage.setTitle("Mortal Destruction");
-        Stage.setScene(MenuScene);
-        Stage.setFullScreen(true);
+        Stage.setScene(MenuScene); //set menu scene
+        Stage.setFullScreen(true); //opens menu in full screen
         Stage.show();
 
     }
@@ -180,12 +181,13 @@ public class CompSciProject2023 extends Application {
         vboxM.getChildren().addAll(BtnPlay, Btnscore, BtnGuide, BtnSet, BtnExit);
 
         // vboxM.setSpacing(50);
-        borderPane.setTranslateY(200);
-        borderPane.setCenter(vboxM);
+        
+        borderPane.setCenter(vboxM); //places the vbox to the center
+        borderPane.setTranslateY(200); //moves vbox down a bit
         Menuroot.getChildren().add(borderPane);
-        Scene scene = new Scene(Menuroot, WIDTH, HEIGHT);
+        Scene Menuscene = new Scene(Menuroot, WIDTH, HEIGHT);
 
-        return scene;
+        return Menuscene;
 
     }
 
@@ -198,13 +200,12 @@ public class CompSciProject2023 extends Application {
         ScoreRoot.getChildren().add(Backg);
 
         Rectangle rectangle = new Rectangle(200, 200, 960, 540);
-
         Image SetBox = new Image("Settingsbox.JPG");
         rectangle.setFill(new ImagePattern(SetBox));
 
         BorderPane borderPane = new BorderPane();
         borderPane.setPrefSize(WIDTH, HEIGHT);
-        borderPane.setCenter(rectangle);
+        borderPane.setCenter(rectangle); //sets the rectange to the center
 
         ScoreRoot.getChildren().add(borderPane);
 
@@ -216,7 +217,6 @@ public class CompSciProject2023 extends Application {
         ScoreRoot.getChildren().add(Title);
 
         BorderPane borderPane2 = new BorderPane();
-
         Button BtnBack = new Button();
         BtnBack.setText("< Back");
         BtnBack.setBackground(null);
@@ -364,17 +364,17 @@ public class CompSciProject2023 extends Application {
         Backg.setFitHeight(HEIGHT);
         GameRoot.getChildren().add(Backg);
 
-        p1 = new Player(30, 30, 4, Down1);
+        p1 = new Player(30, 30, 4, Down1); //creates the player object
 
         //GameRoot.getChildren().add(p1.rect);
         GameRoot.getChildren().add(p1.Sprite);
 
         Scene sceneGame = new Scene(GameRoot, WIDTH, HEIGHT);
-        sceneGame.setCursor(Cursor.CROSSHAIR);
-        controls(sceneGame);
-        loop(primaryStage);
+        sceneGame.setCursor(Cursor.CROSSHAIR); //changes how the mouse will look
+        controls(sceneGame); //calls the subroutine resposible for the key listeners
+        loop(primaryStage); //calls the subroutine with the animation timer/gameloop
 
-        spawnRangedEnemies();
+        spawnRangedEnemies();//calls the subroutine responsible for enemy spawns
         
 
         primaryStage.setScene(sceneGame);
@@ -507,13 +507,14 @@ public class CompSciProject2023 extends Application {
                     dx *= 3;
                     dy *= 3;
                 }
-                p1.move(dy, dx);
+                p1.move(dy, dx); // player movement method
 
-                shootPlayerprojectile();
-                Arrowcounter++;
-                RangedEnemycounter++;
-                spawnArrows();
-                moveArrows();
+                shootPlayerprojectile(); //calls for the method responsible for the player shooting
+                Arrowcounter++;//increments each time
+                RangedEnemycounter++;//dont need it for now
+                spawnArrows();//spawns arrows
+                moveArrows();//moves the arrows
+                
                 //Timer myTimer = new Timer();
                 //TimerTask myTimerTask = new TimerTask() {
                 //@Override
@@ -522,13 +523,13 @@ public class CompSciProject2023 extends Application {
                 //}
                 //};
                 //myTimer.scheduleAtFixedRate(myTimerTask, 0, 10);
-                EnemyProjectile(p1.getXSprite(), p1.getYSprite());
+                EnemyProjectile(p1.getXSprite(), p1.getYSprite()); //responsible for creating enemy projectiles
                 //shootenemeyprojEnemyprojectiles();
-                Enemyprojectiles.forEach(Enemyprojectiles -> Enemyprojectiles.moveprojectile());
+                Enemyprojectiles.forEach(Enemyprojectiles -> Enemyprojectiles.moveprojectile()); //calls movement method for each projectile
                 
                
-                SpawnEnemycounter++;
-                if(SpawnEnemycounter%200==0){
+                SpawnEnemycounter++;//increments each time--> counts the number of ticks in loop
+                if(SpawnEnemycounter%200==0){ //works for every 200 ticks
                 RangedEnemies.forEach(RangedEnemies -> RangedEnemies.move());
             }
                 
@@ -638,6 +639,7 @@ public class CompSciProject2023 extends Application {
             //if ((playerdistx) * (playerdistx) < (RangedEnemies.get(i).getRange()) * (RangedEnemies.get(i).getRange())
             //        || (playerdisty) * (playerdisty) < (RangedEnemies.get(i).getRange()) * (RangedEnemies.get(i).getRange())
             //        || hypot * hypot < (RangedEnemies.get(i).getRange()) * (RangedEnemies.get(i).getRange())) {
+            
                 double val = playerdisty / playerdistx;
                 double angle = Math.atan(val);
                 double dy = projectileSpeed * (Math.sin(angle));
@@ -650,8 +652,7 @@ public class CompSciProject2023 extends Application {
                         dx = -dx;
                     }
                 }
-                
-                if (px < RangedEnemies.get(i).getXSprite() && py > RangedEnemies.get(i).getXSprite()) { // this is where the projectile shoots to down-left corner
+                if (px < RangedEnemies.get(i).getXSprite() && py > RangedEnemies.get(i).getYSprite()) { // this is where the projectile shoots to down-left corner
                     if (dy < 0) {
                         dy = -dy;
                     }
@@ -660,27 +661,7 @@ public class CompSciProject2023 extends Application {
                     }
                 }
 
-                if (px == RangedEnemies.get(i).getXSprite() && py < RangedEnemies.get(i).getYSprite()) { // this is where the projectile shoots straight up
-                    if (dy > 0) {
-                        dy = -dy;
-                    }
-                }
-                if (px == RangedEnemies.get(i).getXSprite() && py > RangedEnemies.get(i).getYSprite()) { // this is where the projectile shoots straight down
-                    if (dy < 0) {
-                        dy = -dy;
-                    }
-                }
 
-                if (py == RangedEnemies.get(i).getYSprite() && px < RangedEnemies.get(i).getXSprite()) { // this is where the projectile shoots directly left
-                    if (dx > 0) {
-                        dx = -dx;
-                    }
-                }
-                if (py == RangedEnemies.get(i).getYSprite() && px < RangedEnemies.get(i).getXSprite()) { // this is where the projectile shoots directly right
-                    if (dx < 0) {
-                        dx = -dx;
-                    }
-                }
 
                 Enemyprojectiles.add(projectile = new Projectiles(dy, dx, playerfireball, RangedEnemies.get(i).getXSprite(), RangedEnemies.get(i).getYSprite()));
                 GameRoot.getChildren().add(projectile.Sprite);
@@ -692,12 +673,7 @@ public class CompSciProject2023 extends Application {
 
     }
 
-    private void shootenemeyprojEnemyprojectiles() {
-        for (int i = 0; i < Enemyprojectiles.size(); ++i) {
-            Enemyprojectiles.get(i).moveprojectile();
-        }
-
-    }
+  
 
     private void enemyshot() {
         Iterator<Projectiles> it = projectiles.iterator();
