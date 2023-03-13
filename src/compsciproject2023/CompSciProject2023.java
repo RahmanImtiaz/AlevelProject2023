@@ -59,6 +59,11 @@ import javafx.stage.StageStyle;
  */
 public class CompSciProject2023 extends Application {
 
+    double randommovedx = 0;
+    double randommovedy = 0;
+
+    int upcount = 1, downcount = 1, rightcount = 1, leftcount = 1;
+
     Stage Stage;
     Scene MenuScene;
     Scene ScoreScene;
@@ -102,6 +107,8 @@ public class CompSciProject2023 extends Application {
     Button BtnPlay, Btnscore, BtnSet, BtnExit, BtnGuide;
     Button BtnSaveScore, BtnResume, ButtonExitGame;
     private Group Menuroot, ScoreRoot, Guideroot, SetRoot, GameRoot, PauseRoot;
+   
+   
 
     @Override
     public void start(Stage primaryStage) {
@@ -363,8 +370,11 @@ public class CompSciProject2023 extends Application {
 
         p1 = new Player(30, 30, 4, Down1); //creates the player object
 
+        GenerateMaze();
+
         //GameRoot.getChildren().add(p1.rect);
         GameRoot.getChildren().add(p1.Sprite);
+        //GameRoot.getChildren().add(p1.radiuscircleP);
 
         Scene sceneGame = new Scene(GameRoot, WIDTH, HEIGHT);
         sceneGame.setCursor(Cursor.CROSSHAIR); //changes how the mouse will look
@@ -484,19 +494,42 @@ public class CompSciProject2023 extends Application {
                 double dx = 0, dy = 0;
 
                 if (goNorth) {
-                    p1.Sprite.setImage(Up1);
+                    if (upcount % 2 == 0) {
+                        p1.Sprite.setImage(Up2);
+                        upcount++;
+                    } else {
+                        p1.Sprite.setImage(Up1);
+                    }
                     dy += 4;
                 }
                 if (goSouth) {
-                    p1.Sprite.setImage(Down1);
+
+                    if (downcount % 2 == 0) {
+                        p1.Sprite.setImage(Down2);
+                        downcount++;
+                    } else {
+                        p1.Sprite.setImage(Down1);
+                    }
                     dy -= 4;
                 }
                 if (goEast) {
-                    p1.Sprite.setImage(Right1);
+
+                    if (rightcount % 2 == 0) {
+                        p1.Sprite.setImage(Right2);
+                        rightcount++;
+                    } else {
+                        p1.Sprite.setImage(Right1);
+                    }
                     dx -= 4;
                 }
                 if (goWest) {
-                    p1.Sprite.setImage(Left2);
+
+                    if (leftcount % 2 == 0) {
+                        p1.Sprite.setImage(Left1);
+                        leftcount++;
+                    } else {
+                        p1.Sprite.setImage(Left2);
+                    }
                     dx += 4;
                 }
                 if (running) {
@@ -521,14 +554,69 @@ public class CompSciProject2023 extends Application {
                 //myTimer.scheduleAtFixedRate(myTimerTask, 0, 10);
                 EnemyProjcounter++;
                 if (SpawnEnemycounter % 100 == 0) {
-                    EnemyProjectile(p1.getXSprite(), p1.getYSprite()); //responsible for creating enemy projectiles
+                    EnemyProjectile(p1.getXSprite()+50, p1.getYSprite()+50); //responsible for creating enemy projectiles
                 }
                 Enemyprojectiles.forEach(Enemyprojectiles -> Enemyprojectiles.moveprojectile()); //calls movement method for each projectile
                 SpawnEnemycounter++;//increments each time--> counts the number of ticks in loop
-                if (SpawnEnemycounter % 200 == 0) { //works for every 200 ticks
-                    //RangedEnemies.forEach(RangedEnemies -> RangedEnemies.move());
+                if (SpawnEnemycounter % 30 == 0) { //works for every 200 ticks
+
+                    //Random change = new Random();
+                    //int random = change.nextInt(9);
+                    //if (random == 0 || random == 1) {
+                    ///   randommovedy = -1;
+                    //}
+                    //if (random == 2) {
+                    //    randommovedy = 1;
+                    //}
+                    //if (random == 3) {
+                    //   randommovedx = -1;
+                    //}
+                    //if (random == 4) {
+                    ///    randommovedx = 1;
+                    ///}
+                    //if (random == 5) {
+                    ///    randommovedx = 0;
+                    ///}
+                    ///if (random == 6) {
+                    ///   randommovedy = 0;
+                    //}
+                    ///if (random == 6 || random == 7) {
+                    //   randommovedx = 0;
+                    //    randommovedy = 0;
+                    //}
+                    for (int i = 0; i < RangedEnemies.size(); i++) {
+                        int Edy = 0;
+                        int Edx = 0;
+                        if (RangedEnemies.get(i) != null) {
+                            if (goNorth) {
+                                Edy += 10;
+                            }
+                            if (goSouth) {
+
+                                Edy -= 10;
+                            }
+                            if (goEast) {
+
+                                Edx -= 10;
+                            }
+                            if (goWest) {
+
+                                Edx += 10;
+                            }
+                            Random change = new Random();
+                            for (int j = 0; j < change.nextInt(5); j++) {
+                                RangedEnemies.get(i).move(Edx, Edy, WIDTH, HEIGHT);
+                            }
+                            //RangedEnemies.get(i).move(Edx, Edy, WIDTH, HEIGHT);
+                        }
+                    }
+
                 }
 
+                //checkcollision
+                Enemyprojectiles.forEach(Enemyprojectiles -> checkcollision(Enemyprojectiles, p1, 1)); //passes both sprite and 1--1 because player-enemyproj interact
+
+                //RangedEnemies.forEach(RangedEnemies -> RangedEnemies.move(randommovedx, randommovedy, WIDTH, HEIGHT));
             }
 
         };
@@ -585,11 +673,16 @@ public class CompSciProject2023 extends Application {
             //projectiles.remove(i);
             //GameRoot.getChildren().remove(i);
             //}
+
+            //if (projectiles.get(i).Sprite.getBoundsInParent().intersects(RangedEnemies.get(i).Sprite.getBoundsInParent())) {
+            //    GameRoot.getChildren().remove(RangedEnemies.get(i).Sprite);
+            //}
         }
     }
 
     private void spawnRangedEnemies() {
-        String imgpath = "RangedEnemyImg.png";
+
+        String imgpath = "Enemyleft.png";
         Random r = new Random();
 
         int height = (int) HEIGHT;
@@ -599,7 +692,11 @@ public class CompSciProject2023 extends Application {
             double x = r.nextInt(width);
             double y = r.nextInt(height);
             RangedEnemies.add(new Enemies(5, 5, imgpath, 10, 100, x, y, 30));
+            RangedEnemies.get(i).Sprite.setFitHeight(130);
+            RangedEnemies.get(i).Sprite.setFitWidth(100);
             GameRoot.getChildren().add(RangedEnemies.get(i).Sprite);
+           
+
         }
     }
 
@@ -608,7 +705,7 @@ public class CompSciProject2023 extends Application {
     }
 
     private void EnemyProjectile(double px, double py) {
-        for (int i = 0; i < RangedEnemies.size() / 2; i++) {
+        for (int i = 0; i < RangedEnemies.size() / 2 + 1; i++) {
             double playerdistx;
             double playerdisty;
             playerdistx = RangedEnemies.get(i).getXSprite() - px;
@@ -638,37 +735,20 @@ public class CompSciProject2023 extends Application {
                         dx = -dx;
                     }
                 }
-                Enemyprojectiles.add(projectile = new Projectiles(dy, dx, playerfireball, RangedEnemies.get(i).getXSprite(), RangedEnemies.get(i).getYSprite()));
+                Enemyprojectiles.add(projectile = new Projectiles(dy, dx, playerfireball, RangedEnemies.get(i).getXSprite(), RangedEnemies.get(i).getYSprite() + 10));
+
                 GameRoot.getChildren().add(projectile.Sprite);
             }
         }
 
-        
     }
 
-    private void enemyshot() {
-        Iterator<Projectiles> it = projectiles.iterator();
-        Iterator<Enemies> itE = RangedEnemies.iterator();
-        Projectiles P = it.next();
-        Enemies E = itE.next();
-        while (it.hasNext()) {
-            if (P.Sprite.getBoundsInParent().intersects(E.Sprite.getBoundsInParent())) {
-                E.setAlive(false);
-            }
-
-        }
-        for (int i = 0; i < RangedEnemies.size(); i++) {
-            if (RangedEnemies.get(i).isdead()) {
-                GameRoot.getChildren().remove(RangedEnemies.get(i));
-            }
-        }
-    }
 
     private void GenerateMaze() {
-        Terrain Maze = new Terrain();
-        for (Rectangle row[] : Maze.rectangles) {
-            for (Rectangle r : row) {
-                GameRoot.getChildren().add(r);
+        Room Maze = new Room(WIDTH,HEIGHT);
+        for (Cell row[] : Maze.cells) {
+            for (Cell r : row) {
+                GameRoot.getChildren().add(r.Cell);
             }
         }
     }
@@ -709,11 +789,42 @@ public class CompSciProject2023 extends Application {
         Stage.setFullScreen(true);
     }
 
+    private void checkcollision(Sprite sprite1, Sprite sprite2, int code) {
+        if (code == 1) {//checks if player and enemy projectiles -- code 1
+            if (sprite1.Sprite.getBoundsInParent().intersects(sprite2.Sprite.getBoundsInParent())) {
+                //p1.playerhit = true;//player hit is true
+                sprite1.setCollision(true);
+                sprite2.setCollision(true);//player hit is true
+                
+                //projectileremove();
+                
+                p1.hit();//player hit method called - changed player health
+               
+                System.out.println(p1.getHealth());//output player health - testing
+            }
+            sprite2.setCollision(false);
+        }
+       
+        if (code == 2){
+           
+        }
+
+    }
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         launch(args);
+    }
+
+    private void projectileremove() {
+        for (int i = 0; i < Enemyprojectiles.size(); i++) {
+            if (Enemyprojectiles.get(i).getCollision() == true) {
+                GameRoot.getChildren().remove(Enemyprojectiles.get(i).Sprite);
+            }
+        }
+        
     }
 
 }

@@ -17,20 +17,22 @@ import javafx.scene.shape.Rectangle;
  */
 public class Sprite {
 
-    
+   
     public ImageView Sprite;
     Color color;
     private double XSprite, YSprite, XSpeed, YSpeed;
     private int Range;
-    private Boolean Alive;
+    private Boolean Alive,  collision;
     public String direction;
 
-  
+ 
     public Sprite(int width, int height, String imgpath) {
         Image imgSprite = new Image(imgpath);
         Sprite = new ImageView(imgSprite);
+       
         Sprite.setX(XSprite);
         Sprite.setY(YSprite);
+       
     }
 
     public double getXSprite() {
@@ -82,5 +84,15 @@ public class Sprite {
     public void setAlive(boolean Alive) {
         this.Alive = Alive;
     }
+
+    public Boolean getCollision() {
+        return collision;
+    }
+
+    public void setCollision(Boolean collision) {
+        this.collision = collision;
+    }
+   
+   
 
 }

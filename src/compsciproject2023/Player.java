@@ -23,6 +23,7 @@ public class Player extends Sprite {
     double speed;
     public Image Up1, Up2, Down1, Down2, Left1, Left2, Right1, Right2;
     Circle radiuscircleP;
+   
 
     //KeyHandler KeyH = new KeyHandler();
     public Player(int width, int height, double speed, String imgpath) {
@@ -32,8 +33,23 @@ public class Player extends Sprite {
         Image img = draw(imgpath);
         setDefaultAttributes();
         getplayerimage();
-        radiuscircleP = new Circle(getXSprite(),getYSprite(),50,Color.TRANSPARENT);
+        double h = Sprite.getFitHeight();
+        double w = Sprite.getFitWidth();
+        radiuscircleP = new Circle(getXSprite()+50,getYSprite()+50,25,Color.TRANSPARENT);
 
+    }
+   
+    public void hit(){
+        if (getCollision() == true) {
+            //Health = Health - 10;
+            setHealth(getHealth()-5);
+            setCollision(false);
+        }
+       
+        if (getHealth() == 0) {
+            setAlive(false);
+            System.out.println("Player died!");
+        }
     }
 
     public void setDefaultAttributes() {
@@ -45,13 +61,17 @@ public class Player extends Sprite {
         setXSpeed(4);
         setYSpeed(4);
         direction = "down";
+       
+        setCollision(false);
     }
 
     public void move(double dy, double dx) {
         setYSprite(getYSprite() - dy);
         setXSprite(getXSprite() - dx);
-        radiuscircleP.setCenterX(getXSprite());
-        radiuscircleP.setCenterY(getYSprite());
+        double h = Sprite.getFitHeight();
+        double w = Sprite.getFitWidth();
+        radiuscircleP.setCenterX(getXSprite()+50);
+        radiuscircleP.setCenterY(getYSprite()+50);
     }
 
     public void getplayerimage() {
@@ -70,4 +90,22 @@ public class Player extends Sprite {
         return imgPlay;
 
     }
+
+    public int getMp() {
+        return Mp;
+    }
+
+    public int getHealth() {
+        return Health;
+    }
+
+    public void setMp(int Mp) {
+        this.Mp = Mp;
+    }
+
+    public void setHealth(int Health) {
+        this.Health = Health;
+    }
+   
+   
 }

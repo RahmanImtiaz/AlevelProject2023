@@ -19,6 +19,7 @@ public class Enemies extends Sprite {
     double xspeedE = 3;
     double yspeedE = 3;
     Circle radiuscircleE;
+    boolean up, down, right, left;
 
     public Enemies(int width, int height, String imgpath, int stength, int health, double x, double y, int Range) {
         super(width, height, imgpath);
@@ -28,7 +29,7 @@ public class Enemies extends Sprite {
         setRange(Range);
         setXSprite(x);
         setYSprite(y);
-        radiuscircleE = new Circle(getXSprite(), getYSprite(), 350, Color.TRANSPARENT);
+        radiuscircleE = new Circle(getXSprite()+50, getYSprite()+50, 350, Color.TRANSPARENT);
 
     }
 
@@ -48,9 +49,43 @@ public class Enemies extends Sprite {
         return false;
     }
 
-    public void move() {
+    public void move(double dx, double dy, double width, double height){
+        setYSprite(getYSprite() - dy);
+        setXSprite(getXSprite() - dx);
+        radiuscircleE.setCenterX(getXSprite()+50);
+        radiuscircleE.setCenterY(getYSprite()+50);
+       
+        if (getXSprite()<width) {
+            dx = 0;
+        }
+        if (getYSprite()<height) {
+            dy = 0;
+        }
+    }
+   
+   
+    public void setAction(){
+   
         Random change = new Random();
-        
+        int i = change.nextInt(100)+1; //pick number from 1 to 100
+        if (i<=25) {
+            up = true;
+        }
+        if (i>25 && i<=50) {
+            down = true;
+        }
+        if (i>50 && i<=75) {
+            left = true;
+        }
+        if (i>75 && i<=100) {
+            right = true;
+        }
+   
+    }
+   
+    public void move2() {
+        Random change = new Random();
+       
         int random = change.nextInt(5);
 
         if (random == 0 || random == 1) {
@@ -65,8 +100,8 @@ public class Enemies extends Sprite {
         if (random == 4) {
              xspeedE = xspeedE;
         }
-        
-        
+       
+       
         for (int i = 0; i < change.nextInt(100) + 50; i++) {
             setXSprite(getXSprite() + xspeedE);
             radiuscircleE.setCenterX(getXSprite());
@@ -76,10 +111,10 @@ public class Enemies extends Sprite {
             setYSprite(getYSprite() + yspeedE);
             radiuscircleE.setCenterY(getYSprite());
         }
-        
+       
 
     }
-    
-    
+   
+   
 
 }

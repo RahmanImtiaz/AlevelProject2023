@@ -15,14 +15,16 @@ import javafx.stage.Screen;
  *
  * @author 10848
  */
-public class Terrain {
+public class Room {
 
     int[][] maze;
     Cell cells[][];
-    final int RectWidth = 100;
-    final int RectHeight = 100;
+     double RectWidth = 100;
+     double RectHeight = 100;
 
-    public Terrain() {
+    public Room(double width, double height) {
+        RectWidth = width;
+        RectHeight = height;
         maze = new int[][]{
             {4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5},
             {4, 1, 1, 3, 1, 1, 1, 1, 1, 1, 5},
