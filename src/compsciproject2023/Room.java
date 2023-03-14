@@ -22,7 +22,7 @@ import javafx.stage.Screen;
  *
  * @author 10848
  */
-public class Room extends GridPane{
+public class Room extends GridPane {
 
     int[][] maze;
     int[][] mazeroom;
@@ -32,9 +32,9 @@ public class Room extends GridPane{
     double RectHeight = 100;
 
     public Room(double width, double height, Player p1) {
-        
-        int numC = (int) ((int) width/RectWidth);
-        int numR = (int) ((int) height/RectHeight);
+
+        int numC = (int) ((int) width / RectWidth);
+        int numR = (int) ((int) height / RectHeight);
         //RectWidth = width;
         //RectHeight = height;
         maze = new int[][]{
@@ -51,28 +51,28 @@ public class Room extends GridPane{
         for (int row = 0; row < numR; row++) {
             for (int col = 0; col < numC; col++) {
                 int codeimg = -1;
-                if (row == 0 || row == numR-1 || col == 0 || col == numC-1) {//outerboundries
+                if (row == 0 || row == numR - 1 || col == 0 || col == numC - 1) {//outerboundries
                     codeimg = 0;
                 } else {
                     int coderand = getrandcode();
                     codeimg = coderand;
                 }
 
-                if ((col == 0 && row == numR/2)) {//left door
+                if ((col == 0 && row == numR / 2)) {//left door
                     codeimg = 4;
                 }
-                if ((col == numC-1 && row == numR/2)) {//right door
+                if ((col == numC - 1 && row == numR / 2)) {//right door
                     codeimg = 5;
                 }
-                
-                if ((row == numR/2 || row == (numR/2 + 1) || row == (numR/2 - 1)) && ( col == 1 || col == 2 || col == numC-2 || col == numC-3) ) {
+
+                if ((row == numR / 2 || row == (numR / 2 + 1) || row == (numR / 2 - 1)) && (col == 1 || col == 2 || col == numC - 2 || col == numC - 3)) {
                     codeimg = 1;
                 }
 
                 cells[row][col] = new Cell(codeimg, RectWidth, RectHeight);
                 cells[row][col].Cell.setLayoutX(col * (RectWidth));
                 cells[row][col].Cell.setLayoutY(row * (RectHeight));
-                playerwallcollision(p1,cells[row][col]);
+
             }
 
         }
@@ -115,26 +115,28 @@ public class Room extends GridPane{
             return 3; //walls
         }
     }
-    
-       // public Collection<Rectangle2D> getwallbounds() {
-        //List<Rectangle2D> wallbounds = new ArrayList<>();
-         //   for (Node node : this.getChildren()) {
+
+    // public Collection<Rectangle2D> getwallbounds() {
+    //List<Rectangle2D> wallbounds = new ArrayList<>();
+    //   for (Node node : this.getChildren()) {
+    //}
+    //return null;
+    public void playerwallcollision(Player p1) {
+        for (int row = 0; row < cells.length; row++) {
+            for (int col = 0; col < cells[0].length; col++) {
+
+                if (cells[row][col].border == true) {
+                    
+                if (p1.radiuscircleP.intersects(cells[row][col].Cell.getBoundsInParent())) {
+                    //p1.notmoving = true;
+                    System.out.println("interset walllllllllll");
+                } else {
+                    //p1.notmoving = false;
+                }
                 
-            //}
-        //return null;
-    
-    private void playerwallcollision (Player p1, Cell cell){
-        if (p1.radiuscircleP.intersects(cell.Cell.getBoundsInParent())) {
-            //p1.notmoving = true;
-            System.out.println("interset walllllllllll");
-        }else{
-            //p1.notmoving = false;
+                }
+            }
         }
     }
-    
-    
-    }
 
-
-
-
+}

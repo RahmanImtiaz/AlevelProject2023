@@ -79,6 +79,8 @@ public class CompSciProject2023 extends Application {
     public int Spritenum = 0;
     //Projectiles playerprojectile;
     double projectileSpeed = 10;
+    
+    Room Maze;
 
     boolean running, goNorth, goSouth, goEast, goWest, Escape;
     boolean Shooting, Shootleft, Shootright, Shootup, Shootdown;
@@ -644,7 +646,7 @@ public class CompSciProject2023 extends Application {
                     }
 
                 }
-
+                Maze.playerwallcollision(p1);
                 //checkcollision
                 Enemyprojectiles.forEach(Enemyprojectiles -> checkcollision(Enemyprojectiles, p1, 1)); //passes both sprite and 1--1 because player-enemyproj interact
 
@@ -817,7 +819,8 @@ public class CompSciProject2023 extends Application {
     }
 
     private void GenerateMaze() {
-        Room Maze = new Room(WIDTH, HEIGHT,p1);
+        Maze = new Room(WIDTH, HEIGHT,p1);
+        
         for (Cell row[] : Maze.cells) {
             for (Cell r : row) {
                 GameRoot.getChildren().add(r.Cell);

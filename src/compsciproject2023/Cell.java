@@ -27,26 +27,32 @@ public class Cell {
     Image rightdoor = new Image("Doorright.png");
     //Rectangle Cell;
     ImageView Cell;
+    boolean border;
 
     public Cell(int code, double width, double height) {
         if (code == 0) {
             Cell = new ImageView(Topwall2);
+            border = true;
             //Cell.setFill(new ImagePattern(upwall));
         }
         if (code == 1) {
             Cell = new ImageView(floor);
+            border = false;
             //Cell.setFill(new ImagePattern(floor));
         }
         if (code == 3) {
             Cell = new ImageView(Topwall2);
+            border = true;
             //Cell.setFill(new ImagePattern(Topwall2));
         }
         if (code == 4) {
             Cell = new ImageView(leftdoor);
+            border = false;
             //Cell.setFill(new ImagePattern(leftdoor));
         }
         if (code == 5) {
             Cell = new ImageView(rightdoor);
+            border = false;
             //Cell.setFill(new ImagePattern(rightdoor));
         }
        
