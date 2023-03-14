@@ -20,16 +20,18 @@ import javafx.scene.shape.Circle;
 public class Player extends Sprite {
 
     private int StrenghtP, Mp, Health;
-    double speed;
+    double xspeed, yspeed;
     public Image Up1, Up2, Down1, Down2, Left1, Left2, Right1, Right2;
     Circle radiuscircleP;
+    boolean notmoving= false;
+    
    
 
     //KeyHandler KeyH = new KeyHandler();
-    public Player(int width, int height, double speed, String imgpath) {
+    public Player(int width, int height, String imgpath) {
 
         super(width, height, imgpath);
-        this.speed = speed;
+        
         Image img = draw(imgpath);
         setDefaultAttributes();
         getplayerimage();
@@ -66,12 +68,15 @@ public class Player extends Sprite {
     }
 
     public void move(double dy, double dx) {
-        setYSprite(getYSprite() - dy);
+        if (!notmoving) {
+         setYSprite(getYSprite() - dy);
         setXSprite(getXSprite() - dx);
         double h = Sprite.getFitHeight();
         double w = Sprite.getFitWidth();
         radiuscircleP.setCenterX(getXSprite()+50);
-        radiuscircleP.setCenterY(getYSprite()+50);
+        radiuscircleP.setCenterY(getYSprite()+50);  
+        }
+        
     }
 
     public void getplayerimage() {

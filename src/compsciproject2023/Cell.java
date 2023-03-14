@@ -23,6 +23,8 @@ public class Cell {
     Image Topwall1 = new Image("TopwallP1.png");
     Image Topwall2 = new Image("TopwallP2.png");
     Image upwall = new Image("Upwall.png");
+    Image leftdoor = new Image("Doorleft.png");
+    Image rightdoor = new Image("Doorright.png");
     //Rectangle Cell;
     ImageView Cell;
 
@@ -40,12 +42,12 @@ public class Cell {
             //Cell.setFill(new ImagePattern(Topwall2));
         }
         if (code == 4) {
-            Cell = new ImageView(leftwall);
-            //Cell.setFill(new ImagePattern(leftwall));
+            Cell = new ImageView(leftdoor);
+            //Cell.setFill(new ImagePattern(leftdoor));
         }
         if (code == 5) {
-            Cell = new ImageView(rightwall);
-            //Cell.setFill(new ImagePattern(rightwall));
+            Cell = new ImageView(rightdoor);
+            //Cell.setFill(new ImagePattern(rightdoor));
         }
        
         Cell.setFitHeight(height);

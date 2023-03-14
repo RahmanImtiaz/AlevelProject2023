@@ -64,7 +64,11 @@ public class CompSciProject2023 extends Application {
 
     int upcount = 1, downcount = 1, rightcount = 1, leftcount = 1;
 
+    AnimationTimer gametimer;
+
     Stage Stage;
+    Stage popupStage;
+
     Scene MenuScene;
     Scene ScoreScene;
     Scene SettingsScene;
@@ -107,8 +111,6 @@ public class CompSciProject2023 extends Application {
     Button BtnPlay, Btnscore, BtnSet, BtnExit, BtnGuide;
     Button BtnSaveScore, BtnResume, ButtonExitGame;
     private Group Menuroot, ScoreRoot, Guideroot, SetRoot, GameRoot, PauseRoot;
-   
-   
 
     @Override
     public void start(Stage primaryStage) {
@@ -362,13 +364,14 @@ public class CompSciProject2023 extends Application {
 
         //playerprojectile = new Projectiles();
         GameRoot = new Group();
-        Image imgBack = new Image("GameBackground.jpeg");
-        ImageView Backg = new ImageView(imgBack);
+        //Image imgBack = new Image("GameBackground.jpeg");
+        Image bgimg = new Image("Blackbackround.png");
+        ImageView Backg = new ImageView(bgimg);
         Backg.setFitWidth(WIDTH);
         Backg.setFitHeight(HEIGHT);
         GameRoot.getChildren().add(Backg);
 
-        p1 = new Player(30, 30, 4, Down1); //creates the player object
+        p1 = new Player(30, 30, Down1); //creates the player object
 
         GenerateMaze();
 
@@ -382,6 +385,16 @@ public class CompSciProject2023 extends Application {
         loop(primaryStage); //calls the subroutine with the animation timer/gameloop
 
         spawnRangedEnemies();//calls the subroutine responsible for enemy spawns
+
+        //sceneGame.setOnKeyPressed(
+        //        new EventHandler<KeyEvent>() {
+        //    public void handle(KeyEvent e) {
+        //        String code = e.getCode().toString();
+        //        if (code == "ESCAPE") {
+        //            InGamePauseMenu();
+        //        }
+        //    }
+        //});
 
         primaryStage.setScene(sceneGame);
         primaryStage.setFullScreen(true);
@@ -447,8 +460,9 @@ public class CompSciProject2023 extends Application {
                     break;
                 case ESCAPE:
                     Escape = true;
+                    gametimer.stop();
+                    InGamePauseMenu();
                     break;
-
             }
         });
 
@@ -472,6 +486,9 @@ public class CompSciProject2023 extends Application {
                 case SPACE:
                     Shooting = false;
                     break;
+                case ESCAPE:
+                    Escape = false;
+                    break;
 
             }
         });
@@ -488,7 +505,7 @@ public class CompSciProject2023 extends Application {
         Image Right1 = new Image("Right1.png");
         Image Right2 = new Image("Right2.png");
 
-        AnimationTimer gametimer = new AnimationTimer() {
+        gametimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 double dx = 0, dy = 0;
@@ -501,6 +518,7 @@ public class CompSciProject2023 extends Application {
                         p1.Sprite.setImage(Up1);
                     }
                     dy += 4;
+                    //p1.yspeed =4;
                 }
                 if (goSouth) {
 
@@ -511,6 +529,7 @@ public class CompSciProject2023 extends Application {
                         p1.Sprite.setImage(Down1);
                     }
                     dy -= 4;
+                    //p1.yspeed = -4;
                 }
                 if (goEast) {
 
@@ -521,6 +540,7 @@ public class CompSciProject2023 extends Application {
                         p1.Sprite.setImage(Right1);
                     }
                     dx -= 4;
+                    //p1.xspeed =-4;
                 }
                 if (goWest) {
 
@@ -531,11 +551,15 @@ public class CompSciProject2023 extends Application {
                         p1.Sprite.setImage(Left2);
                     }
                     dx += 4;
+                    //p1.xspeed +=4;
                 }
                 if (running) {
                     dx *= 3;
                     dy *= 3;
+                    //p1.xspeed *= 3;
+                    //p1.yspeed *= 3;
                 }
+               
                 p1.move(dy, dx); // player movement method
 
                 shootPlayerprojectile(); //calls for the method responsible for the player shooting
@@ -554,7 +578,7 @@ public class CompSciProject2023 extends Application {
                 //myTimer.scheduleAtFixedRate(myTimerTask, 0, 10);
                 EnemyProjcounter++;
                 if (SpawnEnemycounter % 100 == 0) {
-                    EnemyProjectile(p1.getXSprite()+50, p1.getYSprite()+50); //responsible for creating enemy projectiles
+                    EnemyProjectile(p1.getXSprite() + 50, p1.getYSprite() + 50); //responsible for creating enemy projectiles
                 }
                 Enemyprojectiles.forEach(Enemyprojectiles -> Enemyprojectiles.moveprojectile()); //calls movement method for each projectile
                 SpawnEnemycounter++;//increments each time--> counts the number of ticks in loop
@@ -587,24 +611,32 @@ public class CompSciProject2023 extends Application {
                     for (int i = 0; i < RangedEnemies.size(); i++) {
                         int Edy = 0;
                         int Edx = 0;
+                        Random change = new Random();
+                        int num = change.nextInt(150);
                         if (RangedEnemies.get(i) != null) {
-                            if (goNorth) {
+                            if (num<25) {
                                 Edy += 10;
                             }
-                            if (goSouth) {
-
+                            if (num>=25 && num<50) {
                                 Edy -= 10;
                             }
-                            if (goEast) {
-
+                            if (num>=50 && num<75) {
                                 Edx -= 10;
                             }
-                            if (goWest) {
-
+                            if (num>=75 && num<100) {
                                 Edx += 10;
                             }
-                            Random change = new Random();
-                            for (int j = 0; j < change.nextInt(5); j++) {
+                            if (num>=100 && num<125) {
+                                Edx += 0;
+                            }
+                            if (num>=125 && num<150) {
+                                Edy += 0;
+                            }
+                            
+                            if (p1.getXSprite()<RangedEnemies.get(i).getXSprite()) {
+                                Edx -= 10;
+                            }
+                            for (int j = 0; j < change.nextInt(10); j++) {
                                 RangedEnemies.get(i).move(Edx, Edy, WIDTH, HEIGHT);
                             }
                             //RangedEnemies.get(i).move(Edx, Edy, WIDTH, HEIGHT);
@@ -628,29 +660,71 @@ public class CompSciProject2023 extends Application {
         //         }
     }
 
-    private void InGamePauseMenu(Stage primaryStage) {
+    private void InGamePauseMenu() {
         //BtnSaveScore, BtnResume, ButtonExitGame
         PauseRoot = new Group();
+        double width = WIDTH/2.5;
+        double height = HEIGHT/2.5;
 
+        Image imgBack = new Image("Settingsbox.JPG");
+        ImageView Backg = new ImageView(imgBack);
+        Backg.setFitWidth(width);
+        Backg.setFitHeight(height);
+        PauseRoot.getChildren().add(Backg);
+        
+        Label Title = new Label("Pause Menu");
+        //Title.setLayoutX(width / 2  - 100);
+        //Title.setLayoutY(height / 2 - 200);
+        Title.setFont(new Font("Papyrus", 50));
+        Title.setTextFill(Color.WHITE);
+        
         BtnSaveScore = new Button();
-        BtnSaveScore.setText("> Exit");
+        BtnSaveScore.setText("> Save Game");
         BtnSaveScore.setBackground(null);
         BtnSaveScore.setTextFill(Color.WHITE);
         BtnSaveScore.setFont(new Font("Papyrus", 30));
-        BtnSaveScore.setOnAction(event -> exit());
+        //BtnSaveScore.setOnAction(event -> ));
+        
+        BtnResume = new Button();
+        BtnResume.setText("> Resume");
+        BtnResume.setBackground(null);
+        BtnResume.setTextFill(Color.WHITE);
+        BtnResume.setFont(new Font("Papyrus", 30));
+
+        BtnResume.setOnAction(e -> {
+            gametimer.start();
+            popupStage.close();
+            
+        });
+        
+        ButtonExitGame = new Button();
+        ButtonExitGame.setText("> Exit Game");
+        ButtonExitGame.setBackground(null);
+        ButtonExitGame.setTextFill(Color.WHITE);
+        ButtonExitGame.setFont(new Font("Papyrus", 30));
+        ButtonExitGame.setOnAction(event -> exit());
+        
 
         BorderPane borderPane = new BorderPane();
-        borderPane.setPrefSize(WIDTH, HEIGHT);
+        borderPane.setPrefSize(width, height);
 
         VBox vbox = new VBox();
         vbox.setAlignment(Pos.CENTER);
-        vbox.getChildren().addAll(BtnSaveScore);
+        vbox.getChildren().addAll(Title,BtnSaveScore,BtnResume,ButtonExitGame);
         borderPane.setCenter(vbox);
-        PauseRoot.getChildren().add(borderPane);
-        Stage popupStage = new Stage(StageStyle.TRANSPARENT);
-        popupStage.initOwner(primaryStage);
+        PauseRoot.getChildren().addAll(borderPane);
+        popupStage = new Stage();
+        popupStage.initStyle(StageStyle.UNDECORATED);
+        //popupStage.initOwner(primaryStage);
+        //popupStage.initModality(Modality.APPLICATION_MODAL);
+        popupStage.setScene(new Scene(PauseRoot));
+        popupStage.centerOnScreen();
         popupStage.initModality(Modality.APPLICATION_MODAL);
-        popupStage.setScene(new Scene(PauseRoot, Color.TRANSPARENT));
+        popupStage.setHeight(height);
+        popupStage.setWidth(width);
+        popupStage.show();
+
+       
 
     }
 
@@ -695,7 +769,6 @@ public class CompSciProject2023 extends Application {
             RangedEnemies.get(i).Sprite.setFitHeight(130);
             RangedEnemies.get(i).Sprite.setFitWidth(100);
             GameRoot.getChildren().add(RangedEnemies.get(i).Sprite);
-           
 
         }
     }
@@ -743,9 +816,8 @@ public class CompSciProject2023 extends Application {
 
     }
 
-
     private void GenerateMaze() {
-        Room Maze = new Room(WIDTH,HEIGHT);
+        Room Maze = new Room(WIDTH, HEIGHT,p1);
         for (Cell row[] : Maze.cells) {
             for (Cell r : row) {
                 GameRoot.getChildren().add(r.Cell);
@@ -799,17 +871,28 @@ public class CompSciProject2023 extends Application {
                 //projectileremove();
                 
                 p1.hit();//player hit method called - changed player health
-               
+                
+                sprite2.setCollision(false);
+                
                 System.out.println(p1.getHealth());//output player health - testing
+                //if (p1.getAlive()==false) {
+                //    GameRoot.getChildren().remove(p1);
+                //    GameRoot.getChildren().removeAll(projectiles);
+                //}
             }
             sprite2.setCollision(false);
         }
-       
-        if (code == 2){
-           
+
+        if (code == 2) {
+
         }
 
     }
+    
+    //private void checkwallcollision(Sprite sprite, Room room){
+        //Collection<Rectangle2D> wallbounds = room.
+    //}
+    
 
     /**
      * @param args the command line arguments
@@ -824,7 +907,5 @@ public class CompSciProject2023 extends Application {
                 GameRoot.getChildren().remove(Enemyprojectiles.get(i).Sprite);
             }
         }
-        
     }
-
 }
