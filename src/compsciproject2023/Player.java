@@ -69,8 +69,10 @@ public class Player extends Sprite {
 
     public void move(double dy, double dx, double width, double height) {
         if (!notmoving) {
-         setYSprite(getYSprite() - dy);
-        setXSprite(getXSprite() - dx);
+            //xspeed = dx;
+            //yspeed = dy;
+        setYSprite(getYSprite() - yspeed);
+        setXSprite(getXSprite() - xspeed);
         double h = Sprite.getFitHeight();
         double w = Sprite.getFitWidth();
         radiuscircleP.setCenterX(getXSprite()+50);
@@ -124,6 +126,22 @@ public class Player extends Sprite {
 
     public void setHealth(int Health) {
         this.Health = Health;
+    }
+
+    public double getXspeed() {
+        return xspeed;
+    }
+
+    public double getYspeed() {
+        return yspeed;
+    }
+
+    public void setXspeed(double xspeed) {
+        this.xspeed = xspeed;
+    }
+
+    public void setYspeed(double yspeed) {
+        this.yspeed = yspeed;
     }
    
    

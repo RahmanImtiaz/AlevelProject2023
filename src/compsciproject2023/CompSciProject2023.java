@@ -563,7 +563,8 @@ public class CompSciProject2023 extends Application {
                     //p1.xspeed *= 3;
                     //p1.yspeed *= 3;
                 }
-               
+                p1.setXspeed(dx);
+                p1.setYspeed(dy);
                 p1.move(dy, dx, Wx, Hy); // player movement method
 
                 shootPlayerprojectile(); //calls for the method responsible for the player shooting
