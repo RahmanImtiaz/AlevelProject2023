@@ -55,11 +55,18 @@ public class Enemies extends Sprite {
         radiuscircleE.setCenterX(getXSprite()+50);
         radiuscircleE.setCenterY(getYSprite()+50);
        
-        if (getXSprite()<width) {
-            dx = 0;
+        //Makes sure enemies dont go out of screen
+        if (getXSprite()<0) {
+            setXSprite(0);
         }
-        if (getYSprite()<height) {
-            dy = 0;
+        if (getXSprite()>width-70) {
+            setXSprite(width-70);
+        }
+        if (getYSprite()<0) {
+            setYSprite(0);
+        }
+        if (getYSprite()>height-70) {
+            setYSprite(height-70);
         }
     }
    
@@ -114,7 +121,5 @@ public class Enemies extends Sprite {
        
 
     }
-   
-   
 
 }

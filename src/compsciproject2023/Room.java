@@ -30,6 +30,7 @@ public class Room extends GridPane {
     Random rand = new Random();
     double RectWidth = 100;
     double RectHeight = 100;
+    double EPSILON = 1.0e-6;
 
     public Room(double width, double height, Player p1) {
 
@@ -122,17 +123,38 @@ public class Room extends GridPane {
     //}
     //return null;
     public void playerwallcollision(Player p1) {
+        double minoverlapx = Double.POSITIVE_INFINITY;
+        double minoverlapy = Double.POSITIVE_INFINITY;
         for (int row = 0; row < cells.length; row++) {
             for (int col = 0; col < cells[0].length; col++) {
 
                 if (cells[row][col].border == true) {
                     
-                if (p1.radiuscircleP.intersects(cells[row][col].Cell.getBoundsInParent())) {
+                if (p1.radiuscircleP.getBoundsInParent().intersects(cells[row][col].Cell.getBoundsInParent())) {
                     //p1.notmoving = true;
                     System.out.println("interset walllllllllll");
-                } else {
-                    //p1.notmoving = false;
-                }
+                    double overlapx;
+                    double overlapy;
+                    //Calculate overlap in x and y directions
+                    overlapx = Math.min((p1.radiuscircleP.getBoundsInParent()).getMaxX() - (cells[row][col].Cell.getBoundsInParent()).getMinX() , (cells[row][col].Cell.getBoundsInParent()).getMaxX() - (p1.radiuscircleP.getBoundsInParent()).getMinX());
+                    overlapy = Math.min((p1.radiuscircleP.getBoundsInParent()).getMaxY() - (cells[row][col].Cell.getBoundsInParent()).getMinY() , (cells[row][col].Cell.getBoundsInParent()).getMaxY() - (p1.radiuscircleP.getBoundsInParent()).getMinY());
+                    
+                    if (overlapx<minoverlapx && overlapy<minoverlapy) {
+                        //store smallest overlap of wall
+                        minoverlapx = overlapx;
+                        minoverlapy = overlapy;
+                    }
+                } 
+                
+                    if (cells[row][col].Cell != null) {
+                        double distx = 0;
+                        double disty = 0;
+                        if (Math.abs(minoverlapx-minoverlapy)<EPSILON) {
+                            distx = ((p1.radiuscircleP.getBoundsInParent()).getMaxX() - (cells[row][col].Cell.getBoundsInParent()).getMinX() < (cells[row][col].Cell.getBoundsInParent()).getMaxX() - (p1.radiuscircleP.getBoundsInParent()).getMinX()) ? -minoverlapx : minoverlapx;
+                            disty = ((p1.radiuscircleP.getBoundsInParent()).getMaxY() - (cells[row][col].Cell.getBoundsInParent()).getMinY() < (cells[row][col].Cell.getBoundsInParent()).getMaxY() - (p1.radiuscircleP.getBoundsInParent()).getMinY()) ? -minoverlapy : minoverlapy;
+                        
+                        }
+                    }
                 
                 }
             }

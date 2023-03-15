@@ -79,7 +79,7 @@ public class CompSciProject2023 extends Application {
     public int Spritenum = 0;
     //Projectiles playerprojectile;
     double projectileSpeed = 10;
-    
+   
     Room Maze;
 
     boolean running, goNorth, goSouth, goEast, goWest, Escape;
@@ -109,6 +109,8 @@ public class CompSciProject2023 extends Application {
     //final int HEIGHT = 1080;
     final double WIDTH = Screen.getPrimary().getBounds().getWidth();
     final double HEIGHT = Screen.getPrimary().getBounds().getHeight();
+    double Wx = Screen.getPrimary().getBounds().getMaxX();
+    double Hy = Screen.getPrimary().getBounds().getMaxY();
 
     Button BtnPlay, Btnscore, BtnSet, BtnExit, BtnGuide;
     Button BtnSaveScore, BtnResume, ButtonExitGame;
@@ -562,7 +564,7 @@ public class CompSciProject2023 extends Application {
                     //p1.yspeed *= 3;
                 }
                
-                p1.move(dy, dx); // player movement method
+                p1.move(dy, dx, Wx, Hy); // player movement method
 
                 shootPlayerprojectile(); //calls for the method responsible for the player shooting
                 Arrowcounter++;//increments each time
@@ -634,12 +636,12 @@ public class CompSciProject2023 extends Application {
                             if (num>=125 && num<150) {
                                 Edy += 0;
                             }
-                            
+                           
                             if (p1.getXSprite()<RangedEnemies.get(i).getXSprite()) {
                                 Edx -= 10;
                             }
                             for (int j = 0; j < change.nextInt(10); j++) {
-                                RangedEnemies.get(i).move(Edx, Edy, WIDTH, HEIGHT);
+                                RangedEnemies.get(i).move(Edx, Edy, Wx, Hy);
                             }
                             //RangedEnemies.get(i).move(Edx, Edy, WIDTH, HEIGHT);
                         }
@@ -673,20 +675,20 @@ public class CompSciProject2023 extends Application {
         Backg.setFitWidth(width);
         Backg.setFitHeight(height);
         PauseRoot.getChildren().add(Backg);
-        
+       
         Label Title = new Label("Pause Menu");
         //Title.setLayoutX(width / 2  - 100);
         //Title.setLayoutY(height / 2 - 200);
         Title.setFont(new Font("Papyrus", 50));
         Title.setTextFill(Color.WHITE);
-        
+       
         BtnSaveScore = new Button();
         BtnSaveScore.setText("> Save Game");
         BtnSaveScore.setBackground(null);
         BtnSaveScore.setTextFill(Color.WHITE);
         BtnSaveScore.setFont(new Font("Papyrus", 30));
         //BtnSaveScore.setOnAction(event -> ));
-        
+       
         BtnResume = new Button();
         BtnResume.setText("> Resume");
         BtnResume.setBackground(null);
@@ -696,16 +698,16 @@ public class CompSciProject2023 extends Application {
         BtnResume.setOnAction(e -> {
             gametimer.start();
             popupStage.close();
-            
+           
         });
-        
+       
         ButtonExitGame = new Button();
         ButtonExitGame.setText("> Exit Game");
         ButtonExitGame.setBackground(null);
         ButtonExitGame.setTextFill(Color.WHITE);
         ButtonExitGame.setFont(new Font("Papyrus", 30));
         ButtonExitGame.setOnAction(event -> exit());
-        
+       
 
         BorderPane borderPane = new BorderPane();
         borderPane.setPrefSize(width, height);
@@ -820,7 +822,7 @@ public class CompSciProject2023 extends Application {
 
     private void GenerateMaze() {
         Maze = new Room(WIDTH, HEIGHT,p1);
-        
+       
         for (Cell row[] : Maze.cells) {
             for (Cell r : row) {
                 GameRoot.getChildren().add(r.Cell);
@@ -870,13 +872,13 @@ public class CompSciProject2023 extends Application {
                 //p1.playerhit = true;//player hit is true
                 sprite1.setCollision(true);
                 sprite2.setCollision(true);//player hit is true
-                
+               
                 //projectileremove();
-                
+               
                 p1.hit();//player hit method called - changed player health
-                
+               
                 sprite2.setCollision(false);
-                
+               
                 System.out.println(p1.getHealth());//output player health - testing
                 //if (p1.getAlive()==false) {
                 //    GameRoot.getChildren().remove(p1);
@@ -891,11 +893,11 @@ public class CompSciProject2023 extends Application {
         }
 
     }
-    
+   
     //private void checkwallcollision(Sprite sprite, Room room){
         //Collection<Rectangle2D> wallbounds = room.
     //}
-    
+   
 
     /**
      * @param args the command line arguments

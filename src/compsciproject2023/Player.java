@@ -24,20 +24,20 @@ public class Player extends Sprite {
     public Image Up1, Up2, Down1, Down2, Left1, Left2, Right1, Right2;
     Circle radiuscircleP;
     boolean notmoving= false;
-    
+   
    
 
     //KeyHandler KeyH = new KeyHandler();
     public Player(int width, int height, String imgpath) {
 
         super(width, height, imgpath);
-        
+       
         Image img = draw(imgpath);
         setDefaultAttributes();
         getplayerimage();
         double h = Sprite.getFitHeight();
         double w = Sprite.getFitWidth();
-        radiuscircleP = new Circle(getXSprite()+50,getYSprite()+50,25,Color.TRANSPARENT);
+        radiuscircleP = new Circle(getXSprite()+50,getYSprite()+70,40,Color.TRANSPARENT);
 
     }
    
@@ -67,16 +67,30 @@ public class Player extends Sprite {
         setCollision(false);
     }
 
-    public void move(double dy, double dx) {
+    public void move(double dy, double dx, double width, double height) {
         if (!notmoving) {
          setYSprite(getYSprite() - dy);
         setXSprite(getXSprite() - dx);
         double h = Sprite.getFitHeight();
         double w = Sprite.getFitWidth();
         radiuscircleP.setCenterX(getXSprite()+50);
-        radiuscircleP.setCenterY(getYSprite()+50);  
+        radiuscircleP.setCenterY(getYSprite()+70);  
         }
-        
+       
+        //Makes sure player does not go out of screen
+        if (getXSprite()<0) {
+            setXSprite(0);
+        }
+        if (getXSprite()>width-70) {
+            setXSprite(width-70);
+        }
+        if (getYSprite()<0) {
+            setYSprite(0);
+        }
+        if (getYSprite()>height-70) {
+            setYSprite(height-70);
+        }
+       
     }
 
     public void getplayerimage() {
@@ -114,3 +128,4 @@ public class Player extends Sprite {
    
    
 }
+
