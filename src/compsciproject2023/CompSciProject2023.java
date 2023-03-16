@@ -66,6 +66,9 @@ public class CompSciProject2023 extends Application {
 
     AnimationTimer gametimer;
 
+    Room[][] rooms = new Room[10][10];
+    int CurrentRoomx, CurrentRoomy;
+
     Stage Stage;
     Stage popupStage;
 
@@ -79,7 +82,7 @@ public class CompSciProject2023 extends Application {
     public int Spritenum = 0;
     //Projectiles playerprojectile;
     double projectileSpeed = 10;
-   
+
     Room Maze;
 
     boolean running, goNorth, goSouth, goEast, goWest, Escape;
@@ -375,9 +378,22 @@ public class CompSciProject2023 extends Application {
         Backg.setFitHeight(HEIGHT);
         GameRoot.getChildren().add(Backg);
 
-        p1 = new Player(30, 30, Down1); //creates the player object
+        //p1 = new Player(30, 30, Down1); //creates the player object
 
-        GenerateMaze();
+        //GenerateMaze();
+        /////////////////////
+        
+        Random rand = new Random();
+        CurrentRoomx = rand.nextInt(9);// 9 or 10 idk
+        CurrentRoomy = rand.nextInt(9);
+        
+        //show start room on screen before maze gen
+        rooms[CurrentRoomy][CurrentRoomx].drawRoom(GameRoot);
+        
+        //add player
+        p1 = new Player(30, 30, Down1); //creates the player object
+        System.out.println("Start maze at x="+CurrentRoomx+" and y="+CurrentRoomy);
+        GenerateMaze(CurrentRoomx,CurrentRoomy);
 
         //GameRoot.getChildren().add(p1.rect);
         GameRoot.getChildren().add(p1.Sprite);
@@ -399,11 +415,73 @@ public class CompSciProject2023 extends Application {
         //        }
         //    }
         //});
-
         primaryStage.setScene(sceneGame);
         primaryStage.setFullScreen(true);
 
     }
+    
+    
+    
+    private void GenerateMaze(int x, int y) {
+        rooms[y][x].isAddedToMaze(); // make visited true
+        //System.out.println("Room: ");
+        Direction[] directions = Direction.values();//get all directions
+
+        //Randomise direction
+        shuffle(directions);
+
+        //check if there is a valid room in that direction
+        //make door in wall
+        //make matching neighbor door
+        //recursive call on neighbour
+        for (Direction d : directions) {
+            if (d == Direction.DOWN && isValidRoom(x, y + 1)) {//check if direction is down and the next room down is valid
+                rooms[y][x].makeDoor(d); //make an exit to existing room
+                rooms[y + 1][x].makeDoor(d.getNeighbourDoor(d)); //make an entrance to the new room
+                GenerateMaze(x, y + 1); //Recursive call for the new room
+            } 
+            else if (d == Direction.UP && isValidRoom(x, y - 1)) {//check if direction is up and the next room down is valid
+                rooms[y][x].makeDoor(d); //make an exit to existing room
+                rooms[y - 1][x].makeDoor(d.getNeighbourDoor(d)); //make an entrance to the new room
+                GenerateMaze(x, y - 1); //Recursive call for the new room
+            } 
+            else if (d == Direction.LEFT && isValidRoom(x - 1, y)) {//check if direction is left and the next room down is valid
+                rooms[y][x].makeDoor(d); //make an exit to existing room
+                rooms[y][x - 1].makeDoor(d.getNeighbourDoor(d)); //make an entrance to the new room
+                GenerateMaze(x - 1, y); //Recursive call for the new room
+            } 
+            else if (d == Direction.RIGHT && isValidRoom(x + 1, y)) {//check if direction is right and the next room down is valid
+                rooms[y][x].makeDoor(d); //make an exit to existing room
+                rooms[y][x + 1].makeDoor(d.getNeighbourDoor(d)); //make an entrance to the new room
+                GenerateMaze(x + 1, y); //Recursive call for the new room
+            }
+        }
+
+    }
+
+    private boolean isValidRoom(int x, int y) {
+        if (x > -1 && x < 10 && y > -1 && y < 10 && rooms[y][x].IsInTheMaze() == false) {
+            return true;
+        }
+        return false;
+    }
+
+    private void shuffle(Direction[] directions) {
+        Random Rindex = new Random();
+        for (int i = 0; i < directions.length; i++) {
+            int index = Rindex.nextInt(5); // random value between 1-4
+            if (index != i) {
+              Direction temp = directions[i];
+            directions[i] = directions[index];
+            directions[index] = temp;  
+            }else{
+                i--;//i get incremented in a for loop -- this line decrements in so that i does not change-- cause it to loop again.
+            }
+        }
+    }
+    
+    
+    
 
     private void controls(Scene sceneGame) {
         sceneGame.setOnKeyPressed((KeyEvent event) -> {
@@ -619,26 +697,26 @@ public class CompSciProject2023 extends Application {
                         Random change = new Random();
                         int num = change.nextInt(150);
                         if (RangedEnemies.get(i) != null) {
-                            if (num<25) {
+                            if (num < 25) {
                                 Edy += 10;
                             }
-                            if (num>=25 && num<50) {
+                            if (num >= 25 && num < 50) {
                                 Edy -= 10;
                             }
-                            if (num>=50 && num<75) {
+                            if (num >= 50 && num < 75) {
                                 Edx -= 10;
                             }
-                            if (num>=75 && num<100) {
+                            if (num >= 75 && num < 100) {
                                 Edx += 10;
                             }
-                            if (num>=100 && num<125) {
+                            if (num >= 100 && num < 125) {
                                 Edx += 0;
                             }
-                            if (num>=125 && num<150) {
+                            if (num >= 125 && num < 150) {
                                 Edy += 0;
                             }
-                           
-                            if (p1.getXSprite()<RangedEnemies.get(i).getXSprite()) {
+
+                            if (p1.getXSprite() < RangedEnemies.get(i).getXSprite()) {
                                 Edx -= 10;
                             }
                             for (int j = 0; j < change.nextInt(10); j++) {
@@ -668,28 +746,28 @@ public class CompSciProject2023 extends Application {
     private void InGamePauseMenu() {
         //BtnSaveScore, BtnResume, ButtonExitGame
         PauseRoot = new Group();
-        double width = WIDTH/2.5;
-        double height = HEIGHT/2.5;
+        double width = WIDTH / 2.5;
+        double height = HEIGHT / 2.5;
 
         Image imgBack = new Image("Settingsbox.JPG");
         ImageView Backg = new ImageView(imgBack);
         Backg.setFitWidth(width);
         Backg.setFitHeight(height);
         PauseRoot.getChildren().add(Backg);
-       
+
         Label Title = new Label("Pause Menu");
         //Title.setLayoutX(width / 2  - 100);
         //Title.setLayoutY(height / 2 - 200);
         Title.setFont(new Font("Papyrus", 50));
         Title.setTextFill(Color.WHITE);
-       
+
         BtnSaveScore = new Button();
         BtnSaveScore.setText("> Save Game");
         BtnSaveScore.setBackground(null);
         BtnSaveScore.setTextFill(Color.WHITE);
         BtnSaveScore.setFont(new Font("Papyrus", 30));
         //BtnSaveScore.setOnAction(event -> ));
-       
+
         BtnResume = new Button();
         BtnResume.setText("> Resume");
         BtnResume.setBackground(null);
@@ -699,23 +777,22 @@ public class CompSciProject2023 extends Application {
         BtnResume.setOnAction(e -> {
             gametimer.start();
             popupStage.close();
-           
+
         });
-       
+
         ButtonExitGame = new Button();
         ButtonExitGame.setText("> Exit Game");
         ButtonExitGame.setBackground(null);
         ButtonExitGame.setTextFill(Color.WHITE);
         ButtonExitGame.setFont(new Font("Papyrus", 30));
         ButtonExitGame.setOnAction(event -> exit());
-       
 
         BorderPane borderPane = new BorderPane();
         borderPane.setPrefSize(width, height);
 
         VBox vbox = new VBox();
         vbox.setAlignment(Pos.CENTER);
-        vbox.getChildren().addAll(Title,BtnSaveScore,BtnResume,ButtonExitGame);
+        vbox.getChildren().addAll(Title, BtnSaveScore, BtnResume, ButtonExitGame);
         borderPane.setCenter(vbox);
         PauseRoot.getChildren().addAll(borderPane);
         popupStage = new Stage();
@@ -728,8 +805,6 @@ public class CompSciProject2023 extends Application {
         popupStage.setHeight(height);
         popupStage.setWidth(width);
         popupStage.show();
-
-       
 
     }
 
@@ -822,14 +897,17 @@ public class CompSciProject2023 extends Application {
     }
 
     private void GenerateMaze() {
-        Maze = new Room(WIDTH, HEIGHT,p1);
-       
+        Maze = new Room(WIDTH, HEIGHT, p1);
         for (Cell row[] : Maze.cells) {
             for (Cell r : row) {
                 GameRoot.getChildren().add(r.Cell);
             }
         }
+
+        ///////////////////////
     }
+
+    
 
     private void spawnArrows() {
 
@@ -873,14 +951,13 @@ public class CompSciProject2023 extends Application {
                 //p1.playerhit = true;//player hit is true
                 sprite1.setCollision(true);
                 sprite2.setCollision(true);//player hit is true
-               
+
                 //projectileremove();
                 //Enemyprojectiles.forEach(Enemyprojectiles -> projectileremove());
-               
                 p1.hit();//player hit method called - changed player health
-               
+
                 sprite2.setCollision(false);
-               
+
                 System.out.println(p1.getHealth());//output player health - testing
                 //if (p1.getAlive()==false) {
                 //    GameRoot.getChildren().remove(p1);
@@ -895,12 +972,10 @@ public class CompSciProject2023 extends Application {
         }
 
     }
-   
-    //private void checkwallcollision(Sprite sprite, Room room){
-        //Collection<Rectangle2D> wallbounds = room.
-    //}
-   
 
+    //private void checkwallcollision(Sprite sprite, Room room){
+    //Collection<Rectangle2D> wallbounds = room.
+    //}
     /**
      * @param args the command line arguments
      */
@@ -915,4 +990,5 @@ public class CompSciProject2023 extends Application {
             }
         }
     }
+
 }

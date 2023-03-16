@@ -33,10 +33,12 @@ public class Room extends GridPane {
     double RectWidth = 100;
     double RectHeight = 100;
     double EPSILON = 1.0e-6;
+    int roomnum;
 
     private boolean visited;
 
     public Room(double width, double height, Player p1/*, int roomNum*/) {
+        //this.roomnum = roomNum;
         visited = false;
         int numC = (int) ((int) width / RectWidth);
         int numR = (int) ((int) height / RectHeight);
@@ -85,7 +87,12 @@ public class Room extends GridPane {
     }
 
     public void drawRoom(Group root) {
-
+        root.getChildren().clear();
+        for (Cell[] row:cells) {
+            for (Cell cell:row) {
+                root.getChildren().add(cell.Cell);
+            }
+        }
     }
 
     public void isAddedToMaze() {
@@ -122,6 +129,8 @@ public class Room extends GridPane {
                 break;
         }
     }
+
+    
 
     public void playerwallcollision(Player p1) {
         double minoverlapx = Double.POSITIVE_INFINITY;

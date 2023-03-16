@@ -74,7 +74,6 @@ public class Cell {
             Cell = new ImageView(updoor);
             border = false;
             type = "UpDoor";
-            
         }
         
        
