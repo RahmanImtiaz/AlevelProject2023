@@ -25,36 +25,58 @@ public class Cell {
     Image upwall = new Image("Upwall.png");
     Image leftdoor = new Image("Doorleft.png");
     Image rightdoor = new Image("Doorright.png");
+    Image downdoor = new Image("Doordown.png");
+    Image updoor = new Image("Doorup.png");
     //Rectangle Cell;
     ImageView Cell;
     boolean border;
+    
+    String type;
 
     public Cell(int code, double width, double height) {
         if (code == 0) {
             Cell = new ImageView(Topwall2);
             border = true;
+            type = "Wall";
             //Cell.setFill(new ImagePattern(upwall));
         }
         if (code == 1) {
             Cell = new ImageView(floor);
             border = false;
+            type = "Floor";
             //Cell.setFill(new ImagePattern(floor));
         }
         if (code == 3) {
             Cell = new ImageView(Topwall2);
             border = true;
+            type = "Wall";
             //Cell.setFill(new ImagePattern(Topwall2));
         }
         if (code == 4) {
             Cell = new ImageView(leftdoor);
             border = false;
+            type = "LeftDoor";
             //Cell.setFill(new ImagePattern(leftdoor));
         }
         if (code == 5) {
             Cell = new ImageView(rightdoor);
             border = false;
+            type = "RightDoor";
             //Cell.setFill(new ImagePattern(rightdoor));
         }
+        if (code == 6) {
+            Cell = new ImageView(downdoor);
+            border = false;
+            type = "DownDoor";
+            
+        }
+        if (code == 7) {
+            Cell = new ImageView(updoor);
+            border = false;
+            type = "UpDoor";
+            
+        }
+        
        
         Cell.setFitHeight(height);
         Cell.setFitWidth(width);

@@ -875,6 +875,7 @@ public class CompSciProject2023 extends Application {
                 sprite2.setCollision(true);//player hit is true
                
                 //projectileremove();
+                //Enemyprojectiles.forEach(Enemyprojectiles -> projectileremove());
                
                 p1.hit();//player hit method called - changed player health
                

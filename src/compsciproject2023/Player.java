@@ -37,7 +37,7 @@ public class Player extends Sprite {
         getplayerimage();
         double h = Sprite.getFitHeight();
         double w = Sprite.getFitWidth();
-        radiuscircleP = new Circle(getXSprite()+50,getYSprite()+70,40,Color.TRANSPARENT);
+        radiuscircleP = new Circle(getXSprite()+50,getYSprite()+70,35,Color.TRANSPARENT);
 
     }
    
