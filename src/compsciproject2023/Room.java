@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
+import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -68,6 +69,10 @@ public class Room extends GridPane {
                 if (row == numR / 2 && col != 0 && col != numC - 1) {// middle row is all floor, not doors 
                     codeimg = 1;
                 }
+                
+                if ((row == 1 && col == 1) || row == 2 && col == 2) {
+                    codeimg = 1;
+                }
 
                 cells[row][col] = new Cell(codeimg, RectWidth, RectHeight);
                 cells[row][col].Cell.setLayoutX(col * (RectWidth));
@@ -102,6 +107,22 @@ public class Room extends GridPane {
     public boolean IsInTheMaze() {
         return visited;
     }
+    
+    public Collection<Rectangle2D> getwallbounds(){
+        List <Rectangle2D> wallbounds = new ArrayList<>();
+        int numR = cells.length;
+        int numC = cells[0].length;
+        for (int row = 0; row < numR; row++) {
+            for (int col = 0; col < numC; col++) {
+                if (cells[row][col].border==true) {
+                    Bounds BoundsInScene = cells[row][col].Cell.localToScene(cells[row][col].Cell.getBoundsInLocal());
+                    
+                    wallbounds.add(new Rectangle2D(BoundsInScene.getMinX(), BoundsInScene.getMinY(), BoundsInScene.getWidth(), BoundsInScene.getHeight()));
+                }
+            
+            }}
+        return wallbounds;
+    }
 
     public void makeDoor(Direction direction) {
         int numR = cells.length;
@@ -130,7 +151,7 @@ public class Room extends GridPane {
         }
     }
 
-    
+
 
     public void playerwallcollision(Player p1) {
         double minoverlapx = Double.POSITIVE_INFINITY;
@@ -145,6 +166,9 @@ public class Room extends GridPane {
                         System.out.println("interset walllllllllll");
                         p1.setXSprite(p1.getXSprite() + p1.xspeed);
                         p1.setYSprite(p1.getYSprite() + p1.yspeed);
+                        
+                       
+
 
                         //double overlapx;
                         //double overlapy;

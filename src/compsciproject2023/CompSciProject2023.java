@@ -360,6 +360,8 @@ public class CompSciProject2023 extends Application {
     }
 
     private void CreateGame(Stage primaryStage) { //Function used to create the Game scene
+        
+        
         Down1 = "Down1.png";
         Down2 = "Down2.png";
         Up1 = "Up1.png";
@@ -380,20 +382,20 @@ public class CompSciProject2023 extends Application {
 
         //p1 = new Player(30, 30, Down1); //creates the player object
 
-        //GenerateMaze();
+        GenerateMaze();
         /////////////////////
         
         Random rand = new Random();
-        CurrentRoomx = rand.nextInt(9);// 9 or 10 idk
-        CurrentRoomy = rand.nextInt(9);
+        CurrentRoomx = rand.nextInt(10);// 9 or 10 idk
+        CurrentRoomy = rand.nextInt(10);
         
         //show start room on screen before maze gen
-        rooms[CurrentRoomy][CurrentRoomx].drawRoom(GameRoot);
+        ///rooms[CurrentRoomy][CurrentRoomx].drawRoom(GameRoot);
         
         //add player
         p1 = new Player(30, 30, Down1); //creates the player object
-        System.out.println("Start maze at x="+CurrentRoomx+" and y="+CurrentRoomy);
-        GenerateMaze(CurrentRoomx,CurrentRoomy);
+        ///System.out.println("Start maze at x="+CurrentRoomx+" and y="+CurrentRoomy);
+        ///GenerateMaze(CurrentRoomx,CurrentRoomy);
 
         //GameRoot.getChildren().add(p1.rect);
         GameRoot.getChildren().add(p1.Sprite);
@@ -401,20 +403,10 @@ public class CompSciProject2023 extends Application {
 
         Scene sceneGame = new Scene(GameRoot, WIDTH, HEIGHT);
         sceneGame.setCursor(Cursor.CROSSHAIR); //changes how the mouse will look
-        controls(sceneGame); //calls the subroutine resposible for the key listeners
+        controls(sceneGame,primaryStage); //calls the subroutine resposible for the key listeners
         loop(primaryStage); //calls the subroutine with the animation timer/gameloop
 
         spawnRangedEnemies();//calls the subroutine responsible for enemy spawns
-
-        //sceneGame.setOnKeyPressed(
-        //        new EventHandler<KeyEvent>() {
-        //    public void handle(KeyEvent e) {
-        //        String code = e.getCode().toString();
-        //        if (code == "ESCAPE") {
-        //            InGamePauseMenu();
-        //        }
-        //    }
-        //});
         primaryStage.setScene(sceneGame);
         primaryStage.setFullScreen(true);
 
@@ -469,7 +461,7 @@ public class CompSciProject2023 extends Application {
     private void shuffle(Direction[] directions) {
         Random Rindex = new Random();
         for (int i = 0; i < directions.length; i++) {
-            int index = Rindex.nextInt(5); // random value between 1-4
+            int index = Rindex.nextInt(5); // random value between 0-4
             if (index != i) {
               Direction temp = directions[i];
             directions[i] = directions[index];
@@ -483,7 +475,7 @@ public class CompSciProject2023 extends Application {
     
     
 
-    private void controls(Scene sceneGame) {
+    private void controls(Scene sceneGame, Stage primaryStage) {
         sceneGame.setOnKeyPressed((KeyEvent event) -> {
             switch (event.getCode()) {
                 case W:
@@ -543,7 +535,7 @@ public class CompSciProject2023 extends Application {
                 case ESCAPE:
                     Escape = true;
                     gametimer.stop();
-                    InGamePauseMenu();
+                    InGamePauseMenu(primaryStage);
                     break;
             }
         });
@@ -644,8 +636,9 @@ public class CompSciProject2023 extends Application {
                 p1.setXspeed(dx);
                 p1.setYspeed(dy);
                 p1.move(dy, dx, Wx, Hy); // player movement method
-
-                shootPlayerprojectile(); //calls for the method responsible for the player shooting
+                
+                
+                //shootPlayerprojectile(); //calls for the method responsible for the player shooting
                 Arrowcounter++;//increments each time
                 RangedEnemycounter++;//dont need it for now
                 spawnArrows();//spawns arrows
@@ -730,8 +723,23 @@ public class CompSciProject2023 extends Application {
                 Maze.playerwallcollision(p1);
                 //checkcollision
                 Enemyprojectiles.forEach(Enemyprojectiles -> checkcollision(Enemyprojectiles, p1, 1)); //passes both sprite and 1--1 because player-enemyproj interact
-
+                //projectiles.forEach(Enemyprojectiles -> checkcollision(Enemyprojectiles, Enemyprojectiles, 2));
                 //RangedEnemies.forEach(RangedEnemies -> RangedEnemies.move(randommovedx, randommovedy, WIDTH, HEIGHT));
+                
+                //player PROJECTILE WALL COLLISIOON
+                for (Projectiles projectile : projectiles) {
+                    if (projectile.isAlive()) {
+                        shootPlayerprojectile();
+                    }
+                   if (projectile.checkcollision(Maze)) {
+                    projectile.setAlive(false);
+                    if (projectile.Sprite.getParent() != null) {
+                        GameRoot.getChildren().remove(projectile.Sprite);
+                    }
+                  } 
+                }
+                
+                
             }
 
         };
@@ -743,11 +751,11 @@ public class CompSciProject2023 extends Application {
         //         }
     }
 
-    private void InGamePauseMenu() {
+    private void InGamePauseMenu(Stage primaryStage) {
         //BtnSaveScore, BtnResume, ButtonExitGame
         PauseRoot = new Group();
-        double width = WIDTH / 2.5;
-        double height = HEIGHT / 2.5;
+        double width = WIDTH / 2;
+        double height = HEIGHT / 2;
 
         Image imgBack = new Image("Settingsbox.JPG");
         ImageView Backg = new ImageView(imgBack);
@@ -779,6 +787,18 @@ public class CompSciProject2023 extends Application {
             popupStage.close();
 
         });
+        
+        Button Restartbtn = new Button();
+        Restartbtn.setText("> Restart");
+        Restartbtn.setBackground(null);
+        Restartbtn.setTextFill(Color.WHITE);
+        Restartbtn.setFont(new Font("Papyrus", 30));
+
+        Restartbtn.setOnAction(e -> {
+           CreateGame(primaryStage);
+
+        });
+
 
         ButtonExitGame = new Button();
         ButtonExitGame.setText("> Exit Game");
@@ -792,7 +812,7 @@ public class CompSciProject2023 extends Application {
 
         VBox vbox = new VBox();
         vbox.setAlignment(Pos.CENTER);
-        vbox.getChildren().addAll(Title, BtnSaveScore, BtnResume, ButtonExitGame);
+        vbox.getChildren().addAll(Title, BtnSaveScore, BtnResume, Restartbtn, ButtonExitGame);
         borderPane.setCenter(vbox);
         PauseRoot.getChildren().addAll(borderPane);
         popupStage = new Stage();
@@ -967,8 +987,10 @@ public class CompSciProject2023 extends Application {
             sprite2.setCollision(false);
         }
 
-        if (code == 2) {
-
+        if (code == 2) {//player projectile and enemy
+            if (sprite1.Sprite.getBoundsInParent().intersects(sprite2.Sprite.getBoundsInParent())) {
+                GameRoot.getChildren().remove(sprite2.Sprite);
+            }
         }
 
     }
