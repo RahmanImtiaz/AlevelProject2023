@@ -712,35 +712,16 @@ public class CompSciProject2023 extends Application {
                     }
 
                 }
-                Maze.playerwallcollision(p1);
-                //checkcollision
-                if (healthhitcount % 100 == 0) {
-                    Enemyprojectiles.forEach(Enemyprojectiles -> checkcollision(Enemyprojectiles, p1, 1)); //passes both sprite and 1--1 because player-enemyproj interact
-                    projectiles.forEach(projectiles -> Arraycheckcollision(projectiles, Enemyprojectiles)); //player projectile and enemy collision
-                }
 
+                //Collisions
+                Maze.playerwallcollision(p1); //Player and wall collisions
+                if (healthhitcount % 100 == 0) {
+                    playerwithenemyprojcoll(p1); //Player and enemy projectile         
+                }
                 projectiles.forEach(projectiles -> Maze.Spritewallcollision(projectiles, GameRoot, 1)); //Player projectile and wall collision
                 Enemyprojectiles.forEach(Enemyprojectiles -> Maze.Spritewallcollision(Enemyprojectiles, GameRoot, 1)); //Enemy projectile and wall collision
                 RangedEnemies.forEach(RangedEnemies -> Maze.Spritewallcollision(RangedEnemies, GameRoot, 2)); //Enemy and wall collision
-
-                //projectile and enemy collision
                 RangedEnemies.forEach(RangedEnemies -> enemyplayerprojcoll(RangedEnemies)); //Enemy and player proj collision
-
-                //Enemyprojectiles.forEach(Enemyprojectiles -> checkcollision(Enemyprojectiles, p1, 1)); //passes both sprite and 1--1 because player-enemyproj interact
-                //projectiles.forEach(Enemyprojectiles -> checkcollision(Enemyprojectiles, Enemyprojectiles, 2));
-                //RangedEnemies.forEach(RangedEnemies -> RangedEnemies.move(randommovedx, randommovedy, WIDTH, HEIGHT));
-                //player PROJECTILE WALL COLLISIOON
-                //for (Projectiles projectile : projectiles) {
-                //if (projectile.isAlive()) {
-                //shootPlayerprojectile();
-                //}
-                //if (projectile.checkcollision(Maze)) {
-                //projectile.setAlive(false);
-                //if (projectile.Sprite.getParent() != null) {
-                // GameRoot.getChildren().remove(projectile.Sprite);
-                //}
-                //}
-                //}
                 spriteremove(primaryStage); // remove sprite that are not alive
             }
 
@@ -962,51 +943,6 @@ public class CompSciProject2023 extends Application {
         Stage.setFullScreen(true);
     }
 
-    private void checkcollision(Sprite sprite1, Sprite sprite2, int code) {
-        if (code == 1) {//checks if player and enemy projectiles -- code 1
-            if (sprite1.Sprite.getBoundsInParent().intersects(sprite2.Sprite.getBoundsInParent())) {
-                //p1.playerhit = true;//player hit is true
-                sprite1.setCollision(true);
-                sprite2.setCollision(true);//player hit is true
-
-                projectilesetalive();
-                //Enemyprojectiles.forEach(Enemyprojectiles -> projectileremove());
-                p1.hit();//player hit method called - changed player health
-                sprite2.setAlive(false);
-                sprite2.setCollision(false);
-
-                System.out.println(p1.getHealth());//output player health - testing
-                //if (p1.getAlive()==false) {
-                //    GameRoot.getChildren().remove(p1);
-                //    GameRoot.getChildren().removeAll(projectiles);
-                //}
-            }
-            sprite2.setCollision(false);
-        }
-
-        if (code == 2) {//player projectile and enemy
-            if (sprite1.Sprite.getBoundsInParent().intersects(sprite2.Sprite.getBoundsInParent())) {
-                sprite1.setAlive(false);
-                sprite2.setAlive(false);
-            }
-        }
-
-    }
-
-    private void Arraycheckcollision(Sprite sprite1, ArrayList<Projectiles> sprite2) {//player projectiles and enemies
-        for (int i = 0; i < sprite2.size(); i++) {
-
-            if (sprite1.Sprite.getBoundsInParent().intersects(sprite2.get(i).Sprite.getBoundsInParent())) {
-
-                sprite1.setAlive(false);
-                sprite2.get(i).setAlive(false);
-            }
-        }
-
-    }
-
-    //private void checkwallcollision(Sprite sprite, Room room){
-    //Collection<Rectangle2D> wallbounds = room.
     //}
     /**
      * @param args the command line arguments
@@ -1027,10 +963,13 @@ public class CompSciProject2023 extends Application {
         }
     }
 
-    private void projectilesetalive() {
-        for (int i = 0; i < Enemyprojectiles.size(); i++) {
-            if (Enemyprojectiles.get(i).getCollision() == true) {
-                Enemyprojectiles.get(i).setAlive(false);
+    private void playerwithenemyprojcoll(Player p1) {
+        Iterator<Projectiles> it = Enemyprojectiles.iterator();
+        while (it.hasNext()) {
+            Projectiles proj = it.next();
+            if (proj.Sprite.getBoundsInParent().intersects(p1.Sprite.getBoundsInParent())) {
+                proj.setAlive(false);
+                p1.hit();
             }
         }
     }
@@ -1038,8 +977,8 @@ public class CompSciProject2023 extends Application {
     private void spriteremove(Stage primaryStage) { //Remove the sprites from the game root, if they are not alive
 
         if (p1.isAlive() == false) {//Remove player if dead
-            //GameRoot.getChildren().remove(p1.Sprite);
-            //GameRoot.getChildren().remove(projectiles);
+            //GameRoot.getChildren().remove(p1.Sprite);//remove player
+            //GameRoot.getChildren().remove(projectiles);//remove players projectiles
         }
         for (int i = 0; i < Enemyprojectiles.size(); i++) {//Remove enemy projectile if dead
             if (Enemyprojectiles.get(i).isAlive() == false) {
@@ -1054,11 +993,11 @@ public class CompSciProject2023 extends Application {
         }
         for (int k = 0; k < RangedEnemies.size(); k++) {//Remove enemy if dead
             if (RangedEnemies.get(k).isAlive() == false) {
-                GameRoot.getChildren().remove(RangedEnemies.get(k).Sprite);
-                KillCounter++;
-                System.out.println(KillCounter);
+                GameRoot.getChildren().remove(RangedEnemies.get(k).Sprite);//removes enemy
+                GameRoot.getChildren().remove(Enemyprojectiles);//removes enemy's projectiles
+                KillCounter++;//counts the kills
+                System.out.println(KillCounter);//used for testing
             }
         }
-
     }
 }

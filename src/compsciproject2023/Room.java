@@ -153,54 +153,13 @@ public class Room extends GridPane {
         }
     }
 
-    public void playerwallcollision(Player p1) {
-        double minoverlapx = Double.POSITIVE_INFINITY;
-        double minoverlapy = Double.POSITIVE_INFINITY;
+    public void playerwallcollision(Player p1) { //Player and wall collisions
         for (int row = 0; row < cells.length; row++) {
             for (int col = 0; col < cells[0].length; col++) {
-
                 if (cells[row][col].border == true) {
-
                     if (p1.radiuscircleP.getBoundsInParent().intersects(cells[row][col].Cell.getBoundsInParent())) {
-                        //p1.notmoving = true;
-                        //System.out.println("interset walllllllllll");
                         p1.setXSprite(p1.getXSprite() + p1.xspeed);
                         p1.setYSprite(p1.getYSprite() + p1.yspeed);
-
-                        //double overlapx;
-                        //double overlapy;
-                        ////Calculate overlap in x and y directions
-                        //overlapx = Math.min((p1.radiuscircleP.getBoundsInParent()).getMaxX() - (cells[row][col].Cell.getBoundsInParent()).getMinX() , (cells[row][col].Cell.getBoundsInParent()).getMaxX() - (p1.radiuscircleP.getBoundsInParent()).getMinX());
-                        //overlapy = Math.min((p1.radiuscircleP.getBoundsInParent()).getMaxY() - (cells[row][col].Cell.getBoundsInParent()).getMinY() , (cells[row][col].Cell.getBoundsInParent()).getMaxY() - (p1.radiuscircleP.getBoundsInParent()).getMinY());
-                        //if (overlapx < overlapy) {
-                        //double sign = Math.signum(p1.getXSpeed());
-                        //p1.setXSprite(p1.getXSprite() - overlapx * sign);
-                        //p1.setXSpeed(0);
-                        //} else {
-                        //double sign = Math.signum(p1.getYSpeed());
-                        //p1.setXSprite(p1.getYSprite() - overlapy * sign);
-                        //p1.setXSpeed(0);
-                        //}
-                        ////////////////////////////////////////////////////////////////////////
-                        //if (overlapx<minoverlapx && overlapy<minoverlapy) {
-                        ////store smallest overlap of wall
-                        //minoverlapx = overlapx;
-                        //minoverlapy = overlapy;
-                        //}
-                        //}
-                        //if (cells[row][col].Cell != null) {
-                        //double distx = 0;
-                        //double disty = 0;
-                        //if (Math.abs(minoverlapx-minoverlapy)<EPSILON) {
-                        //distx = ((p1.radiuscircleP.getBoundsInParent()).getMaxX() - (cells[row][col].Cell.getBoundsInParent()).getMinX() < (cells[row][col].Cell.getBoundsInParent()).getMaxX() - (p1.radiuscircleP.getBoundsInParent()).getMinX()) ? -minoverlapx : minoverlapx;
-                        //disty = ((p1.radiuscircleP.getBoundsInParent()).getMaxY() - (cells[row][col].Cell.getBoundsInParent()).getMinY() < (cells[row][col].Cell.getBoundsInParent()).getMaxY() - (p1.radiuscircleP.getBoundsInParent()).getMinY()) ? -minoverlapy : minoverlapy;
-                        //} else if (minoverlapx< minoverlapy){
-                        //distx = ((p1.radiuscircleP.getBoundsInParent()).getMaxX() - (cells[row][col].Cell.getBoundsInParent()).getMinX() < (cells[row][col].Cell.getBoundsInParent()).getMaxX() - (p1.radiuscircleP.getBoundsInParent()).getMinX()) ? -minoverlapx : minoverlapx;
-                        //} else {
-                        //disty = ((p1.radiuscircleP.getBoundsInParent()).getMaxY() - (cells[row][col].Cell.getBoundsInParent()).getMinY() < (cells[row][col].Cell.getBoundsInParent()).getMaxY() - (p1.radiuscircleP.getBoundsInParent()).getMinY()) ? -minoverlapy : minoverlapy;
-                        //}
-                        //p1.setXSprite(p1.getXSprite() + distx);
-                        //p1.setYSprite(p1.getYSprite() + disty);
                     }
                 }
             }
@@ -208,19 +167,13 @@ public class Room extends GridPane {
     }
 
     public void Spritewallcollision(Sprite sprite, Group GameRoot, int code) { //collision for sprite and wall //code 1 - projectile, code 2 - enemies
-        double minoverlapx = Double.POSITIVE_INFINITY;
-        double minoverlapy = Double.POSITIVE_INFINITY;
         for (int row = 0; row < cells.length; row++) {
             for (int col = 0; col < cells[0].length; col++) {
-
                 if (cells[row][col].border == true) {
-
                     if (sprite.Sprite.getBoundsInParent().intersects(cells[row][col].Cell.getBoundsInParent())) {
-
                         sprite.setXSprite(sprite.getXSprite() + sprite.getXSpeed());
                         sprite.setYSprite(sprite.getYSprite() + sprite.getYSpeed());
-                        
-                        if (code == 1) {
+                        if (code == 1) {//if sprite is projectile
                           sprite.setAlive(false);  
                         }
                     }
