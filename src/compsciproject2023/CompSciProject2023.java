@@ -80,6 +80,7 @@ public class CompSciProject2023 extends Application {
     public Player p1;
     public int Spritecount = 0;
     public int Spritenum = 0;
+    public int healthhitcount = 0;
     //Projectiles playerprojectile;
     double projectileSpeed = 10;
 
@@ -97,6 +98,7 @@ public class CompSciProject2023 extends Application {
     private int MaleeEnemycounter = 0, MaleeEnemyspawnTime = 180;
     private double MaleeEnemySpeed = 2;
     private Enemies MaleeEnemy;
+    private int KillCounter = 0;
 
     private ArrayList<Enemies> RangedEnemies = new ArrayList();
     private ArrayList<Projectiles> Enemyprojectiles = new ArrayList();
@@ -360,8 +362,7 @@ public class CompSciProject2023 extends Application {
     }
 
     private void CreateGame(Stage primaryStage) { //Function used to create the Game scene
-        
-        
+
         Down1 = "Down1.png";
         Down2 = "Down2.png";
         Up1 = "Up1.png";
@@ -381,17 +382,16 @@ public class CompSciProject2023 extends Application {
         GameRoot.getChildren().add(Backg);
 
         //p1 = new Player(30, 30, Down1); //creates the player object
-
         GenerateMaze();
         /////////////////////
-        
+
         Random rand = new Random();
         CurrentRoomx = rand.nextInt(10);// 9 or 10 idk
         CurrentRoomy = rand.nextInt(10);
-        
+
         //show start room on screen before maze gen
         ///rooms[CurrentRoomy][CurrentRoomx].drawRoom(GameRoot);
-        
+        ///rooms[CurrentRoomy][CurrentRoomx] = new Room(WIDTH,HEIGHT,p1);
         //add player
         p1 = new Player(30, 30, Down1); //creates the player object
         ///System.out.println("Start maze at x="+CurrentRoomx+" and y="+CurrentRoomy);
@@ -403,17 +403,16 @@ public class CompSciProject2023 extends Application {
 
         Scene sceneGame = new Scene(GameRoot, WIDTH, HEIGHT);
         sceneGame.setCursor(Cursor.CROSSHAIR); //changes how the mouse will look
-        controls(sceneGame,primaryStage); //calls the subroutine resposible for the key listeners
+        controls(sceneGame, primaryStage); //calls the subroutine resposible for the key listeners
         loop(primaryStage); //calls the subroutine with the animation timer/gameloop
 
         spawnRangedEnemies();//calls the subroutine responsible for enemy spawns
+
         primaryStage.setScene(sceneGame);
         primaryStage.setFullScreen(true);
 
     }
-    
-    
-    
+
     private void GenerateMaze(int x, int y) {
         rooms[y][x].isAddedToMaze(); // make visited true
         //System.out.println("Room: ");
@@ -431,18 +430,15 @@ public class CompSciProject2023 extends Application {
                 rooms[y][x].makeDoor(d); //make an exit to existing room
                 rooms[y + 1][x].makeDoor(d.getNeighbourDoor(d)); //make an entrance to the new room
                 GenerateMaze(x, y + 1); //Recursive call for the new room
-            } 
-            else if (d == Direction.UP && isValidRoom(x, y - 1)) {//check if direction is up and the next room down is valid
+            } else if (d == Direction.UP && isValidRoom(x, y - 1)) {//check if direction is up and the next room down is valid
                 rooms[y][x].makeDoor(d); //make an exit to existing room
                 rooms[y - 1][x].makeDoor(d.getNeighbourDoor(d)); //make an entrance to the new room
                 GenerateMaze(x, y - 1); //Recursive call for the new room
-            } 
-            else if (d == Direction.LEFT && isValidRoom(x - 1, y)) {//check if direction is left and the next room down is valid
+            } else if (d == Direction.LEFT && isValidRoom(x - 1, y)) {//check if direction is left and the next room down is valid
                 rooms[y][x].makeDoor(d); //make an exit to existing room
                 rooms[y][x - 1].makeDoor(d.getNeighbourDoor(d)); //make an entrance to the new room
                 GenerateMaze(x - 1, y); //Recursive call for the new room
-            } 
-            else if (d == Direction.RIGHT && isValidRoom(x + 1, y)) {//check if direction is right and the next room down is valid
+            } else if (d == Direction.RIGHT && isValidRoom(x + 1, y)) {//check if direction is right and the next room down is valid
                 rooms[y][x].makeDoor(d); //make an exit to existing room
                 rooms[y][x + 1].makeDoor(d.getNeighbourDoor(d)); //make an entrance to the new room
                 GenerateMaze(x + 1, y); //Recursive call for the new room
@@ -463,17 +459,14 @@ public class CompSciProject2023 extends Application {
         for (int i = 0; i < directions.length; i++) {
             int index = Rindex.nextInt(5); // random value between 0-4
             if (index != i) {
-              Direction temp = directions[i];
-            directions[i] = directions[index];
-            directions[index] = temp;  
-            }else{
+                Direction temp = directions[i];
+                directions[i] = directions[index];
+                directions[index] = temp;
+            } else {
                 i--;//i get incremented in a for loop -- this line decrements in so that i does not change-- cause it to loop again.
             }
         }
     }
-    
-    
-    
 
     private void controls(Scene sceneGame, Stage primaryStage) {
         sceneGame.setOnKeyPressed((KeyEvent event) -> {
@@ -514,19 +507,19 @@ public class CompSciProject2023 extends Application {
                     if (!Shooting) {
                         String playerfireball = "PurpleFireBall.png";
                         if (Shootup) {
-                            projectiles.add(projectile = new Projectiles(-projectileSpeed, 0, playerfireball, p1.getXSprite(), p1.getYSprite()));
+                            projectiles.add(projectile = new Projectiles(-projectileSpeed, 0, playerfireball, p1.getXSprite() + 50, p1.getYSprite() + 50));
                             GameRoot.getChildren().add(projectile.Sprite);
                         }
                         if (Shootdown) {
-                            projectiles.add(projectile = new Projectiles(projectileSpeed, 0, playerfireball, p1.getXSprite(), p1.getYSprite()));
+                            projectiles.add(projectile = new Projectiles(projectileSpeed, 0, playerfireball, p1.getXSprite() + 50, p1.getYSprite() + 50));
                             GameRoot.getChildren().add(projectile.Sprite);
                         }
                         if (Shootleft) {
-                            projectiles.add(projectile = new Projectiles(0, -projectileSpeed, playerfireball, p1.getXSprite(), p1.getYSprite()));
+                            projectiles.add(projectile = new Projectiles(0, -projectileSpeed, playerfireball, p1.getXSprite() + 50, p1.getYSprite() + 50));
                             GameRoot.getChildren().add(projectile.Sprite);
                         }
                         if (Shootright) {
-                            projectiles.add(projectile = new Projectiles(0, projectileSpeed, playerfireball, p1.getXSprite(), p1.getYSprite()));
+                            projectiles.add(projectile = new Projectiles(0, projectileSpeed, playerfireball, p1.getXSprite() + 50, p1.getYSprite() + 50));
                             GameRoot.getChildren().add(projectile.Sprite);
                         }
                         Shooting = true;
@@ -636,9 +629,8 @@ public class CompSciProject2023 extends Application {
                 p1.setXspeed(dx);
                 p1.setYspeed(dy);
                 p1.move(dy, dx, Wx, Hy); // player movement method
-                
-                
-                //shootPlayerprojectile(); //calls for the method responsible for the player shooting
+
+                shootPlayerprojectile(); //calls for the method responsible for the player shooting
                 Arrowcounter++;//increments each time
                 RangedEnemycounter++;//dont need it for now
                 spawnArrows();//spawns arrows
@@ -722,24 +714,34 @@ public class CompSciProject2023 extends Application {
                 }
                 Maze.playerwallcollision(p1);
                 //checkcollision
-                Enemyprojectiles.forEach(Enemyprojectiles -> checkcollision(Enemyprojectiles, p1, 1)); //passes both sprite and 1--1 because player-enemyproj interact
+                if (healthhitcount % 100 == 0) {
+                    Enemyprojectiles.forEach(Enemyprojectiles -> checkcollision(Enemyprojectiles, p1, 1)); //passes both sprite and 1--1 because player-enemyproj interact
+                    projectiles.forEach(projectiles -> Arraycheckcollision(projectiles, Enemyprojectiles)); //player projectile and enemy collision
+                }
+
+                projectiles.forEach(projectiles -> Maze.Spritewallcollision(projectiles, GameRoot, 1)); //Player projectile and wall collision
+                Enemyprojectiles.forEach(Enemyprojectiles -> Maze.Spritewallcollision(Enemyprojectiles, GameRoot, 1)); //Enemy projectile and wall collision
+                RangedEnemies.forEach(RangedEnemies -> Maze.Spritewallcollision(RangedEnemies, GameRoot, 2)); //Enemy and wall collision
+
+                //projectile and enemy collision
+                RangedEnemies.forEach(RangedEnemies -> enemyplayerprojcoll(RangedEnemies)); //Enemy and player proj collision
+
+                //Enemyprojectiles.forEach(Enemyprojectiles -> checkcollision(Enemyprojectiles, p1, 1)); //passes both sprite and 1--1 because player-enemyproj interact
                 //projectiles.forEach(Enemyprojectiles -> checkcollision(Enemyprojectiles, Enemyprojectiles, 2));
                 //RangedEnemies.forEach(RangedEnemies -> RangedEnemies.move(randommovedx, randommovedy, WIDTH, HEIGHT));
-                
                 //player PROJECTILE WALL COLLISIOON
-                for (Projectiles projectile : projectiles) {
-                    if (projectile.isAlive()) {
-                        shootPlayerprojectile();
-                    }
-                   if (projectile.checkcollision(Maze)) {
-                    projectile.setAlive(false);
-                    if (projectile.Sprite.getParent() != null) {
-                        GameRoot.getChildren().remove(projectile.Sprite);
-                    }
-                  } 
-                }
-                
-                
+                //for (Projectiles projectile : projectiles) {
+                //if (projectile.isAlive()) {
+                //shootPlayerprojectile();
+                //}
+                //if (projectile.checkcollision(Maze)) {
+                //projectile.setAlive(false);
+                //if (projectile.Sprite.getParent() != null) {
+                // GameRoot.getChildren().remove(projectile.Sprite);
+                //}
+                //}
+                //}
+                spriteremove(primaryStage); // remove sprite that are not alive
             }
 
         };
@@ -787,19 +789,16 @@ public class CompSciProject2023 extends Application {
             popupStage.close();
 
         });
-        
+
         Button Restartbtn = new Button();
         Restartbtn.setText("> Restart");
         Restartbtn.setBackground(null);
         Restartbtn.setTextFill(Color.WHITE);
         Restartbtn.setFont(new Font("Papyrus", 30));
 
-        Restartbtn.setOnAction(e -> {
-           CreateGame(primaryStage);
-
-        });
-
-
+        //Restartbtn.setOnAction(e -> {
+        //    CreateGame(primaryStage);
+        //});
         ButtonExitGame = new Button();
         ButtonExitGame.setText("> Exit Game");
         ButtonExitGame.setBackground(null);
@@ -927,8 +926,6 @@ public class CompSciProject2023 extends Application {
         ///////////////////////
     }
 
-    
-
     private void spawnArrows() {
 
         double spawnPosition = Math.random();
@@ -972,10 +969,10 @@ public class CompSciProject2023 extends Application {
                 sprite1.setCollision(true);
                 sprite2.setCollision(true);//player hit is true
 
-                //projectileremove();
+                projectilesetalive();
                 //Enemyprojectiles.forEach(Enemyprojectiles -> projectileremove());
                 p1.hit();//player hit method called - changed player health
-
+                sprite2.setAlive(false);
                 sprite2.setCollision(false);
 
                 System.out.println(p1.getHealth());//output player health - testing
@@ -989,7 +986,20 @@ public class CompSciProject2023 extends Application {
 
         if (code == 2) {//player projectile and enemy
             if (sprite1.Sprite.getBoundsInParent().intersects(sprite2.Sprite.getBoundsInParent())) {
-                GameRoot.getChildren().remove(sprite2.Sprite);
+                sprite1.setAlive(false);
+                sprite2.setAlive(false);
+            }
+        }
+
+    }
+
+    private void Arraycheckcollision(Sprite sprite1, ArrayList<Projectiles> sprite2) {//player projectiles and enemies
+        for (int i = 0; i < sprite2.size(); i++) {
+
+            if (sprite1.Sprite.getBoundsInParent().intersects(sprite2.get(i).Sprite.getBoundsInParent())) {
+
+                sprite1.setAlive(false);
+                sprite2.get(i).setAlive(false);
             }
         }
 
@@ -1005,12 +1015,50 @@ public class CompSciProject2023 extends Application {
         launch(args);
     }
 
-    private void projectileremove() {
-        for (int i = 0; i < Enemyprojectiles.size(); i++) {
-            if (Enemyprojectiles.get(i).getCollision() == true) {
-                GameRoot.getChildren().remove(Enemyprojectiles.get(i).Sprite);
+    private void enemyplayerprojcoll(Enemies Enemy) {
+        Iterator<Projectiles> it = projectiles.iterator();
+        while (it.hasNext()) {
+            Projectiles proj = it.next();
+            if (proj.Sprite.getBoundsInParent().intersects(Enemy.Sprite.getBoundsInParent())) {
+                proj.setAlive(false);
+                Enemy.setAlive(false);
+
             }
         }
     }
 
+    private void projectilesetalive() {
+        for (int i = 0; i < Enemyprojectiles.size(); i++) {
+            if (Enemyprojectiles.get(i).getCollision() == true) {
+                Enemyprojectiles.get(i).setAlive(false);
+            }
+        }
+    }
+
+    private void spriteremove(Stage primaryStage) { //Remove the sprites from the game root, if they are not alive
+
+        if (p1.isAlive() == false) {//Remove player if dead
+            //GameRoot.getChildren().remove(p1.Sprite);
+            //GameRoot.getChildren().remove(projectiles);
+        }
+        for (int i = 0; i < Enemyprojectiles.size(); i++) {//Remove enemy projectile if dead
+            if (Enemyprojectiles.get(i).isAlive() == false) {
+                GameRoot.getChildren().remove(Enemyprojectiles.get(i).Sprite);
+            }
+        }
+        for (int j = 0; j < projectiles.size(); j++) {//Remove Player projectile if dead
+            if (projectiles.get(j).isAlive() == false) {
+                GameRoot.getChildren().remove(projectiles.get(j).Sprite);
+            }
+
+        }
+        for (int k = 0; k < RangedEnemies.size(); k++) {//Remove enemy if dead
+            if (RangedEnemies.get(k).isAlive() == false) {
+                GameRoot.getChildren().remove(RangedEnemies.get(k).Sprite);
+                KillCounter++;
+                System.out.println(KillCounter);
+            }
+        }
+
+    }
 }

@@ -30,7 +30,7 @@ public class Cell {
     //Rectangle Cell;
     ImageView Cell;
     boolean border;
-    
+   
     String type;
 
     public Cell(int code, double width, double height) {
@@ -68,14 +68,14 @@ public class Cell {
             Cell = new ImageView(downdoor);
             border = false;
             type = "DownDoor";
-            
+           
         }
         if (code == 7) {
             Cell = new ImageView(updoor);
             border = false;
             type = "UpDoor";
         }
-        
+       
        
         Cell.setFitHeight(height);
         Cell.setFitWidth(width);

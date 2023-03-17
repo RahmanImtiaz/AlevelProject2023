@@ -37,13 +37,6 @@ public class Projectiles extends Sprite {
         //ivView.setLayoutY(y);
     }
 
-    public void setAlive(boolean alive) {
-        this.alive = alive;
-    }
-
-    public boolean isAlive() {
-        return alive;
-    }
 
     public ImageView getImageView() {
         return Sprite;
@@ -54,6 +47,8 @@ public class Projectiles extends Sprite {
         //ivView.setLayoutY(y);
         setXSprite(getXSprite() + dx);
         setYSprite(getYSprite() + dy);
+        setXSpeed(dx);
+        setYSpeed(dy);
         if (getYSprite() < 0 || getXSprite() < 0) {
             stillShooting = false;
         }

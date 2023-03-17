@@ -29,7 +29,7 @@ public class Sprite {
     public Sprite(int width, int height, String imgpath) {
         Image imgSprite = new Image(imgpath);
         Sprite = new ImageView(imgSprite);
-       
+        this.Alive = true;
         Sprite.setX(XSprite);
         Sprite.setY(YSprite);
        
@@ -77,7 +77,7 @@ public class Sprite {
         this.Range = Range;
     }
 
-    public boolean getAlive() {
+    public boolean isAlive() {
         return Alive;
     }
 

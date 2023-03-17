@@ -43,7 +43,7 @@ public class Enemies extends Sprite {
     }
 
     public Boolean isdead() {
-        if (getAlive() == false) {
+        if (isAlive() == false) {
             return true;
         }
         return false;
@@ -54,6 +54,8 @@ public class Enemies extends Sprite {
         setXSprite(getXSprite() - dx);
         radiuscircleE.setCenterX(getXSprite()+50);
         radiuscircleE.setCenterY(getYSprite()+50);
+        setXSpeed(dx);
+        setYSpeed(dy);
        
         //Makes sure enemies dont go out of screen
         if (getXSprite()<0) {

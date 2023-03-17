@@ -55,6 +55,7 @@ public class Player extends Sprite {
     }
 
     public void setDefaultAttributes() {
+       
         this.Mp = 100;
         this.StrenghtP = 100;
         this.Health = 100;
@@ -146,4 +147,3 @@ public class Player extends Sprite {
    
    
 }
-

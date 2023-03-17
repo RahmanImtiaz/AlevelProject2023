@@ -44,8 +44,9 @@ public class Room extends GridPane {
         int numC = (int) ((int) width / RectWidth);
         int numR = (int) ((int) height / RectHeight);
 
-        mazeroom = new int[numR][numC];
-        cells = new Cell[mazeroom.length][mazeroom[0].length];
+        //mazeroom = new int[numR][numC];
+        //cells = new Cell[mazeroom.length][mazeroom[0].length];
+        cells = new Cell[numR][numC];
         for (int row = 0; row < numR; row++) {
             for (int col = 0; col < numC; col++) {
                 int codeimg = -1;
@@ -66,11 +67,11 @@ public class Room extends GridPane {
                 if ((row == numR / 2 || row == (numR / 2 + 1) || row == (numR / 2 - 1)) && (col == 1 || col == 2 || col == numC - 2 || col == numC - 3)) {
                     codeimg = 1;
                 }
-                if (row == numR / 2 && col != 0 && col != numC - 1) {// middle row is all floor, not doors 
+                if (row == numR / 2 && col != 0 && col != numC - 1) {// middle row is all floor, not doors
                     codeimg = 1;
                 }
-                
-                if ((row == 1 && col == 1) || row == 2 && col == 2) {
+
+                if ((row == 1 && col == 1) || (row == 1 && col == 2) || (row == 2 && col == 1) || (row == 2 && col == 2)) {
                     codeimg = 1;
                 }
 
@@ -93,8 +94,8 @@ public class Room extends GridPane {
 
     public void drawRoom(Group root) {
         root.getChildren().clear();
-        for (Cell[] row:cells) {
-            for (Cell cell:row) {
+        for (Cell[] row : cells) {
+            for (Cell cell : row) {
                 root.getChildren().add(cell.Cell);
             }
         }
@@ -107,20 +108,21 @@ public class Room extends GridPane {
     public boolean IsInTheMaze() {
         return visited;
     }
-    
-    public Collection<Rectangle2D> getwallbounds(){
-        List <Rectangle2D> wallbounds = new ArrayList<>();
+
+    public Collection<Rectangle2D> getwallbounds() {
+        List<Rectangle2D> wallbounds = new ArrayList<>();
         int numR = cells.length;
         int numC = cells[0].length;
         for (int row = 0; row < numR; row++) {
             for (int col = 0; col < numC; col++) {
-                if (cells[row][col].border==true) {
+                if (cells[row][col].border == true) {
                     Bounds BoundsInScene = cells[row][col].Cell.localToScene(cells[row][col].Cell.getBoundsInLocal());
-                    
+
                     wallbounds.add(new Rectangle2D(BoundsInScene.getMinX(), BoundsInScene.getMinY(), BoundsInScene.getWidth(), BoundsInScene.getHeight()));
                 }
-            
-            }}
+
+            }
+        }
         return wallbounds;
     }
 
@@ -151,8 +153,6 @@ public class Room extends GridPane {
         }
     }
 
-
-
     public void playerwallcollision(Player p1) {
         double minoverlapx = Double.POSITIVE_INFINITY;
         double minoverlapy = Double.POSITIVE_INFINITY;
@@ -163,12 +163,9 @@ public class Room extends GridPane {
 
                     if (p1.radiuscircleP.getBoundsInParent().intersects(cells[row][col].Cell.getBoundsInParent())) {
                         //p1.notmoving = true;
-                        System.out.println("interset walllllllllll");
+                        //System.out.println("interset walllllllllll");
                         p1.setXSprite(p1.getXSprite() + p1.xspeed);
                         p1.setYSprite(p1.getYSprite() + p1.yspeed);
-                        
-                       
-
 
                         //double overlapx;
                         //double overlapy;
@@ -204,6 +201,28 @@ public class Room extends GridPane {
                         //}
                         //p1.setXSprite(p1.getXSprite() + distx);
                         //p1.setYSprite(p1.getYSprite() + disty);
+                    }
+                }
+            }
+        }
+    }
+
+    public void Spritewallcollision(Sprite sprite, Group GameRoot, int code) { //collision for sprite and wall //code 1 - projectile, code 2 - enemies
+        double minoverlapx = Double.POSITIVE_INFINITY;
+        double minoverlapy = Double.POSITIVE_INFINITY;
+        for (int row = 0; row < cells.length; row++) {
+            for (int col = 0; col < cells[0].length; col++) {
+
+                if (cells[row][col].border == true) {
+
+                    if (sprite.Sprite.getBoundsInParent().intersects(cells[row][col].Cell.getBoundsInParent())) {
+
+                        sprite.setXSprite(sprite.getXSprite() + sprite.getXSpeed());
+                        sprite.setYSprite(sprite.getYSprite() + sprite.getYSpeed());
+                        
+                        if (code == 1) {
+                          sprite.setAlive(false);  
+                        }
                     }
                 }
             }
