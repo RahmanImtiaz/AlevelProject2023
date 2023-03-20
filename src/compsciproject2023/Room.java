@@ -38,9 +38,10 @@ public class Room extends GridPane {
 
     private boolean visited;
 
-    public Room(double width, double height, Player p1/*, int roomNum*/) {
+    public Room(double width, double height, Player p1, int roomNum) {
         //this.roomnum = roomNum;
-        visited = false;
+        this.visited = false;
+        this.roomnum = roomNum;
         int numC = (int) ((int) width / RectWidth);
         int numR = (int) ((int) height / RectHeight);
 
@@ -57,12 +58,12 @@ public class Room extends GridPane {
                     codeimg = coderand;
                 }
 
-                if ((col == 0 && row == numR / 2)) {//left door
-                    codeimg = 4;
-                }
-                if ((col == numC - 1 && row == numR / 2)) {//right door
-                    codeimg = 5;
-                }
+                //if ((col == 0 && row == numR / 2)) {//left door
+                //    codeimg = 4;
+                //}
+                //if ((col == numC - 1 && row == numR / 2)) {//right door
+                //    codeimg = 5;
+                //}
 
                 if ((row == numR / 2 || row == (numR / 2 + 1) || row == (numR / 2 - 1)) && (col == 1 || col == 2 || col == numC - 2 || col == numC - 3)) {
                     codeimg = 1;
@@ -70,15 +71,20 @@ public class Room extends GridPane {
                 if (row == numR / 2 && col != 0 && col != numC - 1) {// middle row is all floor, not doors
                     codeimg = 1;
                 }
+                
+                if (col == numC / 2 && row != 0 && row != numR - 1) {// middle row is all floor, not doors (virtical)
+                    codeimg = 1;
+                }
 
                 if ((row == 1 && col == 1) || (row == 1 && col == 2) || (row == 2 && col == 1) || (row == 2 && col == 2)) {
                     codeimg = 1;
                 }
+                Image downdoor = new Image("Doordown.png");
+                
 
                 cells[row][col] = new Cell(codeimg, RectWidth, RectHeight);
                 cells[row][col].Cell.setLayoutX(col * (RectWidth));
                 cells[row][col].Cell.setLayoutY(row * (RectHeight));
-
             }
         }
     }
@@ -134,21 +140,22 @@ public class Room extends GridPane {
     }
 
     public String EnterDoor(Player p1) {//Find collision with door and check which direction door is
-        for (int row = 0; row < cells.length; row++) {
-            for (int col = 0; col < cells[0].length; col++) {
-                
-                if (p1.Sprite.getBoundsInParent().intersects(cells[row][col].Cell.getBoundsInParent())) {
-                    if (cells[row][col].type == "DownDoor") {
-                        return "Down";
-                    }
-                    if (cells[row][col].type == "UpDoor") {
-                        return "Up";
-                    }
-                    if (cells[row][col].type == "LeftDoor") {
-                        return "Left";
-                    }
-                    if (cells[row][col].type == "RightDoor") {
-                        return "Right";
+        for (int row = 0; row < this.cells.length; row++) {
+            for (int col = 0; col < this.cells[0].length; col++) {
+                if (this.cells[row][col].border) {
+                    if (p1.radiuscircleP.getBoundsInParent().intersects(this.cells[row][col].Cell.getBoundsInParent())) {
+                        if (cells[row][col].type == "DownDoor") {
+                            return "Down";
+                        }
+                        if (cells[row][col].type == "UpDoor") {
+                            return "Up";
+                        }
+                        if (cells[row][col].type == "LeftDoor") {
+                            return "Left";
+                        }
+                        if (cells[row][col].type == "RightDoor") {
+                            return "Right";
+                        }
                     }
                 }
             }

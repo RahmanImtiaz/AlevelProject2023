@@ -81,8 +81,8 @@ public class CompSciProject2023 extends Application {
 
     AnimationTimer gametimer;
 
-    Room[][] rooms = new Room[10][10];
-    int CurrentRoomx, CurrentRoomy, floornum;
+    Room[][] rooms = new Room[5][5];
+    int CurrentRoomx, CurrentRoomy, floornum, indexX, indexY;
 
     Stage Stage;
     Stage popupStage;
@@ -396,14 +396,22 @@ public class CompSciProject2023 extends Application {
         //GenerateMaze();
         /////////////////////
         Random rand = new Random();
-        CurrentRoomx = rand.nextInt(10);// 9 or 10 idk
-        CurrentRoomy = rand.nextInt(10);
+        CurrentRoomx = rand.nextInt(5);// 9 or 10 idk
+        CurrentRoomy = rand.nextInt(5);
 
         //show start room on screen before maze gen
         ///rooms[CurrentRoomy][CurrentRoomx] = new Room(WIDTH,HEIGHT,p1);
         ///rooms[CurrentRoomy][CurrentRoomx].drawRoom(GameRoot,rooms[CurrentRoomy][CurrentRoomx]);
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                int RoomNum = (i+1)*(j+1);
+                rooms[i][j] = new Room(WIDTH, HEIGHT, p1, RoomNum);
+            }
+        }
+        
         GenerateMaze(CurrentRoomx, CurrentRoomy);
         DrawMaze(rooms[CurrentRoomy][CurrentRoomx]);
+        
         //Maze = rooms[CurrentRoomy][CurrentRoomx];
         //add player
         p1 = new Player(30, 30, Down1); //creates the player object
@@ -439,7 +447,7 @@ public class CompSciProject2023 extends Application {
         Backg.setFitWidth(WIDTH);
         Backg.setFitHeight(HEIGHT);
         GameRoot.getChildren().add(Backg);
-        Maze = new Room(WIDTH, HEIGHT, p1);
+        //Maze = new Room(WIDTH, HEIGHT, p1);
         for (Cell row[] : Maze.cells) {
             for (Cell r : row) {
                 GameRoot.getChildren().add(r.Cell);
@@ -467,9 +475,13 @@ public class CompSciProject2023 extends Application {
     }
 
     private void GenerateMaze(int x, int y) {
-        rooms[y][x] = new Room(WIDTH, HEIGHT, p1);
+        int RoomNum = (x+1)*(y+1);
+        //rooms[y][x] = new Room(WIDTH, HEIGHT, p1, RoomNum);
         rooms[y][x].isAddedToMaze(); // make visited true
+        System.out.println("Room "+rooms[y][x].roomnum+", Visited: "+rooms[y][x].IsInTheMaze());
         Maze = rooms[y][x];
+        indexX = x;
+        indexY = y;
         //System.out.println("Room: ");
         Direction[] directions = Direction.values();//get all directions
 
@@ -482,48 +494,40 @@ public class CompSciProject2023 extends Application {
         //recursive call on neighbour
         for (Direction d : directions) {
             if (d == Direction.DOWN && isValidRoom(x, y + 1)) {//check if direction is down and the next room down is valid
+                System.out.println("WORKsss");
+                //RoomNum = (x+1)*(y+2);
+                //rooms[y+1][x] = new Room(WIDTH, HEIGHT, p1, RoomNum);
                 rooms[y][x].makeDoor(d); //make an exit to existing room
                 rooms[y + 1][x].makeDoor(d.getNeighbourDoor(d)); //make an entrance to the new room
                 GenerateMaze(x, y + 1); //Recursive call for the new room
             } else if (d == Direction.UP && isValidRoom(x, y - 1)) {//check if direction is up and the next room down is valid
+                System.out.println("WORKsss");
+                //RoomNum = (x+1)*(y);
+                //rooms[y-1][x] = new Room(WIDTH, HEIGHT, p1, RoomNum);
                 rooms[y][x].makeDoor(d); //make an exit to existing room
                 rooms[y - 1][x].makeDoor(d.getNeighbourDoor(d)); //make an entrance to the new room
                 GenerateMaze(x, y - 1); //Recursive call for the new room
             } else if (d == Direction.LEFT && isValidRoom(x - 1, y)) {//check if direction is left and the next room down is valid
+                System.out.println("WORKsss");
+                //RoomNum = (x)*(y+1);
+                //rooms[y][x-1] = new Room(WIDTH, HEIGHT, p1, RoomNum);
                 rooms[y][x].makeDoor(d); //make an exit to existing room
                 rooms[y][x - 1].makeDoor(d.getNeighbourDoor(d)); //make an entrance to the new room
                 GenerateMaze(x - 1, y); //Recursive call for the new room
             } else if (d == Direction.RIGHT && isValidRoom(x + 1, y)) {//check if direction is right and the next room down is valid
+                System.out.println("WORKsss");
+                //RoomNum = (x+2)*(y+1);
+                //rooms[y][x+1] = new Room(WIDTH, HEIGHT, p1, RoomNum);
                 rooms[y][x].makeDoor(d); //make an exit to existing room
                 rooms[y][x + 1].makeDoor(d.getNeighbourDoor(d)); //make an entrance to the new room
                 GenerateMaze(x + 1, y); //Recursive call for the new room
             }
         }
-        
-        
-        /*String MazeDirection = Maze.EnterDoor(p1);
-        if (MazeDirection != null) {
-            if (MazeDirection == "Down") {
-                y = y+1;
-            }
-            if (MazeDirection == "Up") {
-                y = y-1;
-            }
-            if (MazeDirection == "Left") {
-                x = x-1;
-            }
-            if (MazeDirection == "Right") {
-                x = x+1;
-            }
-            GenerateMaze(x, y);
-            Maze = rooms[y][x];
-            DrawMaze(rooms[y][x]);
-        }
-        */
-}
 
-private boolean isValidRoom(int x, int y) {
-        if (x > -1 && x < 10 && y > -1 && y < 10 && rooms[y][x]!=null) {
+    }
+
+    private boolean isValidRoom(int x, int y) {
+        if (x > -1 && x < 5 && y > -1 && y < 5 && rooms[y][x] != null && rooms[y][x].IsInTheMaze() == false) {
             return true;
         }
         return false;
@@ -579,7 +583,7 @@ private boolean isValidRoom(int x, int y) {
                     running = true;
                     break;
                 case SPACE:
-                    if (!Shooting && p1.getMp()>0 && p1.isAlive()) {
+                    if (!Shooting && p1.getMp() > 0 && p1.isAlive()) {
                         String playerfireball = "PurpleFireBall.png";
                         if (Shootup) {
                             projectiles.add(projectile = new Projectiles(-projectileSpeed, 0, playerfireball, p1.getXSprite() + 50, p1.getYSprite() + 50));
@@ -598,7 +602,7 @@ private boolean isValidRoom(int x, int y) {
                             GameRoot.getChildren().add(projectile.Sprite);
                         }
                         Shooting = true;
-                        p1.setMp(p1.getMp()-5);//Take away mana
+                        p1.setMp(p1.getMp() - 5);//Take away mana
                     }
                     break;
                 case ESCAPE:
@@ -650,7 +654,7 @@ private boolean isValidRoom(int x, int y) {
 
         gametimer = new AnimationTimer() {
             @Override
-        public void handle(long now) {
+            public void handle(long now) {
                 double dx = 0, dy = 0;
 
                 if (goNorth) {
@@ -797,6 +801,26 @@ private boolean isValidRoom(int x, int y) {
                 RangedEnemies.forEach(RangedEnemies -> enemyplayerprojcoll(RangedEnemies)); //Enemy and player proj collision
                 spriteremove(primaryStage); // remove sprite that are not alive
 
+                //Check to see if player enters door
+                String MazeDirection = Maze.EnterDoor(p1);
+                if (MazeDirection != null) {
+                    if ("Down".equals(MazeDirection)) {
+                        indexY = indexY + 1;
+                    }
+                    if ("Up".equals(MazeDirection)) {
+                        indexY = indexY - 1;
+                    }
+                    if ("Left".equals(MazeDirection)) {
+                        indexX = indexX - 1;
+                    }
+                    if ("Right".equals(MazeDirection)) {
+                        indexX = indexX + 1;
+                    }
+                    //GenerateMaze(x, y);
+                    Maze = rooms[indexY][indexX];
+                    DrawMaze(rooms[indexY][indexX]);
+                }
+
                 //Adjusts health bar based on player health
                 double healthdec;
                 double phealth = p1.getHealth();
@@ -811,10 +835,8 @@ private boolean isValidRoom(int x, int y) {
                     HpText.setText("Player Has Died!");//When player has died
                     PlayerDied = true;
                 }
-               
-               
+
                 //Adjusts mana bar based on player Mp
-               
                 double Mpdec;
                 double pMana = p1.getMp();
                 Mpdec = 295 * (pMana / 100);//Find the distance needed to ensure the mana bar stays left
@@ -824,18 +846,15 @@ private boolean isValidRoom(int x, int y) {
                     ManaBarMP.setTranslateX(-Manachange);//Moves the mana bar so it stays in the left
                 }
                 MpText.setText("MP:      " + p1.getMp() + "/100");
-               
+
                 //update kill counter bar
                 KillCount.setText("Kills: " + KillCounter);
-               
-               
-               
+
             }
 
         };
         gametimer.start();
 
-       
     }
 
     private void InGamePauseMenu(Stage primaryStage) {
@@ -880,7 +899,6 @@ private boolean isValidRoom(int x, int y) {
         Restartbtn.setBackground(null);
         Restartbtn.setTextFill(Color.WHITE);
         Restartbtn.setFont(new Font("Papyrus", 30));
-       
 
         Restartbtn.setOnAction(e -> {
             gametimer.stop();
@@ -987,8 +1005,6 @@ private boolean isValidRoom(int x, int y) {
 
     }
 
-
-
     private StackPane HealthBar() {
         HealthBarBckg = new Rectangle(300, 30);
         HealthBarBckg.setFill(Color.GREY);
@@ -1024,27 +1040,27 @@ private boolean isValidRoom(int x, int y) {
 
         return sp;
     }
-   
-    private HBox Scores(){
+
+    private HBox Scores() {
         HBox Scorebox = new HBox();
         KillCount = new Text("Kills: " + KillCounter);
         KillCount.setFont(new Font("Papyrus", 40));
         KillCount.setFill(Color.WHITE);
-       
+
         FloorCount = new Text("Floor: " + floornum);
         FloorCount.setFont(new Font("Papyrus", 40));
         FloorCount.setFill(Color.WHITE);
-       
+
         ScoreCount = new Text("Score: " + Score);
         ScoreCount.setFont(new Font("Papyrus", 40));
         ScoreCount.setFill(Color.WHITE);
-       
+
         Scorebox.getChildren().addAll(KillCount, ScoreCount, FloorCount);
         Scorebox.setSpacing(35);
         Scorebox.setAlignment(Pos.TOP_RIGHT);
-       
+
         return Scorebox;
-   
+
     }
 
     private void spawnArrows() {
