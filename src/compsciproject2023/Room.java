@@ -92,13 +92,20 @@ public class Room extends GridPane {
         }
     }
 
-    public void drawRoom(Group root) {
+    public void drawRoom(Group root, Room maze) {
         root.getChildren().clear();
-        for (Cell[] row : cells) {
+        for (Cell row[] : maze.cells) {
+            for (Cell r : row) {
+                root.getChildren().add(r.Cell);
+            }
+        }
+
+        /*for (Cell[] row : cells) {
             for (Cell cell : row) {
                 root.getChildren().add(cell.Cell);
             }
         }
+         */
     }
 
     public void isAddedToMaze() {
@@ -124,6 +131,29 @@ public class Room extends GridPane {
             }
         }
         return wallbounds;
+    }
+
+    public String EnterDoor(Player p1) {//Find collision with door and check which direction door is
+        for (int row = 0; row < cells.length; row++) {
+            for (int col = 0; col < cells[0].length; col++) {
+                
+                if (p1.Sprite.getBoundsInParent().intersects(cells[row][col].Cell.getBoundsInParent())) {
+                    if (cells[row][col].type == "DownDoor") {
+                        return "Down";
+                    }
+                    if (cells[row][col].type == "UpDoor") {
+                        return "Up";
+                    }
+                    if (cells[row][col].type == "LeftDoor") {
+                        return "Left";
+                    }
+                    if (cells[row][col].type == "RightDoor") {
+                        return "Right";
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     public void makeDoor(Direction direction) {
@@ -174,7 +204,7 @@ public class Room extends GridPane {
                         sprite.setXSprite(sprite.getXSprite() + sprite.getXSpeed());
                         sprite.setYSprite(sprite.getYSprite() + sprite.getYSpeed());
                         if (code == 1) {//if sprite is projectile
-                          sprite.setAlive(false);  
+                            sprite.setAlive(false);
                         }
                     }
                 }

@@ -15,11 +15,12 @@ import javafx.scene.shape.Circle;
  */
 public class Enemies extends Sprite {
 
-    int StrengthE, Health;
+    int StrengthE, Health, KillCount = 0;
     double xspeedE = 3;
     double yspeedE = 3;
     Circle radiuscircleE;
     boolean up, down, right, left;
+   
 
     public Enemies(int width, int height, String imgpath, int stength, int health, double x, double y, int Range) {
         super(width, height, imgpath);
@@ -70,6 +71,10 @@ public class Enemies extends Sprite {
         if (getYSprite()>height-70) {
             setYSprite(height-70);
         }
+    }
+   
+    public void Addkillcount(int num){
+        this.KillCount = this.KillCount + num;
     }
    
    

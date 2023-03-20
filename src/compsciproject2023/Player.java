@@ -20,6 +20,7 @@ import javafx.scene.shape.Circle;
 public class Player extends Sprite {
 
     private int StrenghtP, Mp, Health;
+    private final int MaxHp = 100;
     double xspeed, yspeed;
     public Image Up1, Up2, Down1, Down2, Left1, Left2, Right1, Right2;
     Circle radiuscircleP;
@@ -41,12 +42,13 @@ public class Player extends Sprite {
 
     }
    
-    public void hit(){
+    public void hit(int damage){
         if (getCollision() == true) {
             //Health = Health - 10;
-            setHealth(getHealth()-5);
+            setHealth(getHealth()-damage);
             setCollision(false);
-        }
+         }
+       
        
         if (getHealth() == 0) {
             setAlive(false);
@@ -143,6 +145,10 @@ public class Player extends Sprite {
 
     public void setYspeed(double yspeed) {
         this.yspeed = yspeed;
+    }
+
+    public int getMaxHp() {
+        return MaxHp;
     }
    
    
