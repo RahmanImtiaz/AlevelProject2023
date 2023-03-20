@@ -29,7 +29,7 @@ public class Cell {
     Image updoor = new Image("Doorup.png");
     //Rectangle Cell;
     ImageView Cell;
-    boolean border;
+    boolean border, door;
    
     String type;
 

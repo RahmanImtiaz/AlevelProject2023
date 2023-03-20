@@ -81,7 +81,7 @@ public class CompSciProject2023 extends Application {
 
     AnimationTimer gametimer;
 
-    Room[][] rooms = new Room[5][5];
+    Room[][] rooms = new Room[3][3];
     int CurrentRoomx, CurrentRoomy, floornum, indexX, indexY;
 
     Stage Stage;
@@ -396,14 +396,14 @@ public class CompSciProject2023 extends Application {
         //GenerateMaze();
         /////////////////////
         Random rand = new Random();
-        CurrentRoomx = rand.nextInt(5);// 9 or 10 idk
-        CurrentRoomy = rand.nextInt(5);
+        CurrentRoomx = rand.nextInt(3);// 9 or 10 idk
+        CurrentRoomy = rand.nextInt(3);
 
         //show start room on screen before maze gen
         ///rooms[CurrentRoomy][CurrentRoomx] = new Room(WIDTH,HEIGHT,p1);
         ///rooms[CurrentRoomy][CurrentRoomx].drawRoom(GameRoot,rooms[CurrentRoomy][CurrentRoomx]);
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 5; j++) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
                 int RoomNum = (i+1)*(j+1);
                 rooms[i][j] = new Room(WIDTH, HEIGHT, p1, RoomNum);
             }
@@ -412,9 +412,11 @@ public class CompSciProject2023 extends Application {
         GenerateMaze(CurrentRoomx, CurrentRoomy);
         DrawMaze(rooms[CurrentRoomy][CurrentRoomx]);
         
-        //Maze = rooms[CurrentRoomy][CurrentRoomx];
+        Maze = rooms[CurrentRoomy][CurrentRoomx];
         //add player
         p1 = new Player(30, 30, Down1); //creates the player object
+        
+        
         ///System.out.println("Start maze at x="+CurrentRoomx+" and y="+CurrentRoomy);
 
         //GameRoot.getChildren().add(p1.rect);
@@ -458,6 +460,7 @@ public class CompSciProject2023 extends Application {
     }
 
     private void DrawMaze(Room Maze) {
+        //GameRoot.getChildren().clear();
         GameRoot.getChildren().clear();
         Image bgimg = new Image("Blackbackround.png");
         ImageView Backg = new ImageView(bgimg);
@@ -474,12 +477,11 @@ public class CompSciProject2023 extends Application {
         ///////////////////////
     }
 
-    private void GenerateMaze(int x, int y) {
-        int RoomNum = (x+1)*(y+1);
-        //rooms[y][x] = new Room(WIDTH, HEIGHT, p1, RoomNum);
+    private void GenerateMaze(int x, int y) {//Recursive backtracking
+        int RoomNum = (x+1)*(y+1); // find room num
         rooms[y][x].isAddedToMaze(); // make visited true
-        System.out.println("Room "+rooms[y][x].roomnum+", Visited: "+rooms[y][x].IsInTheMaze());
-        Maze = rooms[y][x];
+        System.out.println("Room "+rooms[y][x].roomnum+", Visited: "+rooms[y][x].IsInTheMaze());//used for testing
+        
         indexX = x;
         indexY = y;
         //System.out.println("Room: ");
@@ -527,7 +529,7 @@ public class CompSciProject2023 extends Application {
     }
 
     private boolean isValidRoom(int x, int y) {
-        if (x > -1 && x < 5 && y > -1 && y < 5 && rooms[y][x] != null && rooms[y][x].IsInTheMaze() == false) {
+        if (x > -1 && x < 3 && y > -1 && y < 3 && rooms[y][x].IsInTheMaze() == false) {
             return true;
         }
         return false;

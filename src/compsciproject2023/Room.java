@@ -94,7 +94,7 @@ public class Room extends GridPane {
         if (num < 80) {
             return 1; //floor
         } else {
-            return 3; //walls
+            return 0; //walls
         }
     }
 
@@ -142,7 +142,7 @@ public class Room extends GridPane {
     public String EnterDoor(Player p1) {//Find collision with door and check which direction door is
         for (int row = 0; row < this.cells.length; row++) {
             for (int col = 0; col < this.cells[0].length; col++) {
-                if (this.cells[row][col].border) {
+                if (this.cells[row][col].door) {
                     if (p1.radiuscircleP.getBoundsInParent().intersects(this.cells[row][col].Cell.getBoundsInParent())) {
                         if (cells[row][col].type == "DownDoor") {
                             return "Down";
@@ -173,19 +173,43 @@ public class Room extends GridPane {
         switch (direction) {
             case DOWN:
                 cells[numR - 1][numC / 2].Cell = new ImageView(downdoor);
+                cells[numR - 1][numC / 2].Cell.setLayoutX((numC / 2)*RectWidth);
+                cells[numR - 1][numC / 2].Cell.setLayoutY((numR - 1)*RectHeight);
+                cells[numR - 1][numC / 2].Cell.setFitHeight(RectHeight);
+                cells[numR - 1][numC / 2].Cell.setFitWidth(RectWidth);
                 cells[numR - 1][numC / 2].type = "DownDoor";
+                cells[numR - 1][numC / 2].border = false;
+                cells[numR - 1][numC / 2].door = true;
                 break;
             case UP:
                 cells[0][numC / 2].Cell = new ImageView(updoor);
-                cells[numR - 1][numC / 2].type = "UpDoor";
+                cells[0][numC / 2].Cell.setLayoutX((numC / 2)*RectWidth);
+                cells[0][numC / 2].Cell.setLayoutY((0)*RectHeight);
+                cells[0][numC / 2].Cell.setFitHeight(RectHeight);
+                cells[0][numC / 2].Cell.setFitWidth(RectWidth);
+                cells[0][numC / 2].type = "UpDoor";
+                cells[0][numC / 2].border = false;
+                cells[0][numC / 2].door = true;
                 break;
             case LEFT:
                 cells[numR / 2][0].Cell = new ImageView(leftdoor);
-                cells[numR - 1][numC / 2].type = "LeftDoor";
+                cells[numR / 2][0].Cell.setLayoutX((0)*RectWidth);
+                cells[numR / 2][0].Cell.setLayoutY((numR / 2)*RectHeight);
+                cells[numR / 2][0].Cell.setFitHeight(RectHeight);
+                cells[numR / 2][0].Cell.setFitWidth(RectWidth);
+                cells[numR / 2][0].type = "LeftDoor";
+                cells[numR / 2][0].border = false;
+                cells[numR / 2][0].door = true;
                 break;
             case RIGHT:
-                cells[numR / 2][0].Cell = new ImageView(rightdoor);
-                cells[numR - 1][numC / 2].type = "RightDoor";
+                cells[numR / 2][numC - 1].Cell = new ImageView(rightdoor);
+                cells[numR / 2][numC - 1].Cell.setLayoutX((numC - 1)*RectWidth);
+                cells[numR / 2][numC - 1].Cell.setLayoutY((numR / 2)*RectHeight);
+                cells[numR / 2][numC - 1].Cell.setFitHeight(RectHeight);
+                cells[numR / 2][numC - 1].Cell.setFitWidth(RectWidth);
+                cells[numR / 2][numC - 1].type = "RightDoor";
+                cells[numR / 2][numC - 1].border = false;
+                cells[numR / 2][numC - 1].door = true;
                 break;
         }
     }
