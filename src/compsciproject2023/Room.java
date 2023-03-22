@@ -27,13 +27,13 @@ import javafx.stage.Screen;
  */
 public class Room extends GridPane {
 
-    int[][] maze;
+
     int[][] mazeroom;
     Cell cells[][];
     Random rand = new Random();
     double RectWidth = 100;
     double RectHeight = 100;
-    double EPSILON = 1.0e-6;
+    double lastx, lasty;
     int roomnum;
 
     private boolean visited;
@@ -53,8 +53,8 @@ public class Room extends GridPane {
                 int codeimg = -1;
                 if (row == 0 || row == numR - 1 || col == 0 || col == numC - 1) {//outerboundries
                     codeimg = 0;
-                } else {
-                    int coderand = getrandcode();
+                } else { //The rest of the map
+                    int coderand = getrandcode();// Get either 0 or 1
                     codeimg = coderand;
                 }
 
@@ -71,7 +71,7 @@ public class Room extends GridPane {
                 if (row == numR / 2 && col != 0 && col != numC - 1) {// middle row is all floor, not doors
                     codeimg = 1;
                 }
-                
+               
                 if (col == numC / 2 && row != 0 && row != numR - 1) {// middle row is all floor, not doors (virtical)
                     codeimg = 1;
                 }
@@ -80,7 +80,7 @@ public class Room extends GridPane {
                     codeimg = 1;
                 }
                 Image downdoor = new Image("Doordown.png");
-                
+               
 
                 cells[row][col] = new Cell(codeimg, RectWidth, RectHeight);
                 cells[row][col].Cell.setLayoutX(col * (RectWidth));
@@ -144,16 +144,16 @@ public class Room extends GridPane {
             for (int col = 0; col < this.cells[0].length; col++) {
                 if (this.cells[row][col].door) {
                     if (p1.radiuscircleP.getBoundsInParent().intersects(this.cells[row][col].Cell.getBoundsInParent())) {
-                        if (cells[row][col].type == "DownDoor") {
+                        if ("DownDoor".equals(cells[row][col].type)) {
                             return "Down";
                         }
-                        if (cells[row][col].type == "UpDoor") {
+                        if ("UpDoor".equals(cells[row][col].type)) {
                             return "Up";
                         }
-                        if (cells[row][col].type == "LeftDoor") {
+                        if ("LeftDoor".equals(cells[row][col].type)) {
                             return "Left";
                         }
-                        if (cells[row][col].type == "RightDoor") {
+                        if ("RightDoor".equals(cells[row][col].type)) {
                             return "Right";
                         }
                     }
@@ -180,6 +180,8 @@ public class Room extends GridPane {
                 cells[numR - 1][numC / 2].type = "DownDoor";
                 cells[numR - 1][numC / 2].border = false;
                 cells[numR - 1][numC / 2].door = true;
+                lastx = (numC / 2)*RectWidth;
+                lasty = (1)*RectHeight+20;
                 break;
             case UP:
                 cells[0][numC / 2].Cell = new ImageView(updoor);
@@ -190,6 +192,8 @@ public class Room extends GridPane {
                 cells[0][numC / 2].type = "UpDoor";
                 cells[0][numC / 2].border = false;
                 cells[0][numC / 2].door = true;
+                lastx = (numC / 2)*RectWidth;
+                lasty = (numR - 2)*RectHeight-20;
                 break;
             case LEFT:
                 cells[numR / 2][0].Cell = new ImageView(leftdoor);
@@ -200,6 +204,8 @@ public class Room extends GridPane {
                 cells[numR / 2][0].type = "LeftDoor";
                 cells[numR / 2][0].border = false;
                 cells[numR / 2][0].door = true;
+                lastx = (numC - 2)*RectWidth-20;
+                lasty = (numR / 2)*RectHeight;
                 break;
             case RIGHT:
                 cells[numR / 2][numC - 1].Cell = new ImageView(rightdoor);
@@ -210,6 +216,8 @@ public class Room extends GridPane {
                 cells[numR / 2][numC - 1].type = "RightDoor";
                 cells[numR / 2][numC - 1].border = false;
                 cells[numR / 2][numC - 1].door = true;
+                lastx = (1)*RectWidth+20;
+                lasty = (numR / 2)*RectHeight;
                 break;
         }
     }
@@ -243,3 +251,4 @@ public class Room extends GridPane {
         }
     }
 }
+

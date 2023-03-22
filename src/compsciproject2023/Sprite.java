@@ -18,7 +18,7 @@ import javafx.scene.shape.Rectangle;
 public class Sprite {
 
    
-    public ImageView Sprite;
+    public ImageView Sprite = null;
     Color color;
     private double XSprite, YSprite, XSpeed, YSpeed;
     private int Range;

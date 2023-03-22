@@ -101,7 +101,7 @@ public class CompSciProject2023 extends Application {
 
     Room Maze;
 
-    boolean running, goNorth, goSouth, goEast, goWest, Escape;
+    boolean running, goNorth, goSouth, goEast, goWest, Escape, ClickChest;
     boolean Shooting, Shootleft, Shootright, Shootup, Shootdown;
     public String Up1, Up2, Down1, Down2, Left1, Left2, Right1, Right2;
 
@@ -109,16 +109,15 @@ public class CompSciProject2023 extends Application {
     private Projectiles projectile;
     private int projectileLifespan = 6;
 
-    private ArrayList<Enemies> MaleeEnemies = new ArrayList();
-    private int MaleeEnemycounter = 0, MaleeEnemyspawnTime = 180;
-    private double MaleeEnemySpeed = 2;
-    private Enemies MaleeEnemy;
-    private int KillCounter = 0;
+    private ArrayList<Chests> HpChests = new ArrayList();
+    private ArrayList<Chests> MpChests = new ArrayList();
+   
 
     private ArrayList<Enemies> RangedEnemies = new ArrayList();
     private ArrayList<Projectiles> Enemyprojectiles = new ArrayList();
     private int RangedEnemycounter = 0, RangedEnemyspawnTime = 180, SpawnEnemycounter, EnemyProjcounter;
-    private double RangedEnemySpeed = 4;
+    private double RangedEnemySpeed = 4; 
+    private int KillCounter = 0;
     //private Enemies RangedEnemy;
 
     private ArrayList<Rectangle> Arrows = new ArrayList();
@@ -390,7 +389,7 @@ public class CompSciProject2023 extends Application {
 
         //playerprojectile = new Projectiles();
         GameRoot = new Group();
-        //Image imgBack = new Image("GameBackground.jpeg");
+       
 
         //p1 = new Player(30, 30, Down1); //creates the player object
         //GenerateMaze();
@@ -404,31 +403,29 @@ public class CompSciProject2023 extends Application {
         ///rooms[CurrentRoomy][CurrentRoomx].drawRoom(GameRoot,rooms[CurrentRoomy][CurrentRoomx]);
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                int RoomNum = (i+1)*(j+1);
+                int RoomNum = (i + 1) * (j + 1);
                 rooms[i][j] = new Room(WIDTH, HEIGHT, p1, RoomNum);
             }
         }
-        
+
         GenerateMaze(CurrentRoomx, CurrentRoomy);
-        DrawMaze(rooms[CurrentRoomy][CurrentRoomx]);
-        
+        DrawMaze(rooms[CurrentRoomy][CurrentRoomx], 100, 100, 100, 100);//Passes random starting room, and 100 HP, 100 MP, Player x and y
+
         Maze = rooms[CurrentRoomy][CurrentRoomx];
         //add player
-        p1 = new Player(30, 30, Down1); //creates the player object
-        
-        
+        ///p1 = new Player(30, 30, Down1); //creates the player object
+
         ///System.out.println("Start maze at x="+CurrentRoomx+" and y="+CurrentRoomy);
-
         //GameRoot.getChildren().add(p1.rect);
-        GameRoot.getChildren().add(p1.Sprite);
+        ///GameRoot.getChildren().add(p1.Sprite);
         //GameRoot.getChildren().add(p1.radiuscircleP);
-
+       
         Scene sceneGame = new Scene(GameRoot, WIDTH, HEIGHT);
         sceneGame.setCursor(Cursor.CROSSHAIR); //changes how the mouse will look
         controls(sceneGame, primaryStage); //calls the subroutine resposible for the key listeners
         loop(primaryStage); //calls the subroutine with the animation timer/gameloop
 
-        spawnRangedEnemies();//calls the subroutine responsible for enemy spawns
+       /* spawnRangedEnemies();//calls the subroutine responsible for enemy spawns
 
         HBox BarBox = new HBox();
         BorderPane scoreBP = new BorderPane();
@@ -436,52 +433,52 @@ public class CompSciProject2023 extends Application {
         BarBox.getChildren().addAll(HealthBar(), MananBar(), scoreBP);//health bar and mana bar
         BarBox.setSpacing(10);
         GameRoot.getChildren().add(BarBox);
-
+*/
         primaryStage.setScene(sceneGame);
         primaryStage.setFullScreen(true);
 
     }
 
-    private void DrawMaze() {
+
+    private void DrawMaze(Room maze, int PHealth, int PMana, double pX, double pY) {//Passed in new room, and players current health and mana
         GameRoot.getChildren().clear();
         Image bgimg = new Image("Blackbackround.png");
         ImageView Backg = new ImageView(bgimg);
         Backg.setFitWidth(WIDTH);
         Backg.setFitHeight(HEIGHT);
         GameRoot.getChildren().add(Backg);
-        //Maze = new Room(WIDTH, HEIGHT, p1);
-        for (Cell row[] : Maze.cells) {
+        //GameRoot.getChildren().remove(Maze);
+        for (Cell row[] : maze.cells) {
             for (Cell r : row) {
                 GameRoot.getChildren().add(r.Cell);
+                //GameRoot.getChildren().add(1, r.Cell);//Add under all other objects except the black background
             }
         }
-
-        ///////////////////////
+        DrawGame(PHealth, PMana, pX, pY);//Draws the rest of the game
     }
 
-    private void DrawMaze(Room Maze) {
-        //GameRoot.getChildren().clear();
-        GameRoot.getChildren().clear();
-        Image bgimg = new Image("Blackbackround.png");
-        ImageView Backg = new ImageView(bgimg);
-        Backg.setFitWidth(WIDTH);
-        Backg.setFitHeight(HEIGHT);
-        GameRoot.getChildren().add(Backg);
-
-        for (Cell row[] : Maze.cells) {
-            for (Cell r : row) {
-                GameRoot.getChildren().add(r.Cell);
-            }
-        }
-
-        ///////////////////////
+    private void DrawGame(int PlayerHealth, int PlayerMana, double Playerx, double Playery) {    
+        p1 = new Player(30, 30, Down1,PlayerHealth,PlayerMana); //creates the player object
+        p1.setXSprite(Playerx);
+        p1.setYSprite(Playery);
+        GameRoot.getChildren().add(p1.Sprite);
+       
+        spawnRangedEnemies();//calls the subroutine responsible for enemy spawns
+        spawnHpChests();//Spawns in chests giving Hp
+       
+        HBox BarBox = new HBox();
+        BorderPane scoreBP = new BorderPane();
+        scoreBP.setRight(Scores());
+        BarBox.getChildren().addAll(HealthBar(), ManaBar(), scoreBP);//health bar and mana bar
+        BarBox.setSpacing(10);
+        GameRoot.getChildren().add(BarBox);
     }
 
     private void GenerateMaze(int x, int y) {//Recursive backtracking
-        int RoomNum = (x+1)*(y+1); // find room num
+        int RoomNum = (x + 1) * (y + 1); // find room num
         rooms[y][x].isAddedToMaze(); // make visited true
-        System.out.println("Room "+rooms[y][x].roomnum+", Visited: "+rooms[y][x].IsInTheMaze());//used for testing
-        
+        System.out.println("Room " + rooms[y][x].roomnum + ", Visited: " + rooms[y][x].IsInTheMaze());//used for testing
+
         indexX = x;
         indexY = y;
         //System.out.println("Room: ");
@@ -496,28 +493,24 @@ public class CompSciProject2023 extends Application {
         //recursive call on neighbour
         for (Direction d : directions) {
             if (d == Direction.DOWN && isValidRoom(x, y + 1)) {//check if direction is down and the next room down is valid
-                System.out.println("WORKsss");
                 //RoomNum = (x+1)*(y+2);
                 //rooms[y+1][x] = new Room(WIDTH, HEIGHT, p1, RoomNum);
                 rooms[y][x].makeDoor(d); //make an exit to existing room
                 rooms[y + 1][x].makeDoor(d.getNeighbourDoor(d)); //make an entrance to the new room
                 GenerateMaze(x, y + 1); //Recursive call for the new room
             } else if (d == Direction.UP && isValidRoom(x, y - 1)) {//check if direction is up and the next room down is valid
-                System.out.println("WORKsss");
                 //RoomNum = (x+1)*(y);
                 //rooms[y-1][x] = new Room(WIDTH, HEIGHT, p1, RoomNum);
                 rooms[y][x].makeDoor(d); //make an exit to existing room
                 rooms[y - 1][x].makeDoor(d.getNeighbourDoor(d)); //make an entrance to the new room
                 GenerateMaze(x, y - 1); //Recursive call for the new room
             } else if (d == Direction.LEFT && isValidRoom(x - 1, y)) {//check if direction is left and the next room down is valid
-                System.out.println("WORKsss");
                 //RoomNum = (x)*(y+1);
                 //rooms[y][x-1] = new Room(WIDTH, HEIGHT, p1, RoomNum);
                 rooms[y][x].makeDoor(d); //make an exit to existing room
                 rooms[y][x - 1].makeDoor(d.getNeighbourDoor(d)); //make an entrance to the new room
                 GenerateMaze(x - 1, y); //Recursive call for the new room
             } else if (d == Direction.RIGHT && isValidRoom(x + 1, y)) {//check if direction is right and the next room down is valid
-                System.out.println("WORKsss");
                 //RoomNum = (x+2)*(y+1);
                 //rooms[y][x+1] = new Room(WIDTH, HEIGHT, p1, RoomNum);
                 rooms[y][x].makeDoor(d); //make an exit to existing room
@@ -530,6 +523,13 @@ public class CompSciProject2023 extends Application {
 
     private boolean isValidRoom(int x, int y) {
         if (x > -1 && x < 3 && y > -1 && y < 3 && rooms[y][x].IsInTheMaze() == false) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isValidIndex(int x, int y) {
+        if (x > -1 && x < 3 && y > -1 && y < 3) {
             return true;
         }
         return false;
@@ -612,6 +612,9 @@ public class CompSciProject2023 extends Application {
                     gametimer.stop();
                     InGamePauseMenu(primaryStage);
                     break;
+                case C:
+                    ClickChest = true;
+                    break;
             }
         });
 
@@ -637,6 +640,9 @@ public class CompSciProject2023 extends Application {
                     break;
                 case ESCAPE:
                     Escape = false;
+                    break;
+                case C:
+                    ClickChest = false;
                     break;
 
             }
@@ -733,31 +739,6 @@ public class CompSciProject2023 extends Application {
                 Enemyprojectiles.forEach(Enemyprojectiles -> Enemyprojectiles.moveprojectile()); //calls movement method for each projectile
                 SpawnEnemycounter++;//increments each time--> counts the number of ticks in loop
                 if (SpawnEnemycounter % 30 == 0) { //works for every 200 ticks
-
-                    //Random change = new Random();
-                    //int random = change.nextInt(9);
-                    //if (random == 0 || random == 1) {
-                    ///   randommovedy = -1;
-                    //}
-                    //if (random == 2) {
-                    //    randommovedy = 1;
-                    //}
-                    //if (random == 3) {
-                    //   randommovedx = -1;
-                    //}
-                    //if (random == 4) {
-                    ///    randommovedx = 1;
-                    ///}
-                    //if (random == 5) {
-                    ///    randommovedx = 0;
-                    ///}
-                    ///if (random == 6) {
-                    ///   randommovedy = 0;
-                    //}
-                    ///if (random == 6 || random == 7) {
-                    //   randommovedx = 0;
-                    //    randommovedy = 0;
-                    //}
                     for (int i = 0; i < RangedEnemies.size(); i++) {
                         int Edy = 0;
                         int Edx = 0;
@@ -793,7 +774,6 @@ public class CompSciProject2023 extends Application {
 
                 //Collisions
                 Maze.playerwallcollision(p1); //Player and wall collisions
-                //healthhitcount++;
                 if (healthhitcount % 100 == 0) {
                     playerwithenemyprojcoll(p1); //Player and enemy projectile        
                 }
@@ -805,22 +785,26 @@ public class CompSciProject2023 extends Application {
 
                 //Check to see if player enters door
                 String MazeDirection = Maze.EnterDoor(p1);
+                double px = 0;
+                double py = 0;
                 if (MazeDirection != null) {
-                    if ("Down".equals(MazeDirection)) {
+                    if ("Down".equals(MazeDirection) && isValidIndex(indexX, indexY + 1)) {
                         indexY = indexY + 1;
                     }
-                    if ("Up".equals(MazeDirection)) {
+                    if ("Up".equals(MazeDirection) && isValidIndex(indexX, indexY - 1)) {
                         indexY = indexY - 1;
                     }
-                    if ("Left".equals(MazeDirection)) {
+                    if ("Left".equals(MazeDirection) && isValidIndex(indexX - 1, indexY)) {
                         indexX = indexX - 1;
                     }
-                    if ("Right".equals(MazeDirection)) {
+                    if ("Right".equals(MazeDirection) && isValidIndex(indexX + 1, indexY)) {
                         indexX = indexX + 1;
                     }
                     //GenerateMaze(x, y);
+                    px = Maze.lastx;
+                    py = Maze.lasty;
+                    DrawMaze(rooms[indexY][indexX],p1.getHealth(),p1.getMp(), px, py);//Passes new room, and players current health and mana
                     Maze = rooms[indexY][indexX];
-                    DrawMaze(rooms[indexY][indexX]);
                 }
 
                 //Adjusts health bar based on player health
@@ -851,12 +835,14 @@ public class CompSciProject2023 extends Application {
 
                 //update kill counter bar
                 KillCount.setText("Kills: " + KillCounter);
-
+                //System.out.println("X:"+p1.getXSprite()+"Y:"+p1.getYSprite());
+                
+                //Hp Chest
+                HpChests.forEach(HpChests -> OpenChest(HpChests));
+                
             }
-
         };
         gametimer.start();
-
     }
 
     private void InGamePauseMenu(Stage primaryStage) {
@@ -949,26 +935,23 @@ public class CompSciProject2023 extends Application {
 
         int height = (int) HEIGHT;
         int width = (int) WIDTH;
-
-        for (int i = 0; i < r.nextInt(5) + 2; i++) {
-            double x = r.nextInt(width);
-            double y = r.nextInt(height);
+        for (int i = 0; i < r.nextInt(2) + 2; i++) {
+            double x = r.nextInt(width-250);
+            double y = r.nextInt(height-250);
             RangedEnemies.add(new Enemies(5, 5, imgpath, 10, 100, x, y, 30));
             RangedEnemies.get(i).Sprite.setFitHeight(130);
             RangedEnemies.get(i).Sprite.setFitWidth(100);
-            GameRoot.getChildren().add(RangedEnemies.get(i).Sprite);
-            RangedEnemycounter++;// counts the number of enemies
+            if (RangedEnemies.get(i).Sprite!=null) {
+              GameRoot.getChildren().add(RangedEnemies.get(i).Sprite);
+              RangedEnemycounter++;// counts the number of enemies  
+            }
+            
         }
-    }
-
-    private void spawnMaleeEnemies() {
-
     }
 
     private void EnemyProjectile(double px, double py) {
         for (int i = 0; i < RangedEnemies.size(); i++) {
-            if (RangedEnemies.get(i).Sprite != null && RangedEnemies.get(i).isAlive()) {
-
+            if (RangedEnemies.get(i).Sprite != null && RangedEnemies.get(i).isAlive()) {//Only alive enemies can attack
                 double playerdistx;
                 double playerdisty;
                 playerdistx = RangedEnemies.get(i).getXSprite() - px;
@@ -999,7 +982,6 @@ public class CompSciProject2023 extends Application {
                         }
                     }
                     Enemyprojectiles.add(projectile = new Projectiles(dy, dx, playerfireball, RangedEnemies.get(i).getXSprite(), RangedEnemies.get(i).getYSprite() + 10));
-
                     GameRoot.getChildren().add(projectile.Sprite);
                 }
             }
@@ -1025,11 +1007,11 @@ public class CompSciProject2023 extends Application {
         return sp;
     }
 
-    private StackPane MananBar() {
+    private StackPane ManaBar() {
         ManaBarBckg = new Rectangle(300, 30);
         ManaBarBckg.setFill(Color.GREY);
         ManaBarMP = new Rectangle(295, 25);
-        ManaBarMP.setFill(Color.AQUA);
+        ManaBarMP.setFill(Color.DARKTURQUOISE);
 
         MpText = new Text("MP:      " + p1.getMp() + "/100");
         MpText.setFont(new Font("Papyrus", 20));
@@ -1063,6 +1045,40 @@ public class CompSciProject2023 extends Application {
 
         return Scorebox;
 
+    }
+    
+    private void spawnHpChests(){    
+        String HpChestOpen = "HpChestOpen.png";
+        String HpChestClosed = "HpChestClosed.png";
+        Random r = new Random();
+
+        int height = (int) HEIGHT;
+        int width = (int) WIDTH;
+        for (int i = 0; i < r.nextInt(2) + 2; i++) {
+            double x = r.nextInt(width-250);
+            double y = r.nextInt(height-250);
+            int HpBoost = r.nextInt(10)+5;
+            HpChests.add(new Chests(5, 5, HpChestClosed, "HpChest", x, y, HpBoost));
+            HpChests.get(i).Sprite.setFitHeight(50);
+            HpChests.get(i).Sprite.setFitWidth(50);
+            if (HpChests.get(i).Sprite!=null) {
+              GameRoot.getChildren().add(HpChests.get(i).Sprite);
+            }
+            
+        }
+    }
+    
+    private void OpenChest(Chests Chest){
+ Image HpChestOpen= new Image("HpChestOpen.png");
+        if (p1.Sprite.getBoundsInParent().intersects(Chest.Sprite.getBoundsInParent()) && ClickChest == true) {
+            if (Chest.Type == "HpChest") {
+                //Chest.Sprite = new ImageView(HpChestOpen);
+                Chest.Sprite.setImage(HpChestOpen);
+                p1.setHealth(p1.getHealth()+Chest.Boost);
+                HpText.setText("  + "+Chest.Boost+" Hp");
+                
+            }
+            }
     }
 
     private void spawnArrows() {

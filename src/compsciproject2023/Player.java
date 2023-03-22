@@ -29,13 +29,12 @@ public class Player extends Sprite {
    
 
     //KeyHandler KeyH = new KeyHandler();
-    public Player(int width, int height, String imgpath) {
+    public Player(int width, int height, String imgpath, int Health, int Mana) {
 
         super(width, height, imgpath);
        
         Image img = draw(imgpath);
-        setDefaultAttributes();
-        getplayerimage();
+        setDefaultAttributes(Health, Mana);
         double h = Sprite.getFitHeight();
         double w = Sprite.getFitWidth();
         radiuscircleP = new Circle(getXSprite()+50,getYSprite()+70,35,Color.TRANSPARENT);
@@ -43,7 +42,7 @@ public class Player extends Sprite {
     }
    
     public void hit(int damage){
-        if (getCollision() == true) {
+        if (getCollision() == true && getHealth()>=0) {
             //Health = Health - 10;
             setHealth(getHealth()-damage);
             setCollision(false);
@@ -56,11 +55,11 @@ public class Player extends Sprite {
         }
     }
 
-    public void setDefaultAttributes() {
+    public void setDefaultAttributes(int Health, int Mana) {
        
-        this.Mp = 100;
+        this.Mp = Mana;
         this.StrenghtP = 100;
-        this.Health = 100;
+        this.Health = Health;
         setYSprite(100);
         setXSprite(100);
         setXSpeed(4);
