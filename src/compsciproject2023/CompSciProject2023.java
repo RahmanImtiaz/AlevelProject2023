@@ -1057,7 +1057,7 @@ public class CompSciProject2023 extends Application {
         for (int i = 0; i < r.nextInt(2) + 2; i++) {
             double x = r.nextInt(width-250);
             double y = r.nextInt(height-250);
-            int HpBoost = r.nextInt(10)+5;
+            int HpBoost = r.nextInt(5)+5;
             HpChests.add(new Chests(5, 5, HpChestClosed, "HpChest", x, y, HpBoost));
             HpChests.get(i).Sprite.setFitHeight(50);
             HpChests.get(i).Sprite.setFitWidth(50);
@@ -1076,9 +1076,11 @@ public class CompSciProject2023 extends Application {
                 Chest.Sprite.setImage(HpChestOpen);
                 p1.setHealth(p1.getHealth()+Chest.Boost);
                 HpText.setText("  + "+Chest.Boost+" Hp");
-                
+                if (p1.getHealth()>=100) {
+                   Chest.Boost = 0;
+                }
             }
-            }
+        }
     }
 
     private void spawnArrows() {
