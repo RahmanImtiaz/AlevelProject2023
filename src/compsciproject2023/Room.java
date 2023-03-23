@@ -33,7 +33,7 @@ public class Room extends GridPane {
     double RectWidth = 100;
     double RectHeight = 100;
     double lastx, lasty;
-    int roomnum;
+    int roomnum = -1;
 
     private boolean visited, Discovered;//Visited is to see if recursive maze gen has visited room, discovered is if player discovered room
 

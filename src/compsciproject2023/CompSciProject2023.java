@@ -7,7 +7,10 @@ package compsciproject2023;
 
 import java.applet.AudioClip;
 import java.awt.event.MouseEvent;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -15,6 +18,8 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.application.Application;
@@ -34,6 +39,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -82,10 +88,10 @@ public class CompSciProject2023 extends Application {
     AnimationTimer gametimer;
 
     Room[][] rooms = new Room[3][3];
-    int CurrentRoomx, CurrentRoomy, floornum, indexX, indexY, floorcount;
+    int CurrentRoomx, CurrentRoomy, floornum, indexX, indexY, floorcount = 0, prevfloorcount = 0;
 
     Stage Stage;
-    Stage popupStage;
+    Stage popupStage, SaveScoreStage;
 
     Scene MenuScene;
     Scene ScoreScene;
@@ -117,7 +123,7 @@ public class CompSciProject2023 extends Application {
     private ArrayList<Projectiles> Enemyprojectiles = new ArrayList();
     private int RangedEnemycounter = 0, RangedEnemyspawnTime = 180, SpawnEnemycounter, Timer;
     private double RangedEnemySpeed = 4;
-    private int KillCounter = 0;
+    private int KillCounter = 0, prevkillcount = 0;
     //private Enemies RangedEnemy;
 
     private ArrayList<Rectangle> Arrows = new ArrayList();
@@ -134,7 +140,7 @@ public class CompSciProject2023 extends Application {
 
     Button BtnPlay, Btnscore, BtnSet, BtnExit, BtnGuide;
     Button BtnSaveScore, BtnResume, Restartbtn, ButtonExitGame;
-    private Group Menuroot, ScoreRoot, Guideroot, SetRoot, GameRoot, PauseRoot;
+    private Group Menuroot, ScoreRoot, Guideroot, SetRoot, GameRoot, PauseRoot, SaveRoot;
 
     @Override
     public void start(Stage primaryStage) {
@@ -377,7 +383,7 @@ public class CompSciProject2023 extends Application {
     }
 
     private void CreateGame(Stage primaryStage) { //Function used to create the Game scene
-        
+
         Down1 = "Down1.png";
         Down2 = "Down2.png";
         Up1 = "Up1.png";
@@ -400,9 +406,10 @@ public class CompSciProject2023 extends Application {
         //show start room on screen before maze gen
         ///rooms[CurrentRoomy][CurrentRoomx] = new Room(WIDTH,HEIGHT,p1);
         ///rooms[CurrentRoomy][CurrentRoomx].drawRoom(GameRoot,rooms[CurrentRoomy][CurrentRoomx]);
+        int RoomNum = 0;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                int RoomNum = (i + 1) * (j + 1);
+                RoomNum++;
                 rooms[i][j] = new Room(WIDTH, HEIGHT, p1, RoomNum);
             }
         }
@@ -439,8 +446,7 @@ public class CompSciProject2023 extends Application {
 
     private void DrawMaze(Room maze, int PHealth, int PMana, double pX, double pY) {//Passed in new room, and players current health and mana
         if (maze.isDiscovered()) {
-            floorcount++;
-            Score = Score + 200; //When new floor discovered, 200 points to score
+            //Score = Score + 200; //When new floor discovered, 200 points to score
             maze.setDiscovered(true);
         }
         GameRoot.getChildren().clear();//Remove everything from root
@@ -828,13 +834,21 @@ public class CompSciProject2023 extends Application {
                 //update kill counter bar
                 KillCount.setText("Kills: " + KillCounter);
                 //System.out.println("X:"+p1.getXSprite()+"Y:"+p1.getYSprite());
-               
+
                 //Score Update
-                if (Timer%10 == 0 && p1.isAlive()) {
+                if (Timer % 50 == 0 && p1.isAlive()) {
                     Score++;//Score increases every 10 ticks
                 }
+                if (floorcount > prevfloorcount) {//if new floor found
+                    Score = Score + 100;//increase score by 100 each time
+                    prevfloorcount++;
+                }
+                if (KillCounter > prevkillcount) {//if enemy found
+                    Score = Score + 20;//increase score by 100 each time
+                    prevkillcount++;
+                }
+
                 ScoreCount.setText("Score: " + Score);//OUTPUTS SCORE
-               
 
                 //Hp Chest
                 HpChests.forEach(HpChests -> OpenChest(HpChests));//Opens chest
@@ -871,7 +885,11 @@ public class CompSciProject2023 extends Application {
         BtnSaveScore.setBackground(null);
         BtnSaveScore.setTextFill(Color.WHITE);
         BtnSaveScore.setFont(new Font("Papyrus", 30));
-        //BtnSaveScore.setOnAction(event -> ));
+        BtnSaveScore.setOnAction(event -> {
+            SaveScoreScene();
+            popupStage.close();
+            
+        });
 
         BtnResume = new Button();
         BtnResume.setText("> Resume");
@@ -1165,10 +1183,10 @@ public class CompSciProject2023 extends Application {
 
     private void TrapDmg(Traps Trap) {
         if (p1.Sprite.getBoundsInParent().intersects(Trap.Sprite.getBoundsInParent())) {
-            if (Timer%150 == 0) {//Every 150 ticks
-               p1.hit(Trap.TrapDamage);
+            if (Timer % 150 == 0) {//Every 150 ticks
+                p1.hit(Trap.TrapDamage);
             } else {
-               p1.hit(0);
+                p1.hit(0);
             }
         }
     }
@@ -1239,7 +1257,8 @@ public class CompSciProject2023 extends Application {
             GameRoot.getChildren().remove(p1.Sprite);//remove player
             GameRoot.getChildren().remove(projectiles);//remove players projectiles, so player can shoot after death
             p1.Removed = true;//Ensures that this is only called once when the player is killed
-            InGamePauseMenu(primaryStage);//Calls in game menu when player dies
+            //InGamePauseMenu(primaryStage);//Calls in game menu when player dies
+            SaveScoreScene();
         }
         for (int i = 0; i < Enemyprojectiles.size(); i++) {//Remove enemy projectile if dead
             if (Enemyprojectiles.get(i).isAlive() == false) {
@@ -1259,6 +1278,64 @@ public class CompSciProject2023 extends Application {
                 Score = Score + 20;//20 add to score at every kill
             }
         }
+    }
+
+    private void SaveScoreScene() {
+        SaveRoot = new Group();
+        double width = WIDTH / 2;
+        double height = HEIGHT / 2;
+
+        Image imgBack = new Image("Settingsbox.JPG");
+        ImageView Backg = new ImageView(imgBack);
+        Backg.setFitWidth(width);
+        Backg.setFitHeight(height);
+        SaveRoot.getChildren().add(Backg);
+
+        Label Title = new Label("Save Score");
+        Title.setFont(new Font("Papyrus", 50));
+        Title.setTextFill(Color.WHITE);
+
+        TextField usernamefield = new TextField();
+
+        Button submitbtn = new Button("Submit");
+        submitbtn.setOnAction(event -> {
+            String username = usernamefield.getText();
+            try {
+                SaveUserName(username);
+            } catch (IOException ex) {
+                Logger.getLogger(CompSciProject2023.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        
+        });
+
+        ButtonExitGame = new Button();
+        ButtonExitGame.setText("> Exit Game");
+        ButtonExitGame.setBackground(null);
+        ButtonExitGame.setTextFill(Color.WHITE);
+        ButtonExitGame.setFont(new Font("Papyrus", 30));
+        ButtonExitGame.setOnAction(event -> exit());
+
+        BorderPane borderPane = new BorderPane();
+        borderPane.setPrefSize(width, height);
+
+        VBox vbox = new VBox();
+        vbox.setAlignment(Pos.CENTER);
+        vbox.getChildren().addAll(Title, ButtonExitGame);
+        borderPane.setCenter(vbox);
+        SaveRoot.getChildren().addAll(borderPane);
+        Scene SaveScene = new Scene(SaveRoot);
+        SaveScoreStage = new Stage();
+        SaveScoreStage.setScene(SaveScene);
+        SaveScoreStage.setHeight(height);
+        SaveScoreStage.setWidth(width);
+    }
+
+    public void SaveUserName(String UserName) throws IOException {
+        FileWriter writer = new FileWriter("SaveGameDetails.txt");
+        BufferedWriter bufferedwriter = new BufferedWriter(writer);
+        bufferedwriter.write(UserName);
+        bufferedwriter.newLine();
+        bufferedwriter.close();
     }
 
     //}
