@@ -27,7 +27,6 @@ import javafx.stage.Screen;
  */
 public class Room extends GridPane {
 
-
     int[][] mazeroom;
     Cell cells[][];
     Random rand = new Random();
@@ -36,12 +35,13 @@ public class Room extends GridPane {
     double lastx, lasty;
     int roomnum;
 
-    private boolean visited;
+    private boolean visited, Discovered;//Visited is to see if recursive maze gen has visited room, discovered is if player discovered room
 
     public Room(double width, double height, Player p1, int roomNum) {
         //this.roomnum = roomNum;
-        this.visited = false;
+        this.visited = false;//For Recursive algorith
         this.roomnum = roomNum;
+        this.Discovered = false;//Checks if player has reached this room
         int numC = (int) ((int) width / RectWidth);
         int numR = (int) ((int) height / RectHeight);
 
@@ -64,14 +64,13 @@ public class Room extends GridPane {
                 //if ((col == numC - 1 && row == numR / 2)) {//right door
                 //    codeimg = 5;
                 //}
-
                 if ((row == numR / 2 || row == (numR / 2 + 1) || row == (numR / 2 - 1)) && (col == 1 || col == 2 || col == numC - 2 || col == numC - 3)) {
                     codeimg = 1;
                 }
                 if (row == numR / 2 && col != 0 && col != numC - 1) {// middle row is all floor, not doors
                     codeimg = 1;
                 }
-               
+
                 if (col == numC / 2 && row != 0 && row != numR - 1) {// middle row is all floor, not doors (virtical)
                     codeimg = 1;
                 }
@@ -80,7 +79,6 @@ public class Room extends GridPane {
                     codeimg = 1;
                 }
                 Image downdoor = new Image("Doordown.png");
-               
 
                 cells[row][col] = new Cell(codeimg, RectWidth, RectHeight);
                 cells[row][col].Cell.setLayoutX(col * (RectWidth));
@@ -96,22 +94,6 @@ public class Room extends GridPane {
         } else {
             return 0; //walls
         }
-    }
-
-    public void drawRoom(Group root, Room maze) {
-        root.getChildren().clear();
-        for (Cell row[] : maze.cells) {
-            for (Cell r : row) {
-                root.getChildren().add(r.Cell);
-            }
-        }
-
-        /*for (Cell[] row : cells) {
-            for (Cell cell : row) {
-                root.getChildren().add(cell.Cell);
-            }
-        }
-         */
     }
 
     public void isAddedToMaze() {
@@ -142,7 +124,7 @@ public class Room extends GridPane {
     public String EnterDoor(Player p1) {//Find collision with door and check which direction door is
         for (int row = 0; row < this.cells.length; row++) {
             for (int col = 0; col < this.cells[0].length; col++) {
-                if (this.cells[row][col].door) {
+                if (this.cells[row][col].door) {//Check is the cell is a door
                     if (p1.radiuscircleP.getBoundsInParent().intersects(this.cells[row][col].Cell.getBoundsInParent())) {
                         if ("DownDoor".equals(cells[row][col].type)) {
                             return "Down";
@@ -173,51 +155,51 @@ public class Room extends GridPane {
         switch (direction) {
             case DOWN:
                 cells[numR - 1][numC / 2].Cell = new ImageView(downdoor);
-                cells[numR - 1][numC / 2].Cell.setLayoutX((numC / 2)*RectWidth);
-                cells[numR - 1][numC / 2].Cell.setLayoutY((numR - 1)*RectHeight);
+                cells[numR - 1][numC / 2].Cell.setLayoutX((numC / 2) * RectWidth);
+                cells[numR - 1][numC / 2].Cell.setLayoutY((numR - 1) * RectHeight);
                 cells[numR - 1][numC / 2].Cell.setFitHeight(RectHeight);
                 cells[numR - 1][numC / 2].Cell.setFitWidth(RectWidth);
                 cells[numR - 1][numC / 2].type = "DownDoor";
                 cells[numR - 1][numC / 2].border = false;
                 cells[numR - 1][numC / 2].door = true;
-                lastx = (numC / 2)*RectWidth;
-                lasty = (1)*RectHeight+20;
+                lastx = (numC / 2) * RectWidth;
+                lasty = (1) * RectHeight + 20;
                 break;
             case UP:
                 cells[0][numC / 2].Cell = new ImageView(updoor);
-                cells[0][numC / 2].Cell.setLayoutX((numC / 2)*RectWidth);
-                cells[0][numC / 2].Cell.setLayoutY((0)*RectHeight);
+                cells[0][numC / 2].Cell.setLayoutX((numC / 2) * RectWidth);
+                cells[0][numC / 2].Cell.setLayoutY((0) * RectHeight);
                 cells[0][numC / 2].Cell.setFitHeight(RectHeight);
                 cells[0][numC / 2].Cell.setFitWidth(RectWidth);
                 cells[0][numC / 2].type = "UpDoor";
                 cells[0][numC / 2].border = false;
                 cells[0][numC / 2].door = true;
-                lastx = (numC / 2)*RectWidth;
-                lasty = (numR - 2)*RectHeight-20;
+                lastx = (numC / 2) * RectWidth;
+                lasty = (numR - 2) * RectHeight - 20;
                 break;
             case LEFT:
                 cells[numR / 2][0].Cell = new ImageView(leftdoor);
-                cells[numR / 2][0].Cell.setLayoutX((0)*RectWidth);
-                cells[numR / 2][0].Cell.setLayoutY((numR / 2)*RectHeight);
+                cells[numR / 2][0].Cell.setLayoutX((0) * RectWidth);
+                cells[numR / 2][0].Cell.setLayoutY((numR / 2) * RectHeight);
                 cells[numR / 2][0].Cell.setFitHeight(RectHeight);
                 cells[numR / 2][0].Cell.setFitWidth(RectWidth);
                 cells[numR / 2][0].type = "LeftDoor";
                 cells[numR / 2][0].border = false;
                 cells[numR / 2][0].door = true;
-                lastx = (numC - 2)*RectWidth-20;
-                lasty = (numR / 2)*RectHeight;
+                lastx = (numC - 2) * RectWidth - 20;
+                lasty = (numR / 2) * RectHeight;
                 break;
             case RIGHT:
                 cells[numR / 2][numC - 1].Cell = new ImageView(rightdoor);
-                cells[numR / 2][numC - 1].Cell.setLayoutX((numC - 1)*RectWidth);
-                cells[numR / 2][numC - 1].Cell.setLayoutY((numR / 2)*RectHeight);
+                cells[numR / 2][numC - 1].Cell.setLayoutX((numC - 1) * RectWidth);
+                cells[numR / 2][numC - 1].Cell.setLayoutY((numR / 2) * RectHeight);
                 cells[numR / 2][numC - 1].Cell.setFitHeight(RectHeight);
                 cells[numR / 2][numC - 1].Cell.setFitWidth(RectWidth);
                 cells[numR / 2][numC - 1].type = "RightDoor";
                 cells[numR / 2][numC - 1].border = false;
                 cells[numR / 2][numC - 1].door = true;
-                lastx = (1)*RectWidth+20;
-                lasty = (numR / 2)*RectHeight;
+                lastx = (1) * RectWidth + 20;
+                lasty = (numR / 2) * RectHeight;
                 break;
         }
     }
@@ -250,5 +232,23 @@ public class Room extends GridPane {
             }
         }
     }
-}
 
+    public boolean isChestonwall(Chests chest) {
+        for (int row = 0; row < cells.length; row++) {
+            for (int col = 0; col < cells[0].length; col++) {
+                if (cells[row][col].type != "Floor" && chest.Sprite.getBoundsInParent().intersects(cells[row][col].Cell.getBoundsInParent())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+   
+    public boolean isDiscovered(){
+        return Discovered;
+    }
+   
+    public void setDiscovered(boolean value){
+        this.Discovered = value;
+    }
+}

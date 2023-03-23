@@ -82,7 +82,7 @@ public class CompSciProject2023 extends Application {
     AnimationTimer gametimer;
 
     Room[][] rooms = new Room[3][3];
-    int CurrentRoomx, CurrentRoomy, floornum, indexX, indexY;
+    int CurrentRoomx, CurrentRoomy, floornum, indexX, indexY, floorcount;
 
     Stage Stage;
     Stage popupStage;
@@ -111,12 +111,12 @@ public class CompSciProject2023 extends Application {
 
     private ArrayList<Chests> HpChests = new ArrayList();
     private ArrayList<Chests> MpChests = new ArrayList();
-   
+    private ArrayList<Traps> Traps = new ArrayList();
 
     private ArrayList<Enemies> RangedEnemies = new ArrayList();
     private ArrayList<Projectiles> Enemyprojectiles = new ArrayList();
-    private int RangedEnemycounter = 0, RangedEnemyspawnTime = 180, SpawnEnemycounter, EnemyProjcounter;
-    private double RangedEnemySpeed = 4; 
+    private int RangedEnemycounter = 0, RangedEnemyspawnTime = 180, SpawnEnemycounter, Timer;
+    private double RangedEnemySpeed = 4;
     private int KillCounter = 0;
     //private Enemies RangedEnemy;
 
@@ -377,7 +377,6 @@ public class CompSciProject2023 extends Application {
     }
 
     private void CreateGame(Stage primaryStage) { //Function used to create the Game scene
-
         Down1 = "Down1.png";
         Down2 = "Down2.png";
         Up1 = "Up1.png";
@@ -389,7 +388,6 @@ public class CompSciProject2023 extends Application {
 
         //playerprojectile = new Projectiles();
         GameRoot = new Group();
-       
 
         //p1 = new Player(30, 30, Down1); //creates the player object
         //GenerateMaze();
@@ -419,13 +417,12 @@ public class CompSciProject2023 extends Application {
         //GameRoot.getChildren().add(p1.rect);
         ///GameRoot.getChildren().add(p1.Sprite);
         //GameRoot.getChildren().add(p1.radiuscircleP);
-       
         Scene sceneGame = new Scene(GameRoot, WIDTH, HEIGHT);
         sceneGame.setCursor(Cursor.CROSSHAIR); //changes how the mouse will look
         controls(sceneGame, primaryStage); //calls the subroutine resposible for the key listeners
         loop(primaryStage); //calls the subroutine with the animation timer/gameloop
 
-       /* spawnRangedEnemies();//calls the subroutine responsible for enemy spawns
+        /* spawnRangedEnemies();//calls the subroutine responsible for enemy spawns
 
         HBox BarBox = new HBox();
         BorderPane scoreBP = new BorderPane();
@@ -433,39 +430,47 @@ public class CompSciProject2023 extends Application {
         BarBox.getChildren().addAll(HealthBar(), MananBar(), scoreBP);//health bar and mana bar
         BarBox.setSpacing(10);
         GameRoot.getChildren().add(BarBox);
-*/
+         */
         primaryStage.setScene(sceneGame);
         primaryStage.setFullScreen(true);
 
     }
 
-
     private void DrawMaze(Room maze, int PHealth, int PMana, double pX, double pY) {//Passed in new room, and players current health and mana
-        GameRoot.getChildren().clear();
+        if (maze.isDiscovered()) {
+            floorcount++;
+            Score = Score + 200; //When new floor discovered, 200 points to score
+            maze.setDiscovered(true);
+        }
+        GameRoot.getChildren().clear();//Remove everything from root
+        RangedEnemies.clear();//Clear Enemy array lists
+        HpChests.clear();//Clear Chest array lists        
+        MpChests.clear();//Clear Chest array lists  
+        Traps.clear();//Clear Chest array lists    
         Image bgimg = new Image("Blackbackround.png");
         ImageView Backg = new ImageView(bgimg);
         Backg.setFitWidth(WIDTH);
         Backg.setFitHeight(HEIGHT);
-        GameRoot.getChildren().add(Backg);
-        //GameRoot.getChildren().remove(Maze);
+        GameRoot.getChildren().add(Backg);//add black background
         for (Cell row[] : maze.cells) {
             for (Cell r : row) {
-                GameRoot.getChildren().add(r.Cell);
-                //GameRoot.getChildren().add(1, r.Cell);//Add under all other objects except the black background
+                GameRoot.getChildren().add(r.Cell);//add all the cells of new maze
             }
         }
         DrawGame(PHealth, PMana, pX, pY);//Draws the rest of the game
     }
 
-    private void DrawGame(int PlayerHealth, int PlayerMana, double Playerx, double Playery) {    
-        p1 = new Player(30, 30, Down1,PlayerHealth,PlayerMana); //creates the player object
+    private void DrawGame(int PlayerHealth, int PlayerMana, double Playerx, double Playery) {
+        p1 = new Player(30, 30, Down1, PlayerHealth, PlayerMana); //creates the player object
         p1.setXSprite(Playerx);
         p1.setYSprite(Playery);
+        spawnTraps();//Spawns Traps
         GameRoot.getChildren().add(p1.Sprite);
-       
+
         spawnRangedEnemies();//calls the subroutine responsible for enemy spawns
         spawnHpChests();//Spawns in chests giving Hp
-       
+        spawnMpChests();//Spawns in chests giving Mp
+
         HBox BarBox = new HBox();
         BorderPane scoreBP = new BorderPane();
         scoreBP.setRight(Scores());
@@ -493,26 +498,18 @@ public class CompSciProject2023 extends Application {
         //recursive call on neighbour
         for (Direction d : directions) {
             if (d == Direction.DOWN && isValidRoom(x, y + 1)) {//check if direction is down and the next room down is valid
-                //RoomNum = (x+1)*(y+2);
-                //rooms[y+1][x] = new Room(WIDTH, HEIGHT, p1, RoomNum);
                 rooms[y][x].makeDoor(d); //make an exit to existing room
                 rooms[y + 1][x].makeDoor(d.getNeighbourDoor(d)); //make an entrance to the new room
                 GenerateMaze(x, y + 1); //Recursive call for the new room
             } else if (d == Direction.UP && isValidRoom(x, y - 1)) {//check if direction is up and the next room down is valid
-                //RoomNum = (x+1)*(y);
-                //rooms[y-1][x] = new Room(WIDTH, HEIGHT, p1, RoomNum);
                 rooms[y][x].makeDoor(d); //make an exit to existing room
                 rooms[y - 1][x].makeDoor(d.getNeighbourDoor(d)); //make an entrance to the new room
                 GenerateMaze(x, y - 1); //Recursive call for the new room
             } else if (d == Direction.LEFT && isValidRoom(x - 1, y)) {//check if direction is left and the next room down is valid
-                //RoomNum = (x)*(y+1);
-                //rooms[y][x-1] = new Room(WIDTH, HEIGHT, p1, RoomNum);
                 rooms[y][x].makeDoor(d); //make an exit to existing room
                 rooms[y][x - 1].makeDoor(d.getNeighbourDoor(d)); //make an entrance to the new room
                 GenerateMaze(x - 1, y); //Recursive call for the new room
             } else if (d == Direction.RIGHT && isValidRoom(x + 1, y)) {//check if direction is right and the next room down is valid
-                //RoomNum = (x+2)*(y+1);
-                //rooms[y][x+1] = new Room(WIDTH, HEIGHT, p1, RoomNum);
                 rooms[y][x].makeDoor(d); //make an exit to existing room
                 rooms[y][x + 1].makeDoor(d.getNeighbourDoor(d)); //make an entrance to the new room
                 GenerateMaze(x + 1, y); //Recursive call for the new room
@@ -732,8 +729,8 @@ public class CompSciProject2023 extends Application {
                 //}
                 //};
                 //myTimer.scheduleAtFixedRate(myTimerTask, 0, 10);
-                EnemyProjcounter++;
-                if (SpawnEnemycounter % 100 == 0) {
+                Timer++;
+                if (SpawnEnemycounter % 150 == 0) {
                     EnemyProjectile(p1.getXSprite() + 50, p1.getYSprite() + 50); //responsible for creating enemy projectiles
                 }
                 Enemyprojectiles.forEach(Enemyprojectiles -> Enemyprojectiles.moveprojectile()); //calls movement method for each projectile
@@ -771,6 +768,9 @@ public class CompSciProject2023 extends Application {
                     }
 
                 }
+                if (p1.getHealth() <= 0) {//Player Death control
+                    p1.setAlive(false);
+                }
 
                 //Collisions
                 Maze.playerwallcollision(p1); //Player and wall collisions
@@ -800,10 +800,9 @@ public class CompSciProject2023 extends Application {
                     if ("Right".equals(MazeDirection) && isValidIndex(indexX + 1, indexY)) {
                         indexX = indexX + 1;
                     }
-                    //GenerateMaze(x, y);
                     px = Maze.lastx;
                     py = Maze.lasty;
-                    DrawMaze(rooms[indexY][indexX],p1.getHealth(),p1.getMp(), px, py);//Passes new room, and players current health and mana
+                    DrawMaze(rooms[indexY][indexX], p1.getHealth(), p1.getMp(), px, py);//Passes new room, and players current health and mana
                     Maze = rooms[indexY][indexX];
                 }
 
@@ -836,10 +835,21 @@ public class CompSciProject2023 extends Application {
                 //update kill counter bar
                 KillCount.setText("Kills: " + KillCounter);
                 //System.out.println("X:"+p1.getXSprite()+"Y:"+p1.getYSprite());
-                
+               
+                //Score Update
+                if (Timer%10 == 0 && p1.isAlive()) {
+                    Score++;//Score increases every 10 ticks
+                }
+                ScoreCount.setText("Score: " + Score);//OUTPUTS SCORE
+               
+
                 //Hp Chest
-                HpChests.forEach(HpChests -> OpenChest(HpChests));
-                
+                HpChests.forEach(HpChests -> OpenChest(HpChests));//Opens chest
+                //Mp Chest
+                MpChests.forEach(MpChests -> OpenChest(MpChests));//Opens chest
+                //Traps
+                Traps.forEach(Traps -> TrapDmg(Traps));
+
             }
         };
         gametimer.start();
@@ -936,16 +946,16 @@ public class CompSciProject2023 extends Application {
         int height = (int) HEIGHT;
         int width = (int) WIDTH;
         for (int i = 0; i < r.nextInt(2) + 2; i++) {
-            double x = r.nextInt(width-250);
-            double y = r.nextInt(height-250);
+            double x = r.nextInt(width - 250);
+            double y = r.nextInt(height - 250);
             RangedEnemies.add(new Enemies(5, 5, imgpath, 10, 100, x, y, 30));
             RangedEnemies.get(i).Sprite.setFitHeight(130);
             RangedEnemies.get(i).Sprite.setFitWidth(100);
-            if (RangedEnemies.get(i).Sprite!=null) {
-              GameRoot.getChildren().add(RangedEnemies.get(i).Sprite);
-              RangedEnemycounter++;// counts the number of enemies  
+            if (RangedEnemies.get(i).Sprite != null) {
+                GameRoot.getChildren().add(RangedEnemies.get(i).Sprite);
+                RangedEnemycounter++;// counts the number of enemies  
             }
-            
+
         }
     }
 
@@ -1046,8 +1056,8 @@ public class CompSciProject2023 extends Application {
         return Scorebox;
 
     }
-    
-    private void spawnHpChests(){    
+
+    private void spawnHpChests() {
         String HpChestOpen = "HpChestOpen.png";
         String HpChestClosed = "HpChestClosed.png";
         Random r = new Random();
@@ -1055,30 +1065,118 @@ public class CompSciProject2023 extends Application {
         int height = (int) HEIGHT;
         int width = (int) WIDTH;
         for (int i = 0; i < r.nextInt(2) + 2; i++) {
-            double x = r.nextInt(width-250);
-            double y = r.nextInt(height-250);
-            int HpBoost = r.nextInt(5)+5;
+            double x = r.nextInt(width - 250);
+            double y = r.nextInt(height - 250);
+            int HpBoost = r.nextInt(5) + 5;
             HpChests.add(new Chests(5, 5, HpChestClosed, "HpChest", x, y, HpBoost));
             HpChests.get(i).Sprite.setFitHeight(50);
             HpChests.get(i).Sprite.setFitWidth(50);
-            if (HpChests.get(i).Sprite!=null) {
-              GameRoot.getChildren().add(HpChests.get(i).Sprite);
+            if (HpChests.get(i).Sprite != null) {
+                GameRoot.getChildren().add(HpChests.get(i).Sprite);
             }
-            
         }
     }
-    
-    private void OpenChest(Chests Chest){
- Image HpChestOpen= new Image("HpChestOpen.png");
+
+    private void spawnMpChests() {
+        String MpChestOpen = "MpChestOpen.png";
+        String MpChestClosed = "MpChestClosed.png";
+        Random r = new Random();
+
+        int height = (int) HEIGHT;
+        int width = (int) WIDTH;
+        for (int i = 0; i < r.nextInt(2) + 2; i++) {
+            double x = r.nextInt(width - 250);
+            double y = r.nextInt(height - 250);
+            int MpBoost = r.nextInt(5) + 5;
+            MpChests.add(new Chests(5, 5, MpChestClosed, "MpChest", x, y, MpBoost));
+            MpChests.get(i).Sprite.setFitHeight(50);
+            MpChests.get(i).Sprite.setFitWidth(50);
+            if (MpChests.get(i).Sprite != null) {
+                GameRoot.getChildren().add(MpChests.get(i).Sprite);
+            }
+        }
+    }
+
+    private void OpenChest(Chests Chest) {
+        Image HpChestOpen = new Image("HpChestOpen.png");
+        Image MpChestOpen = new Image("MpChestOpen.png");
         if (p1.Sprite.getBoundsInParent().intersects(Chest.Sprite.getBoundsInParent()) && ClickChest == true) {
-            if (Chest.Type == "HpChest") {
-                //Chest.Sprite = new ImageView(HpChestOpen);
+            if (Chest.Type == "HpChest" && p1.getHealth() <= 100 && p1.getHealth() >= 0) {
                 Chest.Sprite.setImage(HpChestOpen);
-                p1.setHealth(p1.getHealth()+Chest.Boost);
-                HpText.setText("  + "+Chest.Boost+" Hp");
-                if (p1.getHealth()>=100) {
-                   Chest.Boost = 0;
+                p1.setHealth(p1.getHealth() + Chest.Boost);
+                //HpText.setText("  + " + Chest.Boost + " Hp");
+                int counter = 0;
+                Text notify = null;
+                while (counter < 100) {
+                    HpText.setText("  + " + Chest.Boost + " Hp");
+                    if (Chest.Boost > 0) {
+                        notify = new Text("  + " + Chest.Boost + " Hp");
+                    }
+                    notify.setFont(new Font("Papyrus", 20));
+                    notify.setFill(Color.WHITE);
+                    notify.setX(Chest.getXSprite());
+                    notify.setY(Chest.getYSprite());
+                    GameRoot.getChildren().add(notify);
+                    counter++;
                 }
+                GameRoot.getChildren().remove(notify);
+                Chest.Boost = 0;//Makes sure the chest cannot be used again
+
+            }
+            if (Chest.Type == "MpChest" && p1.getHealth() <= 100 && p1.getHealth() >= 0) {
+                Chest.Sprite.setImage(MpChestOpen);
+                p1.setMp(p1.getMp() + Chest.Boost);
+                int counter = 0;
+                Text notify = null;
+                while (counter < 100) {
+                    HpText.setText("  + " + Chest.Boost + " Mp");
+                    if (Chest.Boost > 0) {
+                        notify = new Text("  + " + Chest.Boost + " Mp");
+                    }
+                    notify.setFont(new Font("Papyrus", 20));
+                    notify.setFill(Color.WHITE);
+                    notify.setX(Chest.getXSprite());
+                    notify.setY(Chest.getYSprite());
+                    GameRoot.getChildren().add(notify);
+                    counter++;
+                }
+                GameRoot.getChildren().remove(notify);
+                Chest.Boost = 0;//Makes sure the chest cannot be used again
+            }
+            if (p1.getMp() > 100) {//If Mp goes above 100, this caps it to 100
+                p1.setMp(100);
+            }
+            if (p1.getHealth() > 100) {//If Hp goes above 100, this caps it to 100
+                p1.setHealth(100);
+            }
+        }
+    }
+
+    private void spawnTraps() {
+        String Trap = "Trap.jpeg";
+        Random r = new Random();
+
+        int height = (int) HEIGHT;
+        int width = (int) WIDTH;
+        for (int i = 0; i < r.nextInt(5) + 2; i++) {
+            double x = r.nextInt(width - 250);
+            double y = r.nextInt(height - 250);
+            int Damage = r.nextInt(2) + 1;
+            Traps.add(new Traps(5, 5, Trap, x, y, Damage));
+            Traps.get(i).Sprite.setFitHeight(50);
+            Traps.get(i).Sprite.setFitWidth(50);
+            if (Traps.get(i).Sprite != null) {
+                GameRoot.getChildren().add(Traps.get(i).Sprite);
+            }
+        }
+    }
+
+    private void TrapDmg(Traps Trap) {
+        if (p1.Sprite.getBoundsInParent().intersects(Trap.Sprite.getBoundsInParent())) {
+            if (Timer%150 == 0) {//Every 150 ticks
+               p1.hit(Trap.TrapDamage);
+            } else {
+               p1.hit(0);
             }
         }
     }
@@ -1119,14 +1217,6 @@ public class CompSciProject2023 extends Application {
         Stage.setFullScreen(true);
     }
 
-    //}
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        launch(args);
-    }
-
     private void enemyplayerprojcoll(Enemies Enemy) {
         Iterator<Projectiles> it = projectiles.iterator();
         while (it.hasNext()) {
@@ -1153,9 +1243,11 @@ public class CompSciProject2023 extends Application {
 
     private void spriteremove(Stage primaryStage) { //Remove the sprites from the game root, if they are not alive
 
-        if (p1.isAlive() == false) {//Remove player if dead
+        if (p1.isAlive() == false && p1.Removed == false) {//Remove player if dead and has not been removed yet
             GameRoot.getChildren().remove(p1.Sprite);//remove player
-            GameRoot.getChildren().remove(projectiles);//remove players projectiles
+            GameRoot.getChildren().remove(projectiles);//remove players projectiles, so player can shoot after death
+            p1.Removed = true;//Ensures that this is only called once when the player is killed
+            InGamePauseMenu(primaryStage);//Calls in game menu when player dies
         }
         for (int i = 0; i < Enemyprojectiles.size(); i++) {//Remove enemy projectile if dead
             if (Enemyprojectiles.get(i).isAlive() == false) {
@@ -1166,15 +1258,22 @@ public class CompSciProject2023 extends Application {
             if (projectiles.get(j).isAlive() == false) {
                 GameRoot.getChildren().remove(projectiles.get(j).Sprite);
             }
-
         }
         for (int k = 0; k < RangedEnemies.size(); k++) {//Remove enemy if dead
             if (RangedEnemies.get(k).isAlive() == false) {
                 GameRoot.getChildren().remove(RangedEnemies.get(k).Sprite);//removes enemy
                 RangedEnemies.remove(k);
                 KillCounter++;//counts the kills
-                //System.out.println(KillCounter);//used for testing
+                Score = Score + 20;//20 add to score at every kill
             }
         }
+    }
+
+    //}
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        launch(args);
     }
 }

@@ -24,7 +24,7 @@ public class Player extends Sprite {
     double xspeed, yspeed;
     public Image Up1, Up2, Down1, Down2, Left1, Left2, Right1, Right2;
     Circle radiuscircleP;
-    boolean notmoving= false;
+    boolean notmoving= false, Removed;
    
    
 
@@ -32,7 +32,7 @@ public class Player extends Sprite {
     public Player(int width, int height, String imgpath, int Health, int Mana) {
 
         super(width, height, imgpath);
-       
+        this.Removed = false;
         Image img = draw(imgpath);
         setDefaultAttributes(Health, Mana);
         double h = Sprite.getFitHeight();
@@ -42,21 +42,13 @@ public class Player extends Sprite {
     }
    
     public void hit(int damage){
-        if (getCollision() == true && getHealth()>=0) {
-            //Health = Health - 10;
+        if (getHealth()>=0) {
             setHealth(getHealth()-damage);
-            setCollision(false);
          }
-       
-       
-        if (getHealth() == 0) {
-            setAlive(false);
-            System.out.println("Player died!");
-        }
     }
+   
 
     public void setDefaultAttributes(int Health, int Mana) {
-       
         this.Mp = Mana;
         this.StrenghtP = 100;
         this.Health = Health;
