@@ -377,6 +377,7 @@ public class CompSciProject2023 extends Application {
     }
 
     private void CreateGame(Stage primaryStage) { //Function used to create the Game scene
+        
         Down1 = "Down1.png";
         Down2 = "Down2.png";
         Up1 = "Up1.png";
@@ -721,14 +722,6 @@ public class CompSciProject2023 extends Application {
                 spawnArrows();//spawns arrows
                 moveArrows();//moves the arrows
 
-                //Timer myTimer = new Timer();
-                //TimerTask myTimerTask = new TimerTask() {
-                //@Override
-                //public void run() {
-                //EnemyProjectile(p1.getXSprite(), p1.getYSprite());
-                //}
-                //};
-                //myTimer.scheduleAtFixedRate(myTimerTask, 0, 10);
                 Timer++;
                 if (SpawnEnemycounter % 150 == 0) {
                     EnemyProjectile(p1.getXSprite() + 50, p1.getYSprite() + 50); //responsible for creating enemy projectiles
@@ -889,7 +882,6 @@ public class CompSciProject2023 extends Application {
         BtnResume.setOnAction(e -> {
             gametimer.start();
             popupStage.close();
-
         });
 
         Restartbtn = new Button();
