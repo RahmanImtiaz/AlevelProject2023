@@ -255,16 +255,9 @@ public class CompSciProject2023 extends Application {
         Title.setFont(new Font("Papyrus", 80));
         Title.setTextFill(Color.WHITE);
         
-        BorderPane scoreBP = new BorderPane();
-        VBox Scores = LoadDetails();//calls the score vbox
-        Scores.setLayoutX(WIDTH / 2 - 250);
-        Scores.setLayoutY(250);
-        Scores.setAlignment(Pos.CENTER);
-        scoreBP.setPrefSize(WIDTH, HEIGHT);
-        scoreBP.setCenter(Scores);//Sets the score the the center
-        scoreBP.setTranslateY(-200);//moves scores up by 200
+        UpdateScoreBoard();//updates score board
         
-        ScoreRoot.getChildren().addAll(Title, scoreBP);//Adds the title and the scores
+        ScoreRoot.getChildren().addAll(Title);//Adds the title
 
         BorderPane borderPane2 = new BorderPane();
         Button BtnBack = new Button();
@@ -281,6 +274,18 @@ public class CompSciProject2023 extends Application {
         Scene sceneScore = new Scene(ScoreRoot, WIDTH, HEIGHT);
 
         return sceneScore;
+    }
+    
+    private void UpdateScoreBoard(){
+        BorderPane scoreBP = new BorderPane();
+        VBox Scores = LoadDetails();//calls the score vbox
+        Scores.setLayoutX(WIDTH / 2 - 250);
+        Scores.setLayoutY(250);
+        Scores.setAlignment(Pos.CENTER);
+        scoreBP.setPrefSize(WIDTH, HEIGHT);
+        scoreBP.setCenter(Scores);//Sets the score the the center
+        scoreBP.setTranslateY(-150);//moves scores up by 200
+        ScoreRoot.getChildren().addAll(scoreBP); //adds score to scoreboard
     }
 
     private Scene CreateGuide() {
@@ -499,12 +504,12 @@ public class CompSciProject2023 extends Application {
         spawnHpChests();//Spawns in chests giving Hp
         spawnMpChests();//Spawns in chests giving Mp
 
-        HBox BarBox = new HBox();
+        HBox BarBox = new HBox();//Used for Health bar and mana bar
         BorderPane scoreBP = new BorderPane();
-        scoreBP.setRight(Scores());
-        BarBox.getChildren().addAll(HealthBar(), ManaBar(), scoreBP);//health bar and mana bar
+        scoreBP.setRight(Scores());//Borderpane stores and sets the HBOX containing score to the right
+        BarBox.getChildren().addAll(HealthBar(), ManaBar(), scoreBP);//health bar, mana bar and scores, kill count etc.
         BarBox.setSpacing(10);
-        GameRoot.getChildren().add(BarBox);
+        GameRoot.getChildren().add(BarBox); //Hbox added to the root
     }
 
     private void GenerateMaze(int x, int y) {//Recursive backtracking
@@ -1069,19 +1074,19 @@ public class CompSciProject2023 extends Application {
 
     private HBox Scores() {
         HBox Scorebox = new HBox();
-        KillCount = new Text("Kills: " + KillCounter);
+        KillCount = new Text("Kills: " + KillCounter);//For the kill counts
         KillCount.setFont(new Font("Papyrus", 40));
         KillCount.setFill(Color.WHITE);
 
-        FloorCount = new Text("Floors Cleared: " + floornum);
+        FloorCount = new Text("Floors Cleared: " + floornum);//For the floor cleared counts
         FloorCount.setFont(new Font("Papyrus", 40));
         FloorCount.setFill(Color.WHITE);
 
-        ScoreCount = new Text("Score: " + Score);
+        ScoreCount = new Text("Score: " + Score);//For the Score count
         ScoreCount.setFont(new Font("Papyrus", 40));
         ScoreCount.setFill(Color.WHITE);
 
-        Scorebox.getChildren().addAll(KillCount, ScoreCount, FloorCount);
+        Scorebox.getChildren().addAll(KillCount, ScoreCount, FloorCount);//Add all scores to vbox
         Scorebox.setSpacing(35);
         Scorebox.setAlignment(Pos.TOP_RIGHT);
 
@@ -1329,7 +1334,7 @@ public class CompSciProject2023 extends Application {
             String username = UserNameField.getText();
 
             SaveUserName(username, playerScore);
-
+            //UpdateScoreBoard();//Updates scoreboard
             Stage.setScene(MenuScene);//Goes to main menu
             SaveScoreStage.close();//Save screen closes
         });
