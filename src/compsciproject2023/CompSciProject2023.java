@@ -7,8 +7,10 @@ package compsciproject2023;
 
 import java.applet.AudioClip;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
@@ -70,6 +72,7 @@ public class CompSciProject2023 extends Application {
     double randommovedy = 0;
 
     boolean PlayerDied;
+    Text Details;
 
     int upcount = 1, downcount = 1, rightcount = 1, leftcount = 1;
 
@@ -83,7 +86,7 @@ public class CompSciProject2023 extends Application {
 
     Text KillCount, FloorCount, ScoreCount;
 
-    int Score;
+    int Score, HighestScore = 0, CurrentScore = 0;
 
     AnimationTimer gametimer;
 
@@ -158,7 +161,6 @@ public class CompSciProject2023 extends Application {
         Stage.setScene(MenuScene); //set menu scene
         Stage.setFullScreen(true); //opens menu in full screen
         Stage.show();
-
     }
 
     private Scene CreateMainMenu1() { //Function used to create the main menu scene
@@ -170,11 +172,6 @@ public class CompSciProject2023 extends Application {
         BtnPlay.setFont(new Font("Papyrus", 30));
         BtnPlay.setOnAction(event -> CreateGame(Stage));
 
-        // BtnPlay.addEventHandler(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
-        //    BtnPlay.setStyle("-fx-font-weight: bold");
-        //    BtnPlay.setScaleX(3.2);
-        //    BtnPlay.setScaleY(2.2);
-        // });
         Btnscore = new Button();
         Btnscore.setText("> High Score");
         Btnscore.setBackground(null);
@@ -244,13 +241,30 @@ public class CompSciProject2023 extends Application {
         borderPane.setCenter(rectangle); //sets the rectange to the center
 
         ScoreRoot.getChildren().add(borderPane);
-
+       
+        //BorderPane Text = new BorderPane();
+        //Details = new Text(LoadDetails());//Gets Username and scores
+        //Text.setPrefSize(WIDTH, HEIGHT);
+        //Details.setFont(new Font("Papyrus", 30));
+        //Details.setFill(Color.WHITE);
+        //Text.setCenter(Details);
+     
         Label Title = new Label("Score Board");
         Title.setLayoutX(WIDTH / 2 - 250);
         Title.setLayoutY(150);
         Title.setFont(new Font("Papyrus", 80));
         Title.setTextFill(Color.WHITE);
-        ScoreRoot.getChildren().add(Title);
+        
+        BorderPane scoreBP = new BorderPane();
+        VBox Scores = LoadDetails();//calls the score vbox
+        Scores.setLayoutX(WIDTH / 2 - 250);
+        Scores.setLayoutY(250);
+        Scores.setAlignment(Pos.CENTER);
+        scoreBP.setPrefSize(WIDTH, HEIGHT);
+        scoreBP.setCenter(Scores);//Sets the score the the center
+        scoreBP.setTranslateY(-200);//moves scores up by 200
+        
+        ScoreRoot.getChildren().addAll(Title, scoreBP);//Adds the title and the scores
 
         BorderPane borderPane2 = new BorderPane();
         Button BtnBack = new Button();
@@ -276,6 +290,13 @@ public class CompSciProject2023 extends Application {
         Backg.setFitWidth(WIDTH);
         Backg.setFitHeight(HEIGHT);
         Guideroot.getChildren().add(Backg);
+       
+        BorderPane Text = new BorderPane();
+        Text.setPrefSize(WIDTH, HEIGHT);
+        Text inst = new Text("W - Move Up\nS - Move Down\nA - Move Left\nD - Move Right\nC - Open Chests\nSPACEBAR - Shoot *(Face the direction you want to shoot at)");
+        inst.setFont(new Font("Papyrus", 30));
+        inst.setFill(Color.WHITE);
+        Text.setCenter(inst);
 
         Rectangle rectangle = new Rectangle(200, 200, 960, 540);
         Image SetBox = new Image("Settingsbox.JPG");
@@ -284,7 +305,7 @@ public class CompSciProject2023 extends Application {
         borderPane.setPrefSize(WIDTH, HEIGHT);
         borderPane.setCenter(rectangle);
 
-        Guideroot.getChildren().addAll(borderPane);
+        Guideroot.getChildren().addAll(borderPane,Text);
 
         Label Title = new Label("User Intsructions");
         Title.setLayoutX(WIDTH / 2 - 300);
@@ -292,7 +313,7 @@ public class CompSciProject2023 extends Application {
         Title.setFont(new Font("Papyrus", 80));
         Title.setTextFill(Color.WHITE);
         Guideroot.getChildren().add(Title);
-
+       
         BorderPane borderPane2 = new BorderPane();
 
         Button BtnBack = new Button();
@@ -383,7 +404,6 @@ public class CompSciProject2023 extends Application {
     }
 
     private void CreateGame(Stage primaryStage) { //Function used to create the Game scene
-
         Down1 = "Down1.png";
         Down2 = "Down2.png";
         Up1 = "Up1.png";
@@ -447,6 +467,7 @@ public class CompSciProject2023 extends Application {
     private void DrawMaze(Room maze, int PHealth, int PMana, double pX, double pY) {//Passed in new room, and players current health and mana
         if (maze.isDiscovered()) {
             //Score = Score + 200; //When new floor discovered, 200 points to score
+            floorcount++;//increments floor count
             maze.setDiscovered(true);
         }
         GameRoot.getChildren().clear();//Remove everything from root
@@ -608,7 +629,10 @@ public class CompSciProject2023 extends Application {
                             GameRoot.getChildren().add(projectile.Sprite);
                         }
                         Shooting = true;
-                        p1.setMp(p1.getMp() - 5);//Take away mana
+                        if (p1.getMp()>0) {//Only is Mp is above 0
+                           p1.setMp(p1.getMp() - 5);//Take away mana 
+                        }
+                        
                     }
                     break;
                 case ESCAPE:
@@ -849,6 +873,8 @@ public class CompSciProject2023 extends Application {
                 }
 
                 ScoreCount.setText("Score: " + Score);//OUTPUTS SCORE
+                
+                FloorCount.setText("Floors Cleared: " + floorcount);//outputs number of floors cleared.
 
                 //Hp Chest
                 HpChests.forEach(HpChests -> OpenChest(HpChests));//Opens chest
@@ -856,6 +882,7 @@ public class CompSciProject2023 extends Application {
                 MpChests.forEach(MpChests -> OpenChest(MpChests));//Opens chest
                 //Traps
                 Traps.forEach(Traps -> TrapDmg(Traps));
+
 
             }
         };
@@ -888,7 +915,7 @@ public class CompSciProject2023 extends Application {
         BtnSaveScore.setOnAction(event -> {
             SaveScoreScene();
             popupStage.close();
-            
+
         });
 
         BtnResume = new Button();
@@ -930,10 +957,10 @@ public class CompSciProject2023 extends Application {
         borderPane.setCenter(vbox);
         PauseRoot.getChildren().addAll(borderPane);
         popupStage = new Stage();
-        popupStage.initStyle(StageStyle.UNDECORATED);
         //popupStage.initOwner(primaryStage);
         //popupStage.initModality(Modality.APPLICATION_MODAL);
         popupStage.setScene(new Scene(PauseRoot));
+        popupStage.initStyle(StageStyle.UNDECORATED);
         popupStage.centerOnScreen();
         popupStage.initModality(Modality.APPLICATION_MODAL);
         popupStage.setHeight(height);
@@ -1009,40 +1036,35 @@ public class CompSciProject2023 extends Application {
 
     }
 
-    private StackPane HealthBar() {
-        HealthBarBckg = new Rectangle(300, 30);
+    private StackPane HealthBar() {//Makes a health bar.
+        HealthBarBckg = new Rectangle(300, 30); //Background bar
         HealthBarBckg.setFill(Color.GREY);
-        HealthBarHP = new Rectangle(295, 25);
+        HealthBarHP = new Rectangle(295, 25); //Health bar
         HealthBarHP.setFill(Color.RED);
 
-        HpText = new Text("HP:      " + p1.getHealth() + "/100");
+        HpText = new Text("HP:      " + p1.getHealth() + "/100");//Outputs this over the red bar
         HpText.setFont(new Font("Papyrus", 20));
         HpText.setFill(Color.WHITE);
 
-        //HBox hbox = new HBox();
         StackPane sp = new StackPane();
-        sp.getChildren().addAll(HealthBarBckg, HealthBarHP, HpText);
-        //hbox.getChildren().add(sp);
-
-        return sp;
+        sp.getChildren().addAll(HealthBarBckg, HealthBarHP, HpText);//Add grey bar, then red bar, then text
+        return sp;//Returns the stackpane
     }
 
-    private StackPane ManaBar() {
-        ManaBarBckg = new Rectangle(300, 30);
+    private StackPane ManaBar() {//Makes a mana bar.
+        ManaBarBckg = new Rectangle(300, 30); //Background bar
         ManaBarBckg.setFill(Color.GREY);
         ManaBarMP = new Rectangle(295, 25);
-        ManaBarMP.setFill(Color.DARKTURQUOISE);
+        ManaBarMP.setFill(Color.DARKTURQUOISE); //Mana bar
 
-        MpText = new Text("MP:      " + p1.getMp() + "/100");
+        MpText = new Text("MP:      " + p1.getMp() + "/100");//Outputs this over the blue bar
         MpText.setFont(new Font("Papyrus", 20));
         MpText.setFill(Color.WHITE);
 
-        //HBox Mbox = new HBox();
         StackPane sp = new StackPane();
-        sp.getChildren().addAll(ManaBarBckg, ManaBarMP, MpText);
-        //Mbox.getChildren().add(sp);
+        sp.getChildren().addAll(ManaBarBckg, ManaBarMP, MpText);//Add grey bar, then blue bar, then text
 
-        return sp;
+        return sp;//Returns the stackpane
     }
 
     private HBox Scores() {
@@ -1051,7 +1073,7 @@ public class CompSciProject2023 extends Application {
         KillCount.setFont(new Font("Papyrus", 40));
         KillCount.setFill(Color.WHITE);
 
-        FloorCount = new Text("Floor: " + floornum);
+        FloorCount = new Text("Floors Cleared: " + floornum);
         FloorCount.setFont(new Font("Papyrus", 40));
         FloorCount.setFill(Color.WHITE);
 
@@ -1281,6 +1303,7 @@ public class CompSciProject2023 extends Application {
     }
 
     private void SaveScoreScene() {
+        int playerScore = Score;
         SaveRoot = new Group();
         double width = WIDTH / 2;
         double height = HEIGHT / 2;
@@ -1295,18 +1318,25 @@ public class CompSciProject2023 extends Application {
         Title.setFont(new Font("Papyrus", 50));
         Title.setTextFill(Color.WHITE);
 
-        TextField usernamefield = new TextField();
+        Label User = new Label("Enter Username:");
+        User.setFont(new Font("Papyrus", 30));
+        User.setTextFill(Color.WHITE);
+        TextField UserNameField = new TextField();
+        UserNameField.setMaxWidth(width - 150);
+        UserNameField.setFont(new Font("Papyrus", 20));
+        Button Submitbtn = new Button("Submit");
+        Submitbtn.setOnAction(event -> {
+            String username = UserNameField.getText();
 
-        Button submitbtn = new Button("Submit");
-        submitbtn.setOnAction(event -> {
-            String username = usernamefield.getText();
-            try {
-                SaveUserName(username);
-            } catch (IOException ex) {
-                Logger.getLogger(CompSciProject2023.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        
+            SaveUserName(username, playerScore);
+
+            Stage.setScene(MenuScene);//Goes to main menu
+            SaveScoreStage.close();//Save screen closes
         });
+
+        Label UserScore = new Label("User's Current Score: " + playerScore);
+        UserScore.setFont(new Font("Papyrus", 25));
+        UserScore.setTextFill(Color.WHITE);
 
         ButtonExitGame = new Button();
         ButtonExitGame.setText("> Exit Game");
@@ -1320,22 +1350,62 @@ public class CompSciProject2023 extends Application {
 
         VBox vbox = new VBox();
         vbox.setAlignment(Pos.CENTER);
-        vbox.getChildren().addAll(Title, ButtonExitGame);
+        vbox.getChildren().addAll(Title, User, UserNameField, UserScore, Submitbtn, ButtonExitGame);
         borderPane.setCenter(vbox);
         SaveRoot.getChildren().addAll(borderPane);
         Scene SaveScene = new Scene(SaveRoot);
         SaveScoreStage = new Stage();
         SaveScoreStage.setScene(SaveScene);
+        SaveScoreStage.initStyle(StageStyle.UNDECORATED);//Removes the header bar on the new screen
+        SaveScoreStage.centerOnScreen();
+        SaveScoreStage.initModality(Modality.APPLICATION_MODAL);//Makes it so game cannot be touched until this closes
         SaveScoreStage.setHeight(height);
         SaveScoreStage.setWidth(width);
+        SaveScoreStage.show();
     }
 
-    public void SaveUserName(String UserName) throws IOException {
-        FileWriter writer = new FileWriter("SaveGameDetails.txt");
-        BufferedWriter bufferedwriter = new BufferedWriter(writer);
-        bufferedwriter.write(UserName);
-        bufferedwriter.newLine();
-        bufferedwriter.close();
+    public void SaveUserName(String UserName, int Score) {
+        try {
+            FileWriter writer = new FileWriter("SaveGameDetails.txt", true);
+            BufferedWriter bufferedwriter = new BufferedWriter(writer);
+            if (HighestScore == 0 ) {
+                HighestScore = Score;
+            }
+            if (Score > HighestScore) {
+                HighestScore = Score;
+                //add the Username and score on first line
+               
+            }
+            bufferedwriter.write("\n"+UserName+"                              ");
+            bufferedwriter.write("||                              "+Score+"\n");
+            bufferedwriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        }
+    }
+    public VBox LoadDetails(){
+        VBox ScoresList = new VBox();
+        try {
+            FileReader Reader = new FileReader("SaveGameDetails.txt");
+            BufferedReader bufferedreader = new BufferedReader(Reader);
+            int data = bufferedreader.read();//Returns -1 when no data to read
+            String line = bufferedreader.readLine();
+            while(line !=null){
+                Label OneScore = new Label(line);
+                OneScore.setFont(new Font("Papyrus", 25));
+                OneScore.setTextFill(Color.WHITE);
+                ScoresList.getChildren().add(OneScore);
+                line = bufferedreader.readLine();
+            }
+            bufferedreader.close();
+            return ScoresList;
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        }
+        return null;
+   
     }
 
     //}
@@ -1346,3 +1416,4 @@ public class CompSciProject2023 extends Application {
         launch(args);
     }
 }
+

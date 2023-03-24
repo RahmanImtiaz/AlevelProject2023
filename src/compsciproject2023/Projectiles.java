@@ -43,8 +43,6 @@ public class Projectiles extends Sprite {
     }
 
     public void moveprojectile() {
-        //y = y-dy;
-        //ivView.setLayoutY(y);
         setXSprite(getXSprite() + dx);
         setYSprite(getYSprite() + dy);
         setXSpeed(dx);

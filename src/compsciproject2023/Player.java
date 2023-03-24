@@ -42,7 +42,7 @@ public class Player extends Sprite {
     }
    
     public void hit(int damage){
-        if (getHealth()>=0) {
+        if (getHealth()>0) {
             setHealth(getHealth()-damage);
          }
     }
