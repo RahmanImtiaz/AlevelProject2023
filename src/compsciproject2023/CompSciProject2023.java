@@ -14,7 +14,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
-import java.time.Duration;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
@@ -27,6 +27,8 @@ import javafx.animation.KeyFrame;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import static javafx.application.Platform.exit;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -37,6 +39,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
@@ -52,6 +56,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
@@ -61,6 +66,7 @@ import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Duration;
 
 /**
  *
@@ -70,8 +76,11 @@ public class CompSciProject2023 extends Application {
 
     double randommovedx = 0;
     double randommovedy = 0;
+   
+    MediaPlayer mediaPlayer;
+    Slider volume;
 
-    boolean PlayerDied;
+    boolean PlayerDied, GameStart = false;
     Text Details;
 
     int upcount = 1, downcount = 1, rightcount = 1, leftcount = 1;
@@ -164,6 +173,8 @@ public class CompSciProject2023 extends Application {
     }
 
     private Scene CreateMainMenu1() { //Function used to create the main menu scene
+        GameStart = false;
+        music();
 
         BtnPlay = new Button();
         BtnPlay.setText("> Play Game");
@@ -225,6 +236,7 @@ public class CompSciProject2023 extends Application {
     }
 
     private Scene CreateScore2() { //Function used to create the High Score scene
+        GameStart = false;
         ScoreRoot = new Group();
         Image imgBack = new Image("Backgroundimg.jpeg");
         ImageView Backg = new ImageView(imgBack);
@@ -241,22 +253,21 @@ public class CompSciProject2023 extends Application {
         borderPane.setCenter(rectangle); //sets the rectange to the center
 
         ScoreRoot.getChildren().add(borderPane);
-       
+
         //BorderPane Text = new BorderPane();
         //Details = new Text(LoadDetails());//Gets Username and scores
         //Text.setPrefSize(WIDTH, HEIGHT);
         //Details.setFont(new Font("Papyrus", 30));
         //Details.setFill(Color.WHITE);
         //Text.setCenter(Details);
-     
         Label Title = new Label("Score Board");
         Title.setLayoutX(WIDTH / 2 - 250);
         Title.setLayoutY(150);
         Title.setFont(new Font("Papyrus", 80));
         Title.setTextFill(Color.WHITE);
-        
+
         UpdateScoreBoard();//updates score board
-        
+
         ScoreRoot.getChildren().addAll(Title);//Adds the title
 
         BorderPane borderPane2 = new BorderPane();
@@ -275,8 +286,8 @@ public class CompSciProject2023 extends Application {
 
         return sceneScore;
     }
-    
-    private void UpdateScoreBoard(){
+
+    private void UpdateScoreBoard() {
         BorderPane scoreBP = new BorderPane();
         VBox Scores = LoadDetails();//calls the score vbox
         Scores.setLayoutX(WIDTH / 2 - 250);
@@ -289,13 +300,14 @@ public class CompSciProject2023 extends Application {
     }
 
     private Scene CreateGuide() {
+        GameStart = false;
         Guideroot = new Group();
         Image imgBack = new Image("Backgroundimg.jpeg");
         ImageView Backg = new ImageView(imgBack);
         Backg.setFitWidth(WIDTH);
         Backg.setFitHeight(HEIGHT);
         Guideroot.getChildren().add(Backg);
-       
+
         BorderPane Text = new BorderPane();
         Text.setPrefSize(WIDTH, HEIGHT);
         Text inst = new Text("W - Move Up\nS - Move Down\nA - Move Left\nD - Move Right\nC - Open Chests\nSPACEBAR - Shoot *(Face the direction you want to shoot at)");
@@ -310,7 +322,7 @@ public class CompSciProject2023 extends Application {
         borderPane.setPrefSize(WIDTH, HEIGHT);
         borderPane.setCenter(rectangle);
 
-        Guideroot.getChildren().addAll(borderPane,Text);
+        Guideroot.getChildren().addAll(borderPane, Text);
 
         Label Title = new Label("User Intsructions");
         Title.setLayoutX(WIDTH / 2 - 300);
@@ -318,7 +330,7 @@ public class CompSciProject2023 extends Application {
         Title.setFont(new Font("Papyrus", 80));
         Title.setTextFill(Color.WHITE);
         Guideroot.getChildren().add(Title);
-       
+
         BorderPane borderPane2 = new BorderPane();
 
         Button BtnBack = new Button();
@@ -338,6 +350,7 @@ public class CompSciProject2023 extends Application {
     }
 
     private Scene CreateSetting3() { //Function used to create the settings scene
+        GameStart = false;
         SetRoot = new Group();
         Image imgBack = new Image("Backgroundimg.jpeg");
         ImageView Backg = new ImageView(imgBack);
@@ -363,11 +376,12 @@ public class CompSciProject2023 extends Application {
         Title.setTextFill(Color.WHITE);
 
         Label vol = new Label("Volume");
-        Slider volume = new Slider();
+        volume = new Slider();
+        volume.setValue(mediaPlayer.getVolume()*100);//Initially sets slider to audios volume
         volume.setLayoutX(WIDTH / 2 - 400);
         volume.setLayoutY(400);
         volume.setPrefWidth(700);
-        //double value = volume.getValue();
+
         Label volPerc = new Label();
         volPerc.setLayoutX(WIDTH / 2);
         volPerc.setLayoutY(400);
@@ -378,6 +392,14 @@ public class CompSciProject2023 extends Application {
                         volume.valueProperty()
                 )
         );
+       
+        //Volume control
+        volume.valueProperty().addListener(new InvalidationListener() {
+            @Override
+            public void invalidated(Observable observable) {
+                mediaPlayer.setVolume(volume.getValue()/100);//Max slider is 100, max audio val is 1. So divide by 100
+            }
+        });
 
         volPerc.setLayoutX(WIDTH / 2 + 350);
         volPerc.setLayoutY(335);
@@ -409,6 +431,7 @@ public class CompSciProject2023 extends Application {
     }
 
     private void CreateGame(Stage primaryStage) { //Function used to create the Game scene
+        GameStart = true;
         Down1 = "Down1.png";
         Down2 = "Down2.png";
         Up1 = "Up1.png";
@@ -490,10 +513,10 @@ public class CompSciProject2023 extends Application {
                 GameRoot.getChildren().add(r.Cell);//add all the cells of new maze
             }
         }
-        DrawGame(PHealth, PMana, pX, pY);//Draws the rest of the game
+        DrawGame(PHealth, PMana, pX, pY, maze);//Draws the rest of the game
     }
 
-    private void DrawGame(int PlayerHealth, int PlayerMana, double Playerx, double Playery) {
+    private void DrawGame(int PlayerHealth, int PlayerMana, double Playerx, double Playery, Room maze) {
         p1 = new Player(30, 30, Down1, PlayerHealth, PlayerMana); //creates the player object
         p1.setXSprite(Playerx);
         p1.setYSprite(Playery);
@@ -506,7 +529,7 @@ public class CompSciProject2023 extends Application {
 
         HBox BarBox = new HBox();//Used for Health bar and mana bar
         BorderPane scoreBP = new BorderPane();
-        scoreBP.setRight(Scores());//Borderpane stores and sets the HBOX containing score to the right
+        scoreBP.setRight(Scores(maze));//Borderpane stores and sets the HBOX containing score to the right
         BarBox.getChildren().addAll(HealthBar(), ManaBar(), scoreBP);//health bar, mana bar and scores, kill count etc.
         BarBox.setSpacing(10);
         GameRoot.getChildren().add(BarBox); //Hbox added to the root
@@ -634,10 +657,10 @@ public class CompSciProject2023 extends Application {
                             GameRoot.getChildren().add(projectile.Sprite);
                         }
                         Shooting = true;
-                        if (p1.getMp()>0) {//Only is Mp is above 0
-                           p1.setMp(p1.getMp() - 5);//Take away mana 
+                        if (p1.getMp() > 0) {//Only is Mp is above 0
+                            p1.setMp(p1.getMp() - 5);//Take away mana
                         }
-                        
+
                     }
                     break;
                 case ESCAPE:
@@ -802,7 +825,7 @@ public class CompSciProject2023 extends Application {
 
                 //Collisions
                 Maze.playerwallcollision(p1); //Player and wall collisions
-                if (healthhitcount % 100 == 0) {
+                if (healthhitcount % 100 == 0 && GameStart) {
                     playerwithenemyprojcoll(p1); //Player and enemy projectile        
                 }
                 projectiles.forEach(projectiles -> Maze.Spritewallcollision(projectiles, GameRoot, 1)); //Player projectile and wall collision
@@ -873,13 +896,14 @@ public class CompSciProject2023 extends Application {
                     prevfloorcount++;
                 }
                 if (KillCounter > prevkillcount) {//if enemy found
-                    Score = Score + 20;//increase score by 100 each time
+                    Score = Score + 20;//increase score by 20 each time
                     prevkillcount++;
                 }
 
                 ScoreCount.setText("Score: " + Score);//OUTPUTS SCORE
-                
-                FloorCount.setText("Floors Cleared: " + floorcount);//outputs number of floors cleared.
+
+                int RoomNum = Maze.roomnum;
+                FloorCount.setText("Floor: " + RoomNum);//outputs floor number
 
                 //Hp Chest
                 HpChests.forEach(HpChests -> OpenChest(HpChests));//Opens chest
@@ -888,13 +912,13 @@ public class CompSciProject2023 extends Application {
                 //Traps
                 Traps.forEach(Traps -> TrapDmg(Traps));
 
-
             }
         };
         gametimer.start();
     }
 
     private void InGamePauseMenu(Stage primaryStage) {
+        GameStart = false;
         //BtnSaveScore, BtnResume, ButtonExitGame
         PauseRoot = new Group();
         double width = WIDTH / 2;
@@ -932,6 +956,7 @@ public class CompSciProject2023 extends Application {
         BtnResume.setOnAction(e -> {
             gametimer.start();
             popupStage.close();
+            GameStart = true;
         });
 
         Restartbtn = new Button();
@@ -942,9 +967,11 @@ public class CompSciProject2023 extends Application {
 
         Restartbtn.setOnAction(e -> {
             gametimer.stop();
+            Score = 0;//Resets Score to 0
             CreateGame(primaryStage);
             gametimer.start();
             popupStage.close();
+            GameStart = true;
         });
         ButtonExitGame = new Button();
         ButtonExitGame.setText("> Exit Game");
@@ -1072,13 +1099,14 @@ public class CompSciProject2023 extends Application {
         return sp;//Returns the stackpane
     }
 
-    private HBox Scores() {
+    private HBox Scores(Room maze) {
         HBox Scorebox = new HBox();
         KillCount = new Text("Kills: " + KillCounter);//For the kill counts
         KillCount.setFont(new Font("Papyrus", 40));
         KillCount.setFill(Color.WHITE);
 
-        FloorCount = new Text("Floors Cleared: " + floornum);//For the floor cleared counts
+        int RoomNum = maze.roomnum;
+        FloorCount = new Text("Floor: " + RoomNum);//For the floor number
         FloorCount.setFont(new Font("Papyrus", 40));
         FloorCount.setFill(Color.WHITE);
 
@@ -1138,6 +1166,9 @@ public class CompSciProject2023 extends Application {
         Image HpChestOpen = new Image("HpChestOpen.png");
         Image MpChestOpen = new Image("MpChestOpen.png");
         if (p1.Sprite.getBoundsInParent().intersects(Chest.Sprite.getBoundsInParent()) && ClickChest == true) {
+            if (Chest.Boost != 0) {//Makes sure score increase once per chest opened
+                Score = Score + 15;//increases score by 15 with each chest open
+            }
             if (Chest.Type == "HpChest" && p1.getHealth() <= 100 && p1.getHealth() >= 0) {
                 Chest.Sprite.setImage(HpChestOpen);
                 p1.setHealth(p1.getHealth() + Chest.Boost);
@@ -1327,16 +1358,37 @@ public class CompSciProject2023 extends Application {
         User.setFont(new Font("Papyrus", 30));
         User.setTextFill(Color.WHITE);
         TextField UserNameField = new TextField();
+
         UserNameField.setMaxWidth(width - 150);
         UserNameField.setFont(new Font("Papyrus", 20));
         Button Submitbtn = new Button("Submit");
         Submitbtn.setOnAction(event -> {
             String username = UserNameField.getText();
-
             SaveUserName(username, playerScore);
             //UpdateScoreBoard();//Updates scoreboard
             Stage.setScene(MenuScene);//Goes to main menu
             SaveScoreStage.close();//Save screen closes
+        });
+
+        //Regex - Input Validation
+        Alert Error = new Alert(AlertType.NONE);//Alert
+        UserNameField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
+            if (!newValue) { //when focus lost
+                //if (!UserNameField.getText().matches("/^[A-Z0-9]{4,8}$/")) {//When not matching A-Z or 1-9 in Caps between 4-8 char
+                if ((!UserNameField.getText().matches("[A-Z]") || !UserNameField.getText().matches("[0-9]")) && !UserNameField.getText().matches("{4,8}")) {
+                    //set the textField empty
+                    UserNameField.setText("");
+                    Error.setAlertType(AlertType.ERROR);//Error Alert
+                    Error.setTitle("Incorrect Format");
+                    Error.setContentText("User Name cannot contain any symbols, has to be between 4 - 8 characters long, and has to be in Upper Case!");
+                    //Submitbtn.setDisable(true);
+                    Error.show();
+                } else {
+                    Error.close();
+                    //Submitbtn.setDisable(false);
+                }
+            }
+
         });
 
         Label UserScore = new Label("User's Current Score: " + playerScore);
@@ -1373,30 +1425,31 @@ public class CompSciProject2023 extends Application {
         try {
             FileWriter writer = new FileWriter("SaveGameDetails.txt", true);
             BufferedWriter bufferedwriter = new BufferedWriter(writer);
-            if (HighestScore == 0 ) {
+            if (HighestScore == 0) {
                 HighestScore = Score;
             }
             if (Score > HighestScore) {
                 HighestScore = Score;
                 //add the Username and score on first line
-               
+
             }
-            bufferedwriter.write("\n"+UserName+"                              ");
-            bufferedwriter.write("||                              "+Score+"\n");
+            bufferedwriter.write("\n" + UserName + "                              ");
+            bufferedwriter.write("||                              " + Score + "\n");
             bufferedwriter.close();
         } catch (IOException e) {
             e.printStackTrace();
 
         }
     }
-    public VBox LoadDetails(){
+
+    public VBox LoadDetails() {
         VBox ScoresList = new VBox();
         try {
             FileReader Reader = new FileReader("SaveGameDetails.txt");
             BufferedReader bufferedreader = new BufferedReader(Reader);
             int data = bufferedreader.read();//Returns -1 when no data to read
             String line = bufferedreader.readLine();
-            while(line !=null){
+            while (line != null) {
                 Label OneScore = new Label(line);
                 OneScore.setFont(new Font("Papyrus", 25));
                 OneScore.setTextFill(Color.WHITE);
@@ -1410,7 +1463,20 @@ public class CompSciProject2023 extends Application {
 
         }
         return null;
+
+    }
    
+    public void music(){
+    String BackMusic = "BackGmusic.mp3";
+        Media sound = new Media(new File(BackMusic).toURI().toString());
+        mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.setOnEndOfMedia(new Runnable() {//Makes sure to loop the music
+            @Override
+            public void run() {
+                mediaPlayer.seek(Duration.ZERO);
+           }
+        });
+        mediaPlayer.play();
     }
 
     //}
@@ -1421,4 +1487,3 @@ public class CompSciProject2023 extends Application {
         launch(args);
     }
 }
-
