@@ -76,7 +76,7 @@ public class CompSciProject2023 extends Application {
 
     double randommovedx = 0;
     double randommovedy = 0;
-   
+
     MediaPlayer mediaPlayer;
     Slider volume;
 
@@ -324,7 +324,7 @@ public class CompSciProject2023 extends Application {
 
         Guideroot.getChildren().addAll(borderPane, Text);
 
-        Label Title = new Label("User Intsructions");
+        Label Title = new Label("User Instructions");
         Title.setLayoutX(WIDTH / 2 - 300);
         Title.setLayoutY(150);
         Title.setFont(new Font("Papyrus", 80));
@@ -377,7 +377,7 @@ public class CompSciProject2023 extends Application {
 
         Label vol = new Label("Volume");
         volume = new Slider();
-        volume.setValue(mediaPlayer.getVolume()*100);//Initially sets slider to audios volume
+        volume.setValue(mediaPlayer.getVolume() * 100);//Initially sets slider to audios volume
         volume.setLayoutX(WIDTH / 2 - 400);
         volume.setLayoutY(400);
         volume.setPrefWidth(700);
@@ -392,12 +392,12 @@ public class CompSciProject2023 extends Application {
                         volume.valueProperty()
                 )
         );
-       
+
         //Volume control
         volume.valueProperty().addListener(new InvalidationListener() {
             @Override
             public void invalidated(Observable observable) {
-                mediaPlayer.setVolume(volume.getValue()/100);//Max slider is 100, max audio val is 1. So divide by 100
+                mediaPlayer.setVolume(volume.getValue() / 100);//Max slider is 100, max audio val is 1. So divide by 100
             }
         });
 
@@ -479,7 +479,6 @@ public class CompSciProject2023 extends Application {
         loop(primaryStage); //calls the subroutine with the animation timer/gameloop
 
         /* spawnRangedEnemies();//calls the subroutine responsible for enemy spawns
-
         HBox BarBox = new HBox();
         BorderPane scoreBP = new BorderPane();
         scoreBP.setRight(Scores());
@@ -1374,18 +1373,15 @@ public class CompSciProject2023 extends Application {
         Alert Error = new Alert(AlertType.NONE);//Alert
         UserNameField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
             if (!newValue) { //when focus lost
-                //if (!UserNameField.getText().matches("/^[A-Z0-9]{4,8}$/")) {//When not matching A-Z or 1-9 in Caps between 4-8 char
-                if ((!UserNameField.getText().matches("[A-Z]") || !UserNameField.getText().matches("[0-9]")) && !UserNameField.getText().matches("{4,8}")) {
+                if (!UserNameField.getText().matches("^[A-Z0-9]{4,8}$")) {//When not matching A-Z (Caps) or 1-9 between 4-8 char
                     //set the textField empty
                     UserNameField.setText("");
                     Error.setAlertType(AlertType.ERROR);//Error Alert
                     Error.setTitle("Incorrect Format");
                     Error.setContentText("User Name cannot contain any symbols, has to be between 4 - 8 characters long, and has to be in Upper Case!");
-                    //Submitbtn.setDisable(true);
                     Error.show();
                 } else {
                     Error.close();
-                    //Submitbtn.setDisable(false);
                 }
             }
 
@@ -1422,23 +1418,20 @@ public class CompSciProject2023 extends Application {
     }
 
     public void SaveUserName(String UserName, int Score) {
+        Alert NoFileFound = new Alert(AlertType.NONE);//Alert
         try {
             FileWriter writer = new FileWriter("SaveGameDetails.txt", true);
             BufferedWriter bufferedwriter = new BufferedWriter(writer);
-            if (HighestScore == 0) {
-                HighestScore = Score;
-            }
-            if (Score > HighestScore) {
-                HighestScore = Score;
-                //add the Username and score on first line
-
-            }
-            bufferedwriter.write("\n" + UserName + "                              ");
+            bufferedwriter.write(UserName + "                              ");
             bufferedwriter.write("||                              " + Score + "\n");
             bufferedwriter.close();
         } catch (IOException e) {
             e.printStackTrace();
-
+            System.out.println("File Not fpimt");
+            NoFileFound.setAlertType(AlertType.ERROR);//Error Alert
+            NoFileFound.setTitle("No File Found");
+            NoFileFound.setContentText("Error! File Not Found!");
+            NoFileFound.show();
         }
     }
 
@@ -1447,34 +1440,31 @@ public class CompSciProject2023 extends Application {
         try {
             FileReader Reader = new FileReader("SaveGameDetails.txt");
             BufferedReader bufferedreader = new BufferedReader(Reader);
-            int data = bufferedreader.read();//Returns -1 when no data to read
             String line = bufferedreader.readLine();
-            while (line != null) {
-                Label OneScore = new Label(line);
+            while (line != null) {//Loop through all lines
+                Label OneScore = new Label(line);//Adds line to a label
                 OneScore.setFont(new Font("Papyrus", 25));
                 OneScore.setTextFill(Color.WHITE);
-                ScoresList.getChildren().add(OneScore);
-                line = bufferedreader.readLine();
+                ScoresList.getChildren().add(OneScore);//Adds the label to the vbox
+                line = bufferedreader.readLine();//next line
             }
             bufferedreader.close();
             return ScoresList;
         } catch (IOException e) {
             e.printStackTrace();
-
         }
         return null;
-
     }
-   
-    public void music(){
-    String BackMusic = "BackGmusic.mp3";
+
+    public void music() {
+        String BackMusic = "BackGmusic.mp3";
         Media sound = new Media(new File(BackMusic).toURI().toString());
         mediaPlayer = new MediaPlayer(sound);
         mediaPlayer.setOnEndOfMedia(new Runnable() {//Makes sure to loop the music
             @Override
             public void run() {
                 mediaPlayer.seek(Duration.ZERO);
-           }
+            }
         });
         mediaPlayer.play();
     }
