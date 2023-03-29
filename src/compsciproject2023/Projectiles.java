@@ -31,10 +31,6 @@ public class Projectiles extends Sprite {
         this.dx = dx;
         this.setXSprite(spritex);
         this.setYSprite(spritey);
-
-        //Image imgProjectile = new Image("RedFireBall.png");
-        //ivView = new ImageView(imgProjectile);
-        //ivView.setLayoutY(y);
     }
 
 
@@ -50,28 +46,5 @@ public class Projectiles extends Sprite {
         if (getYSprite() < 0 || getXSprite() < 0) {
             stillShooting = false;
         }
-    }
-
-    public Rectangle2D getBounds() {
-
-        Bounds boundsInLocal = Sprite.getBoundsInLocal();
-        Point2D topLeft = new Point2D(boundsInLocal.getMinX(), boundsInLocal.getMinY());
-        Point2D bottomRight = new Point2D(boundsInLocal.getMaxX(), boundsInLocal.getMaxY());
-        Point2D topLeftInScene = Sprite.localToScene(topLeft);
-        Point2D bottomRightInScene = Sprite.localToScene(bottomRight);
-        Sprite.getParent().requestLayout();
-        return new Rectangle2D(topLeftInScene.getX(), topLeftInScene.getY(),
-                bottomRightInScene.getX() - topLeftInScene.getX(),
-                bottomRightInScene.getY() - topLeftInScene.getY());
-    }
-
-    public boolean checkcollision(Room room) {
-        Collection<Rectangle2D> wallBounds = room.getwallbounds();
-        for (Rectangle2D wall : wallBounds) {
-            if (this.getBounds().intersects(wall)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

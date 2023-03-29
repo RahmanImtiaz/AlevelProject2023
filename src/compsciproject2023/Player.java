@@ -26,9 +26,6 @@ public class Player extends Sprite {
     Circle radiuscircleP;
     boolean notmoving= false, Removed;
    
-   
-
-    //KeyHandler KeyH = new KeyHandler();
     public Player(int width, int height, String imgpath, int Health, int Mana) {
 
         super(width, height, imgpath);
@@ -63,8 +60,6 @@ public class Player extends Sprite {
 
     public void move(double dy, double dx, double width, double height) {
         if (!notmoving) {
-            //xspeed = dx;
-            //yspeed = dy;
         setYSprite(getYSprite() - yspeed);
         setXSprite(getXSprite() - xspeed);
         double h = Sprite.getFitHeight();

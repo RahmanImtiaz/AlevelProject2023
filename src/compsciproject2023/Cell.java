@@ -38,31 +38,26 @@ public class Cell {
             Cell = new ImageView(Topwall2);
             border = true;
             type = "Wall";
-            //Cell.setFill(new ImagePattern(upwall));
         }
         if (code == 1) {
             Cell = new ImageView(floor);
             border = false;
             type = "Floor";
-            //Cell.setFill(new ImagePattern(floor));
         }
         if (code == 3) {
             Cell = new ImageView(Topwall2);
             border = true;
             type = "Wall";
-            //Cell.setFill(new ImagePattern(Topwall2));
         }
         if (code == 4) {
             Cell = new ImageView(leftdoor);
             border = false;
             type = "LeftDoor";
-            //Cell.setFill(new ImagePattern(leftdoor));
         }
         if (code == 5) {
             Cell = new ImageView(rightdoor);
             border = false;
             type = "RightDoor";
-            //Cell.setFill(new ImagePattern(rightdoor));
         }
         if (code == 6) {
             Cell = new ImageView(downdoor);

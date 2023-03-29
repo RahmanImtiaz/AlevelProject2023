@@ -45,8 +45,6 @@ public class Room extends GridPane {
         int numC = (int) ((int) width / RectWidth);
         int numR = (int) ((int) height / RectHeight);
 
-        //mazeroom = new int[numR][numC];
-        //cells = new Cell[mazeroom.length][mazeroom[0].length];
         cells = new Cell[numR][numC];
         for (int row = 0; row < numR; row++) {
             for (int col = 0; col < numC; col++) {
@@ -58,12 +56,6 @@ public class Room extends GridPane {
                     codeimg = coderand;
                 }
 
-                //if ((col == 0 && row == numR / 2)) {//left door
-                //    codeimg = 4;
-                //}
-                //if ((col == numC - 1 && row == numR / 2)) {//right door
-                //    codeimg = 5;
-                //}
                 if ((row == numR / 2 || row == (numR / 2 + 1) || row == (numR / 2 - 1)) && (col == 1 || col == 2 || col == numC - 2 || col == numC - 3)) {
                     codeimg = 1;
                 }

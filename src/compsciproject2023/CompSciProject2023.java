@@ -254,12 +254,6 @@ public class CompSciProject2023 extends Application {
 
         ScoreRoot.getChildren().add(borderPane);
 
-        //BorderPane Text = new BorderPane();
-        //Details = new Text(LoadDetails());//Gets Username and scores
-        //Text.setPrefSize(WIDTH, HEIGHT);
-        //Details.setFont(new Font("Papyrus", 30));
-        //Details.setFill(Color.WHITE);
-        //Text.setCenter(Details);
         Label Title = new Label("Score Board");
         Title.setLayoutX(WIDTH / 2 - 250);
         Title.setLayoutY(150);
@@ -441,19 +435,14 @@ public class CompSciProject2023 extends Application {
         Right1 = "Right1.png";
         Right2 = "Right2.png";
 
-        //playerprojectile = new Projectiles();
+
         GameRoot = new Group();
 
-        //p1 = new Player(30, 30, Down1); //creates the player object
-        //GenerateMaze();
-        /////////////////////
         Random rand = new Random();
         CurrentRoomx = rand.nextInt(3);// 9 or 10 idk
         CurrentRoomy = rand.nextInt(3);
 
-        //show start room on screen before maze gen
-        ///rooms[CurrentRoomy][CurrentRoomx] = new Room(WIDTH,HEIGHT,p1);
-        ///rooms[CurrentRoomy][CurrentRoomx].drawRoom(GameRoot,rooms[CurrentRoomy][CurrentRoomx]);
+        //Initialise the rooms in the array
         int RoomNum = 0;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -466,26 +455,12 @@ public class CompSciProject2023 extends Application {
         DrawMaze(rooms[CurrentRoomy][CurrentRoomx], 100, 100, 100, 100);//Passes random starting room, and 100 HP, 100 MP, Player x and y
 
         Maze = rooms[CurrentRoomy][CurrentRoomx];
-        //add player
-        ///p1 = new Player(30, 30, Down1); //creates the player object
-
-        ///System.out.println("Start maze at x="+CurrentRoomx+" and y="+CurrentRoomy);
-        //GameRoot.getChildren().add(p1.rect);
-        ///GameRoot.getChildren().add(p1.Sprite);
-        //GameRoot.getChildren().add(p1.radiuscircleP);
+        
         Scene sceneGame = new Scene(GameRoot, WIDTH, HEIGHT);
         sceneGame.setCursor(Cursor.CROSSHAIR); //changes how the mouse will look
         controls(sceneGame, primaryStage); //calls the subroutine resposible for the key listeners
         loop(primaryStage); //calls the subroutine with the animation timer/gameloop
 
-        /* spawnRangedEnemies();//calls the subroutine responsible for enemy spawns
-        HBox BarBox = new HBox();
-        BorderPane scoreBP = new BorderPane();
-        scoreBP.setRight(Scores());
-        BarBox.getChildren().addAll(HealthBar(), MananBar(), scoreBP);//health bar and mana bar
-        BarBox.setSpacing(10);
-        GameRoot.getChildren().add(BarBox);
-         */
         primaryStage.setScene(sceneGame);
         primaryStage.setFullScreen(true);
 
@@ -493,7 +468,6 @@ public class CompSciProject2023 extends Application {
 
     private void DrawMaze(Room maze, int PHealth, int PMana, double pX, double pY) {//Passed in new room, and players current health and mana
         if (maze.isDiscovered()) {
-            //Score = Score + 200; //When new floor discovered, 200 points to score
             floorcount++;//increments floor count
             maze.setDiscovered(true);
         }
@@ -541,7 +515,6 @@ public class CompSciProject2023 extends Application {
 
         indexX = x;
         indexY = y;
-        //System.out.println("Room: ");
         Direction[] directions = Direction.values();//get all directions
 
         //Randomise direction
@@ -570,7 +543,6 @@ public class CompSciProject2023 extends Application {
                 GenerateMaze(x + 1, y); //Recursive call for the new room
             }
         }
-
     }
 
     private boolean isValidRoom(int x, int y) {
@@ -728,7 +700,6 @@ public class CompSciProject2023 extends Application {
                         p1.Sprite.setImage(Up1);
                     }
                     dy += 4;
-                    //p1.yspeed =4;
                 }
                 if (goSouth) {
 
@@ -739,7 +710,6 @@ public class CompSciProject2023 extends Application {
                         p1.Sprite.setImage(Down1);
                     }
                     dy -= 4;
-                    //p1.yspeed = -4;
                 }
                 if (goEast) {
 
@@ -750,7 +720,6 @@ public class CompSciProject2023 extends Application {
                         p1.Sprite.setImage(Right1);
                     }
                     dx -= 4;
-                    //p1.xspeed =-4;
                 }
                 if (goWest) {
 
@@ -761,13 +730,10 @@ public class CompSciProject2023 extends Application {
                         p1.Sprite.setImage(Left2);
                     }
                     dx += 4;
-                    //p1.xspeed +=4;
                 }
                 if (running) {
                     dx *= 3;
                     dy *= 3;
-                    //p1.xspeed *= 3;
-                    //p1.yspeed *= 3;
                 }
                 p1.setXspeed(dx);
                 p1.setYspeed(dy);
@@ -884,7 +850,6 @@ public class CompSciProject2023 extends Application {
 
                 //update kill counter bar
                 KillCount.setText("Kills: " + KillCounter);
-                //System.out.println("X:"+p1.getXSprite()+"Y:"+p1.getYSprite());
 
                 //Score Update
                 if (Timer % 50 == 0 && p1.isAlive()) {
@@ -918,7 +883,6 @@ public class CompSciProject2023 extends Application {
 
     private void InGamePauseMenu(Stage primaryStage) {
         GameStart = false;
-        //BtnSaveScore, BtnResume, ButtonExitGame
         PauseRoot = new Group();
         double width = WIDTH / 2;
         double height = HEIGHT / 2;
@@ -930,8 +894,6 @@ public class CompSciProject2023 extends Application {
         PauseRoot.getChildren().add(Backg);
 
         Label Title = new Label("Pause Menu");
-        //Title.setLayoutX(width / 2  - 100);
-        //Title.setLayoutY(height / 2 - 200);
         Title.setFont(new Font("Papyrus", 50));
         Title.setTextFill(Color.WHITE);
 
@@ -988,8 +950,6 @@ public class CompSciProject2023 extends Application {
         borderPane.setCenter(vbox);
         PauseRoot.getChildren().addAll(borderPane);
         popupStage = new Stage();
-        //popupStage.initOwner(primaryStage);
-        //popupStage.initModality(Modality.APPLICATION_MODAL);
         popupStage.setScene(new Scene(PauseRoot));
         popupStage.initStyle(StageStyle.UNDECORATED);
         popupStage.centerOnScreen();
@@ -1364,7 +1324,6 @@ public class CompSciProject2023 extends Application {
         Submitbtn.setOnAction(event -> {
             String username = UserNameField.getText();
             SaveUserName(username, playerScore);
-            //UpdateScoreBoard();//Updates scoreboard
             Stage.setScene(MenuScene);//Goes to main menu
             SaveScoreStage.close();//Save screen closes
         });
