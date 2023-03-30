@@ -283,14 +283,17 @@ public class CompSciProject2023 extends Application {
 
     private void UpdateScoreBoard() {
         BorderPane scoreBP = new BorderPane();
-        VBox Scores = LoadDetails();//calls the score vbox
-        Scores.setLayoutX(WIDTH / 2 - 250);
-        Scores.setLayoutY(250);
-        Scores.setAlignment(Pos.CENTER);
-        scoreBP.setPrefSize(WIDTH, HEIGHT);
-        scoreBP.setCenter(Scores);//Sets the score the the center
-        scoreBP.setTranslateY(-150);//moves scores up by 200
-        ScoreRoot.getChildren().addAll(scoreBP); //adds score to scoreboard
+        VBox Scores = LoadDetails();//calls the score vbox - returns null if textfile not found
+        if (Scores != null) {//If there is a text file
+            Scores.setLayoutX(WIDTH / 2 - 250);
+            Scores.setLayoutY(250);
+            Scores.setAlignment(Pos.CENTER);
+            scoreBP.setPrefSize(WIDTH, HEIGHT);
+            scoreBP.setCenter(Scores);//Sets the score the the center
+            scoreBP.setTranslateY(-150);//moves scores up by 200
+            ScoreRoot.getChildren().addAll(scoreBP); //adds score to scoreboard 
+        }
+
     }
 
     private Scene CreateGuide() {
@@ -435,7 +438,6 @@ public class CompSciProject2023 extends Application {
         Right1 = "Right1.png";
         Right2 = "Right2.png";
 
-
         GameRoot = new Group();
 
         Random rand = new Random();
@@ -455,7 +457,7 @@ public class CompSciProject2023 extends Application {
         DrawMaze(rooms[CurrentRoomy][CurrentRoomx], 100, 100, 100, 100);//Passes random starting room, and 100 HP, 100 MP, Player x and y
 
         Maze = rooms[CurrentRoomy][CurrentRoomx];
-        
+
         Scene sceneGame = new Scene(GameRoot, WIDTH, HEIGHT);
         sceneGame.setCursor(Cursor.CROSSHAIR); //changes how the mouse will look
         controls(sceneGame, primaryStage); //calls the subroutine resposible for the key listeners
@@ -1386,16 +1388,16 @@ public class CompSciProject2023 extends Application {
             bufferedwriter.close();
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("File Not fpimt");
             NoFileFound.setAlertType(AlertType.ERROR);//Error Alert
             NoFileFound.setTitle("No File Found");
             NoFileFound.setContentText("Error! File Not Found!");
-            NoFileFound.show();
+            NoFileFound.show();//shows that there is no file found. alert  notifys player
         }
     }
 
     public VBox LoadDetails() {
         VBox ScoresList = new VBox();
+        Alert NoFileFound = new Alert(AlertType.NONE);//Alert
         try {
             FileReader Reader = new FileReader("SaveGameDetails.txt");
             BufferedReader bufferedreader = new BufferedReader(Reader);
@@ -1411,8 +1413,13 @@ public class CompSciProject2023 extends Application {
             return ScoresList;
         } catch (IOException e) {
             e.printStackTrace();
+            NoFileFound.setAlertType(AlertType.ERROR);//Error Alert
+            NoFileFound.setTitle("No File Found");
+            NoFileFound.setContentText("Error! File Not Found!");
+            NoFileFound.show();//shows that there is no file found. alert  notifys player
+            return null;//If no file is found --> Null is returned
         }
-        return null;
+
     }
 
     public void music() {
